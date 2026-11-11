@@ -25,7 +25,9 @@ import {
   MessageCircle,
   Wine,
   Users,
-  Tv
+  Tv,
+  CheckCircle2,
+  ArrowRight
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -33,7 +35,6 @@ export default function HomePage() {
   const [featuredDishes, setFeaturedDishes] = useState<any[]>([]);
   const [mediaAssets, setMediaAssets] = useState<any[]>([]);
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
-  const [videoModalOpen, setVideoModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // Load branches
@@ -101,159 +102,153 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0A0C0E]">
-      {/* 1. CINEMATIC LUXURY HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#060709] via-[#0A0C0E] to-[#0A0C0E] px-4 py-24">
-        {/* Background Verified Photograph with Gradient Overlay */}
+    <div className="flex flex-col min-h-screen bg-[#08090C] text-[#FAF8F5]">
+      {/* 1. CINEMATIC ULTRA-LUXURY HERO SECTION */}
+      <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+        {/* Background Verified Photograph with Depth Gradients */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-30 scale-105 transition-transform duration-1000"
+          className="absolute inset-0 bg-cover bg-center opacity-35 scale-105 transition-transform duration-1000 ease-out"
           style={{
             backgroundImage: `url('/images/kickbunk/google_01_garden_lights_night.jpg')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] via-[#0A0C0E]/75 to-transparent" />
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-[#0A0C0E]/40 to-[#0A0C0E]" />
+        {/* Cinematic Vignette Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#08090C] via-[#08090C]/70 to-[#08090C]/40" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-950/20 via-[#08090C]/60 to-[#08090C]" />
 
         <div className="relative max-w-5xl mx-auto text-center space-y-8 z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold text-xs font-semibold tracking-wider uppercase shadow-lg shadow-brand-gold/10">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Bengaluru's Premier Garden Resto-Bar • Hulimangala Cross</span>
+          {/* Luxury Micro-Badge */}
+          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full luxury-glass border border-brand-gold/40 shadow-gold-glow">
+            <span className="w-2 h-2 rounded-full bg-brand-gold animate-pulse" />
+            <span className="font-cinzel text-brand-gold text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase">
+              Bengaluru Flagship • Garden Resto-Bar Sanctuary
+            </span>
           </div>
 
-          <div className="space-y-3">
-            <h2 className="text-xl sm:text-2xl font-serif text-brand-gold tracking-widest uppercase font-semibold">
-              KICK BUNK
-            </h2>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-serif font-bold text-brand-ivory leading-tight tracking-tight">
-              Good Food. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold via-brand-amber to-yellow-200">
-                Great Moments.
+          {/* Master Headline */}
+          <div className="space-y-4">
+            <div className="font-cinzel text-brand-gold tracking-[0.3em] uppercase text-xs sm:text-sm font-semibold">
+              KICK BUNK GROUP PRESENTS
+            </div>
+            <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif font-bold text-brand-ivory leading-[1.08] tracking-tight">
+              Where Charcoal Fire <br />
+              <span className="text-gold-gradient italic font-serif">
+                Meets Starlit Elegance
               </span>
             </h1>
-            <p className="text-sm sm:text-base font-serif italic text-gray-400">
-              Restaurant & Bar • Electronic City Phase 1, Bengaluru
+            <p className="font-cinzel text-xs sm:text-sm tracking-[0.2em] text-gray-400 uppercase">
+              Electronic City Phase 1 • Hulimangala Main Road • Bengaluru
             </p>
           </div>
 
+          {/* Editorial Hook */}
           <p className="max-w-3xl mx-auto text-base sm:text-lg text-gray-300 font-light leading-relaxed">
-            Immerse yourself in Bengaluru’s favorite open-air dining sanctuary. Savor live clay-oven charcoal tandoori grills, authentic royal dum biryanis, and crafted beverages amidst serene garden cabanas, illuminated walkways, and weekend sports screenings.
+            Step into Bengaluru’s premier open-air culinary sanctuary. Savor slow-fired clay tandoori grills, fragrant handi dum biryanis, and crafted resto-bar spirits amidst secluded bamboo cabanas, illuminated canopies, and weekend sports screenings.
           </p>
 
-          {/* Primary Action Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          {/* Luxury Action Triggers */}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 pt-3">
             <Link
-              href="/menu"
-              className="px-7 py-4 rounded-xl bg-gradient-to-r from-brand-gold to-brand-amber hover:from-brand-goldHover hover:to-brand-gold text-brand-dark font-bold text-sm tracking-wide transition-all shadow-xl shadow-brand-gold/20 flex items-center justify-center gap-2 group"
+              href="/booking"
+              className="px-8 py-4 rounded-xl bg-gradient-to-r from-[#DFBE50] via-[#D4AF37] to-[#B08D26] hover:from-[#F3E5AB] hover:to-[#DFBE50] text-[#08090C] font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-brand-gold/25 hover:shadow-gold-glow-lg flex items-center gap-2.5 group"
             >
-              <Utensils className="w-4 h-4 text-brand-dark" />
-              <span>Explore Menu</span>
+              <Calendar className="w-4 h-4 text-brand-dark" />
+              <span>Reserve Cabana</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
 
             <Link
-              href="/gallery"
-              className="px-7 py-4 rounded-xl bg-brand-card hover:bg-brand-cardBorder border border-brand-cardBorder text-brand-ivory font-semibold text-sm transition-all flex items-center justify-center gap-2 hover:border-brand-gold/50"
+              href="/menu"
+              className="px-8 py-4 rounded-xl luxury-glass hover:border-brand-gold text-brand-ivory hover:text-brand-gold font-semibold text-xs uppercase tracking-[0.18em] transition-all flex items-center gap-2.5 shadow-luxury-card hover:shadow-gold-glow"
             >
-              <Camera className="w-4 h-4 text-brand-gold" />
-              <span>Photos & Videos</span>
+              <Utensils className="w-4 h-4 text-brand-gold" />
+              <span>Explore Menu</span>
             </Link>
 
             <Link
-              href="/booking"
-              className="px-7 py-4 rounded-xl bg-brand-card hover:bg-brand-cardBorder border border-brand-cardBorder text-brand-ivory font-semibold text-sm transition-all flex items-center justify-center gap-2 hover:border-brand-gold/50"
+              href="/gallery"
+              className="px-7 py-4 rounded-xl luxury-glass hover:border-brand-gold/70 text-gray-300 hover:text-white font-medium text-xs uppercase tracking-[0.16em] transition-all flex items-center gap-2"
             >
-              <Calendar className="w-4 h-4 text-brand-gold" />
-              <span>Reserve Table / Cabana</span>
+              <Camera className="w-4 h-4 text-brand-gold" />
+              <span>Visual Gallery</span>
             </Link>
 
             <a
               href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
               target="_blank"
               rel="noreferrer"
-              className="px-6 py-4 rounded-xl bg-[#141820] hover:bg-[#1C222E] border border-brand-cardBorder text-gray-300 hover:text-white font-medium text-sm transition-all flex items-center justify-center gap-2"
+              className="px-7 py-4 rounded-xl bg-[#12151B] hover:bg-[#1A1E26] border border-brand-cardBorder hover:border-brand-gold/40 text-gray-300 hover:text-white font-medium text-xs uppercase tracking-[0.16em] transition-all flex items-center gap-2"
             >
               <Navigation className="w-4 h-4 text-brand-gold" />
-              <span>Get Directions</span>
+              <span>Directions</span>
             </a>
           </div>
 
-          {/* Quick Metrics Banner */}
-          <div className="pt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto border-t border-brand-cardBorder/60">
-            <div className="p-3 rounded-xl bg-brand-card/40 border border-brand-cardBorder/40">
-              <div className="font-serif text-2xl font-bold text-brand-gold">100%</div>
-              <div className="text-xs text-gray-300 font-medium">Clay-Oven Charcoal Tandoor</div>
+          {/* Accolades Strip */}
+          <div className="pt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto border-t border-brand-gold/15">
+            <div className="p-4 rounded-2xl luxury-glass text-center space-y-1">
+              <div className="font-serif text-2xl sm:text-3xl font-bold text-brand-gold">100%</div>
+              <div className="text-[11px] uppercase tracking-wider text-gray-300 font-medium">Clay Charcoal Tandoor</div>
             </div>
-            <div className="p-3 rounded-xl bg-brand-card/40 border border-brand-cardBorder/40">
-              <div className="font-serif text-2xl font-bold text-brand-gold">4.8 ★</div>
-              <div className="text-xs text-gray-300 font-medium">1,800+ Verified Reviews</div>
+            <div className="p-4 rounded-2xl luxury-glass text-center space-y-1">
+              <div className="font-serif text-2xl sm:text-3xl font-bold text-brand-gold flex items-center justify-center gap-1">
+                <span>4.8</span>
+                <Star className="w-4 h-4 fill-brand-gold text-brand-gold" />
+              </div>
+              <div className="text-[11px] uppercase tracking-wider text-gray-300 font-medium">1,800+ Verified Reviews</div>
             </div>
-            <div className="p-3 rounded-xl bg-brand-card/40 border border-brand-cardBorder/40">
-              <div className="font-serif text-2xl font-bold text-brand-gold">Garden</div>
-              <div className="text-xs text-gray-300 font-medium">Private Cabanas & Open-Air</div>
+            <div className="p-4 rounded-2xl luxury-glass text-center space-y-1">
+              <div className="font-serif text-2xl sm:text-3xl font-bold text-brand-gold">Cabanas</div>
+              <div className="text-[11px] uppercase tracking-wider text-gray-300 font-medium">Private Garden Gazebos</div>
             </div>
-            <div className="p-3 rounded-xl bg-brand-card/40 border border-brand-cardBorder/40">
-              <div className="font-serif text-2xl font-bold text-brand-gold">Bengaluru</div>
-              <div className="text-xs text-gray-300 font-medium">Hulimangala Main Road</div>
+            <div className="p-4 rounded-2xl luxury-glass text-center space-y-1">
+              <div className="font-serif text-2xl sm:text-3xl font-bold text-brand-gold">Bengaluru</div>
+              <div className="text-[11px] uppercase tracking-wider text-gray-300 font-medium">Electronic City Flagship</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. VERIFIED RESTAURANT INTRODUCTION & AMBIENCE STORY */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-16">
+      {/* 2. EDITORIAL BRAND PHILOSOPHY SECTION */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-1.5 text-brand-gold text-xs font-bold uppercase tracking-widest">
+          <div className="lg:col-span-6 space-y-7">
+            <div className="inline-flex items-center gap-2 text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold">
               <Flame className="w-4 h-4 text-brand-amber" />
-              <span>Welcome To Kick Bunk Restaurant & Bar</span>
+              <span>The Art of Authentic Hospitality</span>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-brand-ivory leading-tight">
-              An Authentic Escape from the City’s Hustle
+            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-brand-ivory leading-[1.15]">
+              A Dining Sanctuary <br />
+              <span className="text-gold-gradient italic">Crafted for Celebrations</span>
             </h2>
 
             <p className="text-sm sm:text-base text-gray-300 leading-relaxed font-light">
-              Nestled near Hulimangala Cross in Vinayaka Layout, Electronic City Phase 1, <strong>Kick Bunk Restaurant & Bar</strong> offers a one-of-a-kind open-air garden hospitality experience. Designed around lush palm-lined courtyards, decorative illuminated trees, and private wooden dining gazebos, Kick Bunk is the preferred choice for family gatherings, romantic candlelit dinners, and energetic corporate celebrations.
+              Tucked away from the bustling thoroughfares of Electronic City, <strong>Kick Bunk Restaurant & Bar</strong> was envisioned as an unhurried culinary retreat. Spanning expansive landscaped garden courtyards, natural bamboo pergolas, and glowing fairy-lit canopies, Kick Bunk brings friends, families, and colleagues together over authentic gastronomy and celebratory spirits.
             </p>
 
+            <blockquote className="p-5 rounded-2xl border-l-2 border-brand-gold bg-[#10131A] text-xs sm:text-sm text-gray-300 italic font-serif leading-relaxed">
+              &ldquo;From live charcoal embers to handcrafted cocktail infusions, every moment at Kick Bunk is designed to feel celebratory, unhurried, and distinctly memorable.&rdquo;
+            </blockquote>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-brand-card border border-brand-cardBorder space-y-1">
-                <div className="flex items-center gap-2 text-brand-gold font-semibold text-sm">
+              <div className="p-4 rounded-xl luxury-glass space-y-1.5 border border-brand-gold/15">
+                <div className="flex items-center gap-2 text-brand-gold font-semibold text-xs tracking-wider uppercase font-cinzel">
                   <Flame className="w-4 h-4 text-brand-amber" />
-                  <span>Live Charcoal Tandoor</span>
+                  <span>Clay-Oven Grills</span>
                 </div>
-                <p className="text-xs text-gray-400">
-                  Signature Kalmi Kebabs, Malai Tikkas, and tandoori rotis fired fresh over natural coal.
+                <p className="text-xs text-gray-400 font-light leading-relaxed">
+                  Cashew-crusted Kalmi Kebabs and tender Tikkas smoked over natural coal.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-brand-card border border-brand-cardBorder space-y-1">
-                <div className="flex items-center gap-2 text-brand-gold font-semibold text-sm">
+              <div className="p-4 rounded-xl luxury-glass space-y-1.5 border border-brand-gold/15">
+                <div className="flex items-center gap-2 text-brand-gold font-semibold text-xs tracking-wider uppercase font-cinzel">
                   <Wine className="w-4 h-4 text-brand-gold" />
-                  <span>Full Resto-Bar Counter</span>
+                  <span>Curated Resto-Bar</span>
                 </div>
-                <p className="text-xs text-gray-400">
-                  Craft beers, signature spirit cocktails, tropical coolers, and chilled beverages.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-brand-card border border-brand-cardBorder space-y-1">
-                <div className="flex items-center gap-2 text-brand-gold font-semibold text-sm">
-                  <Users className="w-4 h-4 text-brand-green" />
-                  <span>Private Cabana Dining</span>
-                </div>
-                <p className="text-xs text-gray-400">
-                  Exclusive private garden cabanas for intimate family feasts and birthday celebrations.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-brand-card border border-brand-cardBorder space-y-1">
-                <div className="flex items-center gap-2 text-brand-gold font-semibold text-sm">
-                  <Tv className="w-4 h-4 text-brand-amber" />
-                  <span>Live Sports Screening</span>
-                </div>
-                <p className="text-xs text-gray-400">
-                  High-definition outdoor match screenings with high-energy crowd ambiance.
+                <p className="text-xs text-gray-400 font-light leading-relaxed">
+                  Chilled draught beers, single malts, and hand-shaken artisanal cocktails.
                 </p>
               </div>
             </div>
@@ -261,68 +256,76 @@ export default function HomePage() {
             <div className="pt-2 flex flex-wrap gap-4 items-center">
               <Link
                 href="/about"
-                className="text-sm font-semibold text-brand-gold hover:text-brand-goldHover flex items-center gap-1.5"
+                className="text-xs font-bold uppercase tracking-[0.2em] text-brand-gold hover:text-brand-goldLight flex items-center gap-2 group"
               >
-                <span>Read Full Restaurant Story</span>
-                <ChevronRight className="w-4 h-4" />
+                <span>Discover Heritage & Architecture</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <span className="text-gray-600">•</span>
               <a
                 href="tel:+919980626699"
-                className="text-sm font-medium text-gray-300 hover:text-brand-gold flex items-center gap-1.5"
+                className="text-xs uppercase tracking-wider text-gray-400 hover:text-brand-gold flex items-center gap-1.5 transition-colors"
               >
-                <Phone className="w-4 h-4 text-brand-gold" />
-                <span>Call Venue: +91 99806 26699</span>
+                <Phone className="w-3.5 h-3.5 text-brand-gold" />
+                <span>Concierge Desk: +91 99806 26699</span>
               </a>
             </div>
           </div>
 
-          {/* Right Photographic Feature Collage */}
+          {/* Right Editorial Photographic Collage */}
           <div className="lg:col-span-6 grid grid-cols-2 gap-4">
             <div className="space-y-4">
-              <div className="rounded-2xl overflow-hidden border border-brand-cardBorder relative group shadow-xl">
+              <div className="rounded-3xl overflow-hidden border border-brand-gold/25 relative group shadow-2xl">
                 <img
                   src="/images/kickbunk/magicpin_02_entrance_night.webp"
                   alt="Kick Bunk Illuminated Entrance at Night"
-                  className="w-full h-56 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-56 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                  <span className="text-xs font-semibold text-white">Illuminated Entrance at Night</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-4">
+                  <span className="text-[11px] font-cinzel tracking-wider text-brand-gold uppercase font-bold">
+                    Illuminated Entrance
+                  </span>
                 </div>
               </div>
 
-              <div className="rounded-2xl overflow-hidden border border-brand-cardBorder relative group shadow-xl">
+              <div className="rounded-3xl overflow-hidden border border-brand-gold/25 relative group shadow-2xl">
                 <img
                   src="/images/kickbunk/magicpin_01_kalmi_kebab.webp"
-                  alt="Kick Bunk Charcoal Kalmi Kebab"
-                  className="w-full h-44 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                  alt="Signature Kalmi Kebab"
+                  className="w-full h-44 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                  <span className="text-xs font-semibold text-brand-gold">Signature Kalmi Kebab</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-4">
+                  <span className="text-[11px] font-cinzel tracking-wider text-brand-gold uppercase font-bold">
+                    Signature Kalmi Kebab
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4 pt-6">
-              <div className="rounded-2xl overflow-hidden border border-brand-cardBorder relative group shadow-xl">
+              <div className="rounded-3xl overflow-hidden border border-brand-gold/25 relative group shadow-2xl">
                 <img
                   src="/images/kickbunk/google_01_garden_lights_night.jpg"
-                  alt="Fairy-Lit Garden Ambience"
-                  className="w-full h-44 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                  alt="Fairy-Lit Cabanas"
+                  className="w-full h-44 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                  <span className="text-xs font-semibold text-brand-gold">Fairy-Lit Cabanas</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-4">
+                  <span className="text-[11px] font-cinzel tracking-wider text-brand-gold uppercase font-bold">
+                    Fairy-Lit Cabanas
+                  </span>
                 </div>
               </div>
 
-              <div className="rounded-2xl overflow-hidden border border-brand-cardBorder relative group shadow-xl">
+              <div className="rounded-3xl overflow-hidden border border-brand-gold/25 relative group shadow-2xl">
                 <img
                   src="/images/kickbunk/magicpin_07_outdoor_seating_daylight.webp"
-                  alt="Daylight Outdoor Garden Seating"
-                  className="w-full h-56 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                  alt="Garden Seating Deck"
+                  className="w-full h-56 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4">
-                  <span className="text-xs font-semibold text-white">Lush Garden Seating Deck</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent flex items-end p-4">
+                  <span className="text-[11px] font-cinzel tracking-wider text-brand-gold uppercase font-bold">
+                    Palm-Lined Deck
+                  </span>
                 </div>
               </div>
             </div>
@@ -330,134 +333,134 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. RESTAURANT HIGHLIGHT CARDS (Section 3) */}
-      <section className="py-16 bg-[#0E1116] border-y border-brand-cardBorder">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* 3. THE FIVE EXCLUSIVE HALLMARKS */}
+      <section className="py-24 bg-[#050608] border-y border-brand-gold/15 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
+            <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center justify-center gap-2">
               <Award className="w-4 h-4 text-brand-gold" />
-              <span>The Five Hallmarks of Kick Bunk</span>
+              <span>Curated Dining Pillars</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory">
-              Curated Dining Highlights
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-brand-ivory">
+              The Five Hallmarks of Kick Bunk
             </h2>
-            <p className="text-xs sm:text-sm text-gray-400">
-              Each facet of Kick Bunk has been thoughtfully crafted to deliver an authentic culinary journey.
+            <p className="text-xs sm:text-sm text-gray-400 font-light">
+              Each experience is designed to immerse your senses in luxury, comfort, and culinary excellence.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-5">
-            {/* 1. Food & Beverages */}
-            <div className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all flex flex-col group shadow-lg">
-              <div className="relative h-44 overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {/* Hallmark 1: Charcoal Mastery */}
+            <div className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 group shadow-luxury-card flex flex-col">
+              <div className="relative h-48 overflow-hidden bg-black">
                 <img
                   src="/images/kickbunk/magicpin_01_kalmi_kebab.webp"
-                  alt="Food and Beverages"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  alt="Clay Tandoor Charcoal Grills"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] to-transparent" />
-                <span className="absolute bottom-3 left-3 text-xs font-bold text-brand-gold uppercase tracking-wider">
-                  Food & Beverages
+                <span className="absolute bottom-3 left-4 text-xs font-cinzel font-bold text-brand-gold uppercase tracking-[0.15em]">
+                  Charcoal Grills
                 </span>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <p className="text-xs text-gray-300 leading-relaxed font-light">
-                  Charcoal roasted tandoori grills, royal handi biryanis, wok-fried starters, and refreshing drinks.
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Continuous clay-oven coals yielding charred rotis, juicy Kalmi Kebabs, and tandoori platters.
                 </p>
-                <div className="pt-3 border-t border-brand-cardBorder/60 text-[11px] text-brand-gold font-semibold">
-                  Verified Menu Special
+                <div className="pt-2 border-t border-brand-gold/10 text-[10px] text-brand-gold uppercase tracking-wider font-semibold">
+                  Tandoori Craftsmanship
                 </div>
               </div>
             </div>
 
-            {/* 2. Restaurant Ambience */}
-            <div className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all flex flex-col group shadow-lg">
-              <div className="relative h-44 overflow-hidden">
+            {/* Hallmark 2: Garden Ambience */}
+            <div className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 group shadow-luxury-card flex flex-col">
+              <div className="relative h-48 overflow-hidden bg-black">
                 <img
                   src="/images/kickbunk/google_01_garden_lights_night.jpg"
-                  alt="Restaurant Ambience"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  alt="Starlit Garden Cabanas"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] to-transparent" />
-                <span className="absolute bottom-3 left-3 text-xs font-bold text-brand-gold uppercase tracking-wider">
+                <span className="absolute bottom-3 left-4 text-xs font-cinzel font-bold text-brand-gold uppercase tracking-[0.15em]">
                   Garden Ambience
                 </span>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <p className="text-xs text-gray-300 leading-relaxed font-light">
-                  Magical fairy-lit trees, stone pathways, and breezy open skies for evening dining under the stars.
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Lush lawns, fairy-lit tree canopies, and private cabanas for starlit evening dinners.
                 </p>
-                <div className="pt-3 border-t border-brand-cardBorder/60 text-[11px] text-brand-gold font-semibold">
-                  Evening Night Vibe
+                <div className="pt-2 border-t border-brand-gold/10 text-[10px] text-brand-gold uppercase tracking-wider font-semibold">
+                  Open-Air Sanctuary
                 </div>
               </div>
             </div>
 
-            {/* 3. Indoor Dining */}
-            <div className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all flex flex-col group shadow-lg">
-              <div className="relative h-44 overflow-hidden">
+            {/* Hallmark 3: Indoor AC Salon */}
+            <div className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 group shadow-luxury-card flex flex-col">
+              <div className="relative h-48 overflow-hidden bg-black">
                 <img
                   src="/images/kickbunk/restaurant_guru_interior.jpg"
-                  alt="Indoor Dining"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  alt="Air-Conditioned Indoor Dining"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] to-transparent" />
-                <span className="absolute bottom-3 left-3 text-xs font-bold text-brand-gold uppercase tracking-wider">
-                  Indoor Dining
+                <span className="absolute bottom-3 left-4 text-xs font-cinzel font-bold text-brand-gold uppercase tracking-[0.15em]">
+                  Family AC Salon
                 </span>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <p className="text-xs text-gray-300 leading-relaxed font-light">
-                  Spacious air-conditioned family dining hall and comfortable booth seating for all weather comfort.
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Plush booths and climate-controlled elegance for formal corporate dinners and family reunions.
                 </p>
-                <div className="pt-3 border-t border-brand-cardBorder/60 text-[11px] text-brand-gold font-semibold">
-                  Family & Corporate AC
+                <div className="pt-2 border-t border-brand-gold/10 text-[10px] text-brand-gold uppercase tracking-wider font-semibold">
+                  Climate Comfort
                 </div>
               </div>
             </div>
 
-            {/* 4. Outdoor Experience */}
-            <div className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all flex flex-col group shadow-lg">
-              <div className="relative h-44 overflow-hidden">
-                <img
-                  src="/images/kickbunk/magicpin_07_outdoor_seating_daylight.webp"
-                  alt="Outdoor Seating"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] to-transparent" />
-                <span className="absolute bottom-3 left-3 text-xs font-bold text-brand-gold uppercase tracking-wider">
-                  Outdoor Seating
-                </span>
-              </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <p className="text-xs text-gray-300 leading-relaxed font-light">
-                  Expansive garden deck, natural foliage, and secluded gazebos offering fresh outdoor dining.
-                </p>
-                <div className="pt-3 border-t border-brand-cardBorder/60 text-[11px] text-brand-gold font-semibold">
-                  Lush Daylight Seating
-                </div>
-              </div>
-            </div>
-
-            {/* 5. Events & Celebrations */}
-            <div className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all flex flex-col group shadow-lg">
-              <div className="relative h-44 overflow-hidden">
+            {/* Hallmark 4: Resto-Bar Lounge */}
+            <div className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 group shadow-luxury-card flex flex-col">
+              <div className="relative h-48 overflow-hidden bg-black">
                 <img
                   src="/images/kickbunk/magicpin_06_garden_building_night.webp"
-                  alt="Events and Celebrations"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  alt="Resto-Bar & Mixology"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] to-transparent" />
-                <span className="absolute bottom-3 left-3 text-xs font-bold text-brand-gold uppercase tracking-wider">
+                <span className="absolute bottom-3 left-4 text-xs font-cinzel font-bold text-brand-gold uppercase tracking-[0.15em]">
+                  Resto-Bar Lounge
+                </span>
+              </div>
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Craft draught beers, single malts, and hand-shaken cocktails with live match outdoor screenings.
+                </p>
+                <div className="pt-2 border-t border-brand-gold/10 text-[10px] text-brand-gold uppercase tracking-wider font-semibold">
+                  Mixology & Draught
+                </div>
+              </div>
+            </div>
+
+            {/* Hallmark 5: Banquets & Events */}
+            <div className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 group shadow-luxury-card flex flex-col">
+              <div className="relative h-48 overflow-hidden bg-black">
+                <img
+                  src="/images/kickbunk/magicpin_04_food_spread_dining.webp"
+                  alt="Banquets & Celebrations"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] to-transparent" />
+                <span className="absolute bottom-3 left-4 text-xs font-cinzel font-bold text-brand-gold uppercase tracking-[0.15em]">
                   Celebrations
                 </span>
               </div>
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <p className="text-xs text-gray-300 leading-relaxed font-light">
-                  Tailored banquet packages for birthday parties, anniversaries, corporate team outings, and live sports.
+              <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Dedicated lawns and cabanas for birthdays, anniversaries, corporate parties, and private feasts.
                 </p>
-                <div className="pt-3 border-t border-brand-cardBorder/60 text-[11px] text-brand-gold font-semibold">
-                  Cabanas & Groups
+                <div className="pt-2 border-t border-brand-gold/10 text-[10px] text-brand-gold uppercase tracking-wider font-semibold">
+                  Private Gatherings
                 </div>
               </div>
             </div>
@@ -465,237 +468,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. COMPLETE PHOTO GALLERY SHOWCASE (Section 4) */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 mb-2">
-              <Camera className="w-4 h-4 text-brand-gold" />
-              <span>Real Venue Photography</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory">
-              Authentic Restaurant Photo Gallery
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1 max-w-xl">
-              Photographs captured directly at Kick Bunk Bengaluru, sourced from official Google Business Profile, Magicpin, and verified customer visits.
-            </p>
-          </div>
-
-          <Link
-            href="/gallery"
-            className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2 group self-start md:self-auto"
-          >
-            <span>Explore All 24+ Photos & Videos</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-
-        {/* Responsive Grid with Click-to-Zoom */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {verifiedShowcasePhotos.map((photo) => (
-            <div
-              key={photo.id}
-              onClick={() => setSelectedPhoto(photo)}
-              className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/60 transition-all duration-300 cursor-pointer group shadow-xl flex flex-col"
-            >
-              <div className="relative h-64 overflow-hidden bg-black">
-                <img
-                  src={photo.url}
-                  alt={photo.title}
-                  loading="lazy"
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
-
-                <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ZoomIn className="w-4 h-4 text-brand-gold" />
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 space-y-1">
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-brand-gold text-brand-dark inline-block">
-                    {photo.category}
-                  </span>
-                  <h3 className="font-serif font-bold text-base text-brand-ivory group-hover:text-brand-gold transition-colors">
-                    {photo.title}
-                  </h3>
-                  <p className="text-[11px] text-gray-400">
-                    Source: {photo.source}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. COMPLETE VIDEO GALLERY & EXPERIENCES SECTION (Section 5) */}
-      <section className="py-20 bg-[#07090C] border-y border-brand-cardBorder">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
-              <Video className="w-4 h-4 text-brand-gold" />
-              <span>Drone Tours & Social Reels</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory">
-              Videos & Venue Experiences
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-400">
-              Immerse yourself in live footage, drone-view layouts, and food prep highlights from official restaurant channels.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            {/* Feature 1: Magicpin Drone Story Entry */}
-            <div className="bg-brand-card rounded-3xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all shadow-2xl flex flex-col justify-between">
-              <div className="relative h-72 sm:h-80 overflow-hidden bg-black group">
-                <img
-                  src="/images/kickbunk/google_01_garden_lights_night.jpg"
-                  alt="Drone View of Complete Garden Resto-Bar"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] via-transparent to-transparent" />
-
-                {/* Big Play Button Overlay */}
-                <a
-                  href="https://magicpin.in/Bangalore/Yarandahalli/Restaurant/Kick-Bunk-Restaurant/store/621360/stories?post_id=978426497"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="w-20 h-20 rounded-full bg-brand-gold/90 text-brand-dark flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-brand-gold transition-all duration-300">
-                    <Play className="w-8 h-8 fill-brand-dark ml-1" />
-                  </div>
-                </a>
-
-                <div className="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md px-3 py-1 rounded-full border border-brand-gold/30 text-xs text-brand-gold font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                  <span>Official Drone Video</span>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 space-y-4">
-                <div className="space-y-1">
-                  <h3 className="font-serif text-2xl font-bold text-brand-ivory">
-                    Complete Garden Resto-Bar Setup (Drone Walkthrough)
-                  </h3>
-                  <p className="text-xs text-gray-400">
-                    Verified Customer Story • Magicpin Video Entry #978426497
-                  </p>
-                </div>
-
-                <p className="text-sm text-gray-300 font-light leading-relaxed">
-                  Experience a high-definition aerial drone perspective sweeping over the illuminated courtyard, lush garden dining gazebos, bamboo pathways, and outdoor dining tables under fairy lights.
-                </p>
-
-                <div className="pt-2 flex items-center justify-between">
-                  <a
-                    href="https://magicpin.in/Bangalore/Yarandahalli/Restaurant/Kick-Bunk-Restaurant/store/621360/stories?post_id=978426497"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-bold text-xs uppercase tracking-wider transition-all"
-                  >
-                    <span>Watch Drone Story Video</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-
-                  <span className="text-xs text-gray-500">Official Magicpin Video</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Feature 2: Official Instagram Reels Showcase */}
-            <div className="bg-brand-card rounded-3xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all shadow-2xl flex flex-col justify-between">
-              <div className="relative h-72 sm:h-80 overflow-hidden bg-black group">
-                <img
-                  src="/images/kickbunk/magicpin_03_garden_courtyard_night.webp"
-                  alt="Kick Bunk Instagram Reels Showcase"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] via-transparent to-transparent" />
-
-                <a
-                  href="https://www.instagram.com/kick_bunk_gardenrestobar/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="w-20 h-20 rounded-full bg-pink-600/90 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-pink-600 transition-all duration-300">
-                    <Play className="w-8 h-8 fill-white ml-1" />
-                  </div>
-                </a>
-
-                <div className="absolute top-4 left-4 bg-brand-dark/80 backdrop-blur-md px-3 py-1 rounded-full border border-pink-500/30 text-xs text-pink-400 font-bold flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
-                  <span>Instagram Experience</span>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 space-y-4">
-                <div className="space-y-1">
-                  <h3 className="font-serif text-2xl font-bold text-brand-ivory">
-                    Night Vibe & Tandoori Smoke: Instagram Video Reels
-                  </h3>
-                  <p className="text-xs text-gray-400">
-                    Official Handle • @kick_bunk_gardenrestobar
-                  </p>
-                </div>
-
-                <p className="text-sm text-gray-300 font-light leading-relaxed">
-                  Watch behind-the-scenes tandoori preparations, chef skewer flips over glowing embers, and live weekend crowd atmosphere at the Bengaluru resto-bar.
-                </p>
-
-                <div className="pt-2 flex items-center justify-between">
-                  <a
-                    href="https://www.instagram.com/kick_bunk_gardenrestobar/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-xs uppercase tracking-wider transition-all"
-                  >
-                    <span>Follow & Watch on Instagram</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-
-                  <span className="text-xs text-gray-500">@kick_bunk_gardenrestobar</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. SIGNATURE MASTERPIECES MENU (Section 6) */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 mb-2">
+      {/* 4. SIGNATURE GASTRONOMY & MASTERPIECES */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-16">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-2">
+            <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center gap-2">
               <Flame className="w-4 h-4 text-brand-amber" />
               <span>Chef's Masterpieces</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory">
-              Signature Delicacies & Charcoal Grills
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-brand-ivory">
+              Signature Culinary Creations
             </h2>
-            <p className="text-xs sm:text-sm text-gray-400 mt-1">
-              Cooked with authentic Indian spices, live clay tandoor embers, and fresh local produce.
+            <p className="text-xs sm:text-sm text-gray-400 font-light max-w-xl">
+              Prepared to perfection using ancient clay tandoor techniques, royal dum cooking, and farm-fresh ingredients.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <a
-              href="/images/kickbunk/restaurant_guru_menu_snapshot.jpg"
-              target="_blank"
-              rel="noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-brand-card hover:bg-brand-cardBorder border border-brand-cardBorder text-brand-gold text-xs font-semibold flex items-center gap-1.5"
-            >
-              <span>View Original Menu Snapshot</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
             <Link
               href="/menu"
-              className="px-5 py-2.5 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-bold text-xs uppercase tracking-wider flex items-center gap-1.5"
+              className="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark font-bold text-xs uppercase tracking-[0.18em] transition-all shadow-md shadow-brand-gold/20 flex items-center gap-2 group"
             >
-              <span>Full Menu</span>
-              <ChevronRight className="w-4 h-4" />
+              <span>Explore Complete Menu</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
@@ -704,49 +499,50 @@ export default function HomePage() {
           {featuredDishes.map((item) => (
             <div
               key={item.id}
-              className="bg-brand-card rounded-2xl overflow-hidden border border-brand-cardBorder hover:border-brand-gold/40 transition-all duration-300 group flex flex-col shadow-lg"
+              className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 group flex flex-col shadow-luxury-card hover:shadow-gold-glow"
             >
-              <div className="relative h-48 overflow-hidden bg-black">
+              <div className="relative h-52 overflow-hidden bg-black">
                 <img
                   src={item.images?.[0]?.imageUrl || '/images/kickbunk/magicpin_01_kalmi_kebab.webp'}
                   alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] via-transparent to-transparent" />
                 <div className="absolute top-3 left-3 flex gap-2">
                   <span
-                    className={`w-5 h-5 rounded-sm border flex items-center justify-center text-[10px] bg-brand-dark/80 backdrop-blur-sm ${
+                    className={`w-5 h-5 rounded-md border flex items-center justify-center text-[10px] bg-black/80 backdrop-blur-md ${
                       item.isVeg ? 'border-brand-green text-brand-green' : 'border-red-500 text-red-500'
                     }`}
                   >
                     ●
                   </span>
                   {item.isBestSeller && (
-                    <span className="px-2 py-0.5 rounded-full bg-brand-gold text-brand-dark text-[10px] font-bold uppercase tracking-wider">
-                      Chef Special
+                    <span className="px-2.5 py-0.5 rounded-full bg-brand-gold text-brand-dark text-[9px] font-extrabold uppercase tracking-widest font-cinzel shadow">
+                      Signature
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div>
-                  <h3 className="font-serif font-bold text-base text-brand-ivory group-hover:text-brand-gold transition-colors line-clamp-1">
+              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                <div className="space-y-1">
+                  <h3 className="font-serif font-bold text-lg text-brand-ivory group-hover:text-brand-gold transition-colors line-clamp-1">
                     {item.name}
                   </h3>
-                  <p className="text-xs text-gray-400 mt-1 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-gray-400 font-light line-clamp-2 leading-relaxed">
                     {item.description}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-brand-cardBorder/60">
-                  <div className="text-brand-gold font-serif font-bold text-lg">
+                <div className="flex items-center justify-between pt-4 border-t border-brand-gold/15">
+                  <div className="text-brand-gold font-serif font-bold text-xl">
                     ₹{item.basePrice}
                   </div>
                   <Link
                     href="/menu"
-                    className="px-3.5 py-1.5 rounded-lg bg-brand-cardBorder hover:bg-brand-gold hover:text-brand-dark text-xs font-semibold text-gray-200 transition-colors"
+                    className="px-4 py-2 rounded-xl bg-brand-gold/15 hover:bg-brand-gold text-brand-gold hover:text-brand-dark border border-brand-gold/40 text-xs font-bold uppercase tracking-wider transition-all"
                   >
-                    Add to Cart
+                    Order Now
                   </Link>
                 </div>
               </div>
@@ -755,144 +551,247 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. VERIFIED CUSTOMER REVIEWS & REPUTATION */}
-      <section className="py-20 bg-[#0E1116] border-y border-brand-cardBorder">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
-              <Star className="w-4 h-4 fill-brand-gold text-brand-gold" />
-              <span>Guest Voices & Testimonials</span>
+      {/* 5. VISUAL PHOTOGRAPHIC GALLERY */}
+      <section className="py-24 bg-[#050608] border-y border-brand-gold/15">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-2">
+              <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center gap-2">
+                <Camera className="w-4 h-4 text-brand-gold" />
+                <span>Visual Retrospective</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-brand-ivory">
+                Authentic Restaurant Gallery
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-400 font-light max-w-xl">
+                Real photographs of our fairy-lit garden cabanas, live tandoor kitchen, and banquet spreads.
+              </p>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory">
-              Loved by Bengaluru Food Lovers
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-400">
-              Verified feedback gathered from Google Maps, Zomato, and Magicpin diners.
-            </p>
+
+            <Link
+              href="/gallery"
+              className="px-6 py-3 rounded-xl luxury-glass hover:border-brand-gold text-brand-gold text-xs font-bold uppercase tracking-[0.18em] transition-all flex items-center gap-2 group self-start md:self-auto"
+            >
+              <span>Explore All 24+ Media Assets</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex text-brand-gold text-sm">★★★★★</div>
-                <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-bold">Zomato Review</span>
-              </div>
-              <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed italic">
-                “Kick Bunk on Hulimangala Main Road has the most peaceful garden atmosphere. The Kalmi Kebabs were ultra-tender with smoky charcoal flavor, and the private cabana made our team celebration super special.”
-              </p>
-              <div className="pt-2 border-t border-brand-cardBorder/60 flex items-center justify-between text-xs">
-                <span className="font-semibold text-brand-ivory">Rohit Nair</span>
-                <span className="text-gray-500">Electronic City Phase 1</span>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {verifiedShowcasePhotos.map((photo) => (
+              <div
+                key={photo.id}
+                onClick={() => setSelectedPhoto(photo)}
+                className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 cursor-pointer group shadow-luxury-card flex flex-col"
+              >
+                <div className="relative h-64 overflow-hidden bg-black">
+                  <img
+                    src={photo.url}
+                    alt={photo.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
 
-            <div className="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex text-brand-gold text-sm">★★★★★</div>
-                <span className="text-[10px] bg-brand-gold/20 text-brand-gold px-2 py-0.5 rounded font-bold">Google Maps</span>
-              </div>
-              <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed italic">
-                “Fairy lights at night make this place magical. The chicken dum biryani in the handi was fragrant, authentic, and generously portioned. Highly recommend booking a cabana on weekends!”
-              </p>
-              <div className="pt-2 border-t border-brand-cardBorder/60 flex items-center justify-between text-xs">
-                <span className="font-semibold text-brand-ivory">Ananya Deshmukh</span>
-                <span className="text-gray-500">Bengaluru Diner</span>
-              </div>
-            </div>
+                  <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity border border-brand-gold/40">
+                    <ZoomIn className="w-4 h-4 text-brand-gold" />
+                  </div>
 
-            <div className="bg-brand-card p-6 rounded-2xl border border-brand-cardBorder space-y-4 shadow-xl">
-              <div className="flex items-center justify-between">
-                <div className="flex text-brand-gold text-sm">★★★★★</div>
-                <span className="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-bold">Magicpin Review</span>
+                  <div className="absolute bottom-4 left-5 right-5 space-y-1">
+                    <span className="text-[9px] uppercase font-cinzel font-bold tracking-[0.2em] px-2.5 py-0.5 rounded-full bg-brand-gold text-brand-dark inline-block">
+                      {photo.category}
+                    </span>
+                    <h3 className="font-serif font-bold text-base text-brand-ivory group-hover:text-brand-gold transition-colors">
+                      {photo.title}
+                    </h3>
+                    <p className="text-[10px] text-gray-400 font-light">
+                      {photo.source}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed italic">
-                “Great resto-bar setup in Vinayaka Layout. Fast service, spacious parking, clean outdoor environment, and fantastic tandoori snacks to go along with drinks. 10/10 dining destination.”
-              </p>
-              <div className="pt-2 border-t border-brand-cardBorder/60 flex items-center justify-between text-xs">
-                <span className="font-semibold text-brand-ivory">Varun Kulkarni</span>
-                <span className="text-gray-500">Magicpin Gold Member</span>
-              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. VERIFIED GUEST REVIEWS & REPUTATION */}
+      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-16">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center justify-center gap-2">
+            <Star className="w-4 h-4 fill-brand-gold text-brand-gold" />
+            <span>Guest Voices & Testimonials</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-brand-ivory">
+            Loved by Over 1,800+ Verified Diners
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-400 font-light">
+            Genuine experiences from Google Maps, Magicpin, and Zomato diners.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="luxury-glass p-8 rounded-3xl border border-brand-gold/20 space-y-5 shadow-luxury-card">
+            <div className="flex items-center justify-between">
+              <div className="flex text-brand-gold text-sm tracking-widest">★★★★★</div>
+              <span className="text-[9px] font-cinzel bg-brand-gold/20 text-brand-gold px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                Google Verified
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed italic font-serif">
+              &ldquo;Kick Bunk on Hulimangala Main Road has the most serene garden atmosphere in Electronic City. The Kalmi Kebabs were smoked to perfection, and our private cabana made the anniversary dinner unforgettable.&rdquo;
+            </p>
+            <div className="pt-3 border-t border-brand-gold/15 flex items-center justify-between text-xs">
+              <span className="font-serif font-bold text-brand-ivory">Ananya Deshmukh</span>
+              <span className="text-gray-400 font-light">Bengaluru</span>
+            </div>
+          </div>
+
+          <div className="luxury-glass p-8 rounded-3xl border border-brand-gold/20 space-y-5 shadow-luxury-card">
+            <div className="flex items-center justify-between">
+              <div className="flex text-brand-gold text-sm tracking-widest">★★★★★</div>
+              <span className="text-[9px] font-cinzel bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                Magicpin Top Review
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed italic font-serif">
+              &ldquo;The fairy lights at night give this place a resort-like feel. Fragrant dum handi biryani, fast service, and courteous staff. One of the best resto-bars in South Bengaluru.&rdquo;
+            </p>
+            <div className="pt-3 border-t border-brand-gold/15 flex items-center justify-between text-xs">
+              <span className="font-serif font-bold text-brand-ivory">Rohit Nair</span>
+              <span className="text-gray-400 font-light">Electronic City</span>
+            </div>
+          </div>
+
+          <div className="luxury-glass p-8 rounded-3xl border border-brand-gold/20 space-y-5 shadow-luxury-card">
+            <div className="flex items-center justify-between">
+              <div className="flex text-brand-gold text-sm tracking-widest">★★★★★</div>
+              <span className="text-[9px] font-cinzel bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                Zomato Review
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed italic font-serif">
+              &ldquo;Spacious garden layout with ample parking. Crispy Hong Kong chicken paired with cold draught beer while watching the cricket match on the big screen was pure joy.&rdquo;
+            </p>
+            <div className="pt-3 border-t border-brand-gold/15 flex items-center justify-between text-xs">
+              <span className="font-serif font-bold text-brand-ivory">Varun Kulkarni</span>
+              <span className="text-gray-400 font-light">Regular Guest</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 8. VERIFIED LOCATION & QUICK DIRECTIONS BANNER (Section 7) */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        <div className="bg-gradient-to-br from-[#12161F] via-brand-card to-[#12161F] rounded-3xl border border-brand-cardBorder p-8 sm:p-12 shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-1.5 text-brand-gold text-xs font-bold uppercase tracking-widest">
-                <MapPin className="w-4 h-4 text-brand-gold" />
-                <span>Visit Kick Bunk Bengaluru Flagship</span>
+      {/* 7. TWO LUXURY DESTINATIONS (BENGALURU & TIRUPATI) */}
+      <section className="py-24 bg-[#050608] border-t border-brand-gold/15">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center justify-center gap-2">
+              <MapPin className="w-4 h-4 text-brand-gold" />
+              <span>Multi-Outlet Presence</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-brand-ivory">
+              Two Premier Destinations
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-400 font-light">
+              Experience Kick Bunk hospitality across Karnataka and Andhra Pradesh.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Bengaluru Flagship */}
+            <div className="luxury-glass rounded-3xl p-8 sm:p-10 border border-brand-gold/25 space-y-6 shadow-luxury-card flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-cinzel text-xs font-bold uppercase tracking-[0.2em] text-brand-gold">
+                    Flagship Venue
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-green/20 text-brand-green font-bold text-[10px] uppercase tracking-wider">
+                    Bengaluru
+                  </span>
+                </div>
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-brand-ivory">
+                  Kick Bunk Family Garden Restaurant & Bar
+                </h3>
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Hulimangala Main Road, Vinayaka Layout, Electronic City Phase 1, Bengaluru 560105
+                </p>
+                <div className="space-y-2 text-xs text-gray-300 pt-2 border-t border-brand-gold/15">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-brand-gold" />
+                    <span>+91 99806 26699 / +91 82962 19302</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-brand-gold" />
+                    <span>11:30 AM – 11:30 PM (All 7 Days)</span>
+                  </div>
+                </div>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory leading-tight">
-                Plan Your Visit to Kick Bunk Restaurant & Bar
-              </h2>
-
-              <div className="space-y-3 text-xs sm:text-sm text-gray-300">
-                <p className="flex items-start gap-2.5">
-                  <MapPin className="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
-                  <span>
-                    <strong>Address:</strong> Hulimangala Main Road, Vinayaka Layout, Vabasandra, Electronic City Phase 1, Bengaluru, Karnataka 560105
-                  </span>
-                </p>
-                <p className="flex items-center gap-2.5">
-                  <Phone className="w-4 h-4 text-brand-gold shrink-0" />
-                  <span>
-                    <strong>Phone:</strong> <a href="tel:+919980626699" className="hover:text-brand-gold font-bold">+91 99806 26699</a> (Direct Table Inquiries)
-                  </span>
-                </p>
-                <p className="flex items-center gap-2.5">
-                  <Clock className="w-4 h-4 text-brand-gold shrink-0" />
-                  <span>
-                    <strong>Timings:</strong> 11:30 AM – 11:30 PM (All 7 Days)
-                  </span>
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-4 pt-2">
+              <div className="pt-4 flex flex-wrap gap-3">
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
                   target="_blank"
                   rel="noreferrer"
-                  className="px-6 py-3.5 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 text-brand-dark font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow"
                 >
-                  <Navigation className="w-4 h-4" />
-                  <span>Open in Google Maps</span>
+                  <Navigation className="w-3.5 h-3.5" />
+                  <span>Google Maps</span>
                 </a>
-
-                <a
-                  href="https://wa.me/919980626699?text=Hello%20Kick%20Bunk%20Bengaluru,%20I%20would%20like%20to%20reserve%20a%20table"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-6 py-3.5 rounded-xl bg-brand-green hover:bg-brand-greenHover text-white font-bold text-xs uppercase tracking-wider flex items-center gap-2 transition-all shadow-md"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp Reservation</span>
-                </a>
-
                 <Link
                   href="/booking"
-                  className="px-6 py-3.5 rounded-xl bg-brand-card hover:bg-brand-cardBorder border border-brand-cardBorder text-brand-ivory font-semibold text-xs transition-all flex items-center gap-2"
+                  className="px-5 py-2.5 rounded-xl luxury-glass hover:border-brand-gold text-brand-ivory hover:text-brand-gold font-semibold text-xs uppercase tracking-wider flex items-center gap-2"
                 >
-                  <Calendar className="w-4 h-4 text-brand-gold" />
-                  <span>Online Table Booking</span>
+                  <Calendar className="w-3.5 h-3.5 text-brand-gold" />
+                  <span>Reserve Cabana</span>
                 </Link>
               </div>
             </div>
 
-            <div className="lg:col-span-5 rounded-2xl overflow-hidden border border-brand-cardBorder relative shadow-2xl h-64 sm:h-72">
-              <iframe
-                title="Kick Bunk Location Map"
-                src="https://maps.google.com/maps?q=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru&t=&z=14&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
+            {/* Tirupati Outlet */}
+            <div className="luxury-glass rounded-3xl p-8 sm:p-10 border border-brand-gold/25 space-y-6 shadow-luxury-card flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-cinzel text-xs font-bold uppercase tracking-[0.2em] text-brand-gold">
+                    Branch Destination
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-gold/20 text-brand-gold font-bold text-[10px] uppercase tracking-wider">
+                    Tirupati
+                  </span>
+                </div>
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-brand-ivory">
+                  Kick Bunk Garden Bar & Restaurant
+                </h3>
+                <p className="text-xs text-gray-300 font-light leading-relaxed">
+                  Door No. 19-1-G/25, Kothapalli, Samavayi Margam, Chinthalachenu, Korlagunta, Tirupati 517501
+                </p>
+                <div className="space-y-2 text-xs text-gray-300 pt-2 border-t border-brand-gold/15">
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-brand-gold" />
+                    <span>+91 98855 20220 / +91 77605 94868</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-brand-gold" />
+                    <span>11:30 AM – 11:00 PM (All 7 Days)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 flex flex-wrap gap-3">
+                <a
+                  href="tel:+917760594868"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 text-brand-dark font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>Call Tirupati Desk</span>
+                </a>
+                <Link
+                  href="/outlets"
+                  className="px-5 py-2.5 rounded-xl luxury-glass hover:border-brand-gold text-brand-ivory hover:text-brand-gold font-semibold text-xs uppercase tracking-wider flex items-center gap-2"
+                >
+                  <MapPin className="w-3.5 h-3.5 text-brand-gold" />
+                  <span>Outlet Details</span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -901,16 +800,16 @@ export default function HomePage() {
       {/* LIGHTBOX PREVIEW MODAL */}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
           onClick={() => setSelectedPhoto(null)}
         >
           <div
-            className="relative max-w-4xl w-full bg-[#0E1116] rounded-3xl overflow-hidden border border-brand-cardBorder space-y-4 p-4 sm:p-6"
+            className="relative max-w-4xl w-full luxury-glass rounded-3xl overflow-hidden border border-brand-gold/40 space-y-4 p-6 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-2 border-b border-brand-cardBorder/60">
+            <div className="flex items-center justify-between pb-3 border-b border-brand-gold/20">
               <div>
-                <span className="text-xs uppercase font-bold tracking-wider text-brand-gold">
+                <span className="text-[10px] font-cinzel uppercase font-bold tracking-[0.2em] text-brand-gold">
                   {selectedPhoto.category}
                 </span>
                 <h3 className="font-serif text-lg sm:text-xl font-bold text-brand-ivory">
@@ -920,30 +819,30 @@ export default function HomePage() {
 
               <button
                 onClick={() => setSelectedPhoto(null)}
-                className="p-2 rounded-full bg-brand-card hover:bg-brand-cardBorder text-gray-400 hover:text-white transition-colors"
+                className="p-2 rounded-full bg-brand-gold/10 border border-brand-gold/30 text-brand-gold hover:text-white hover:bg-brand-gold/30 transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="relative max-h-[70vh] flex items-center justify-center overflow-hidden rounded-2xl bg-black">
+            <div className="relative max-h-[68vh] flex items-center justify-center overflow-hidden rounded-2xl bg-black">
               <img
                 src={selectedPhoto.url}
                 alt={selectedPhoto.title}
-                className="max-h-[68vh] w-auto object-contain rounded-xl"
+                className="max-h-[66vh] w-auto object-contain rounded-xl"
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-2 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-3 pt-2">
               <div>
-                <strong>Verified Source:</strong> {selectedPhoto.source}
+                <strong className="text-brand-gold">Verified Source:</strong> {selectedPhoto.source}
               </div>
               <Link
                 href="/gallery"
                 onClick={() => setSelectedPhoto(null)}
-                className="text-brand-gold hover:underline font-semibold flex items-center gap-1"
+                className="text-brand-gold hover:text-brand-goldLight font-semibold flex items-center gap-1.5"
               >
-                <span>View Full Photo & Video Gallery</span>
+                <span>View Complete Media Archive</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>

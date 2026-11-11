@@ -1,31 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #121417;
-  --foreground: #fbf9f5;
+  --background: #08090C;
+  --foreground: #FAF8F5;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
 }
 
-/* Custom Scrollbar */
+/* Luxury Headings */
+h1, h2, h3, .font-luxury {
+  font-family: 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 0.08em;
+}
+
+/* Metallic Gold Text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #DFBE50 0%, #FAF8F5 45%, #D4AF37 75%, #997B24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-metallic {
+  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #997B24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Luxury Glassmorphism Card */
+.luxury-glass {
+  background: linear-gradient(180deg, rgba(22, 27, 36, 0.7) 0%, rgba(10, 12, 17, 0.85) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+.luxury-glass:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+/* Custom Luxury Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #121417;
+  background: #08090C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #282c34;
-  border-radius: 4px;
+  background: #1E232E;
+  border-radius: 9999px;
+  border: 2px solid #08090C;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d4af37;
+  background: #D4AF37;
+}
+
+/* Subtle Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(212,175,55,0.15) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 4s infinite;
 }

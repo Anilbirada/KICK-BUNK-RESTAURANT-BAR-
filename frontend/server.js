@@ -3,7 +3,7 @@ const { parse } = require('url');
 const next = require('next');
 
 const port = process.env.PORT || 3000;
-const app = next({ dev: false });
+const app = next({ dev: false, dir: __dirname });
 const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
@@ -14,4 +14,6 @@ app.prepare().then(() => {
     if (err) throw err;
     console.log(`[Kick Bunk 360] Frontend server ready on http://localhost:${port}`);
   });
+}).catch((err) => {
+  console.error('[Frontend Server Error]:', err);
 });

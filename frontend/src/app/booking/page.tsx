@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchApi } from '../../lib/api';
-import { Calendar, Users, Clock, CheckCircle2, MapPin, Sparkles } from 'lucide-react';
+import { Calendar, Users, Clock, CheckCircle2, MapPin, Sparkles, Phone, ChevronRight } from 'lucide-react';
 
 export default function BookingPage() {
   const [branches, setBranches] = useState<any[]>([]);
@@ -13,7 +13,7 @@ export default function BookingPage() {
   const [reservationDate, setReservationDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [reservationTime, setReservationTime] = useState<string>('19:30');
   const [guestCount, setGuestCount] = useState<number>(4);
-  const [seatingPreference, setSeatingPreference] = useState<string>('Open Air Garden');
+  const [seatingPreference, setSeatingPreference] = useState<string>('Private Cabana / Gazebo');
   const [specialRequests, setSpecialRequests] = useState<string>('');
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -34,7 +34,7 @@ export default function BookingPage() {
     setErrorMsg(null);
 
     if (!selectedBranchId || !customerName || !customerPhone || !reservationDate || !reservationTime) {
-      setErrorMsg('Please fill in all required fields.');
+      setErrorMsg('Please complete all mandatory reservation fields.');
       return;
     }
 
@@ -49,7 +49,7 @@ export default function BookingPage() {
         reservationDate,
         reservationTime,
         guestCount,
-        specialRequests: `${seatingPreference ? `Preference: ${seatingPreference}. ` : ''}${specialRequests}`,
+        specialRequests: `${seatingPreference ? `Seating: ${seatingPreference}. ` : ''}${specialRequests}`,
       }),
     });
 
@@ -58,51 +58,60 @@ export default function BookingPage() {
     if (res.success && res.data) {
       setConfirmedBooking(res.data);
     } else {
-      setErrorMsg(res.message || 'Failed to confirm reservation. Please try again.');
+      setErrorMsg(res.message || 'Unable to confirm reservation slot. Please try another time.');
     }
   };
 
   const seatingOptions = [
-    { title: 'Open Air Garden', desc: 'Surrounded by lush greenery and mood lighting' },
-    { title: 'Private Cabana / Gazebo', desc: 'Secluded luxury dining for groups & couples' },
-    { title: 'Family Dining Hall', desc: 'Spacious air-conditioned indoor comfort' },
-    { title: 'Lounge & Bar', desc: 'Next to the mocktail & beverage counter' },
+    { title: 'Private Cabana / Gazebo', desc: 'Secluded luxury dining under fairy lights for intimate groups' },
+    { title: 'Open Air Garden Patio', desc: 'Lush greenery, breezy courtyard with evening mood illumination' },
+    { title: 'Family AC Salon', desc: 'Spacious climate-controlled comfort with upholstered booths' },
+    { title: 'Resto-Bar Lounge', desc: 'Lively cocktail atmosphere next to big screen match displays' },
   ];
 
   return (
-    <div className="min-h-screen bg-brand-dark py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#08090C] py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-[#FAF8F5]">
       {confirmedBooking ? (
-        <div className="bg-brand-card border border-brand-green/40 rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-2xl">
-          <div className="w-16 h-16 rounded-full bg-brand-green/20 text-brand-green flex items-center justify-center mx-auto">
+        <div className="luxury-glass border border-brand-gold/40 rounded-3xl p-8 sm:p-14 text-center space-y-8 shadow-2xl">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-gold/20 to-amber-600/30 text-brand-gold flex items-center justify-center mx-auto border border-brand-gold/40 shadow-gold-glow">
             <CheckCircle2 className="w-10 h-10" />
           </div>
 
-          <div className="space-y-2">
-            <h2 className="text-3xl font-serif font-bold text-brand-ivory">Table Reservation Confirmed!</h2>
-            <p className="text-sm text-gray-300">
-              We look forward to hosting you at <strong>{confirmedBooking.branch?.name}</strong>.
+          <div className="space-y-3">
+            <span className="text-[10px] font-cinzel tracking-[0.25em] uppercase text-brand-gold font-bold">
+              VIP Reservation Confirmed
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-brand-ivory">
+              We Look Forward To Welcoming You
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-300 font-light max-w-md mx-auto">
+              Your table at <strong>{confirmedBooking.branch?.name}</strong> has been secured.
             </p>
           </div>
 
-          <div className="bg-brand-dark p-6 rounded-2xl border border-brand-cardBorder max-w-md mx-auto text-left space-y-3 text-xs">
-            <div className="flex justify-between py-1 border-b border-brand-cardBorder/60">
-              <span className="text-gray-400">Reservation Reference</span>
-              <span className="font-mono font-bold text-brand-gold">KB-RES-{confirmedBooking.id.slice(0, 8).toUpperCase()}</span>
+          <div className="bg-[#050608] p-6 sm:p-8 rounded-2xl border border-brand-gold/20 max-w-md mx-auto text-left space-y-3.5 text-xs">
+            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
+              <span className="text-gray-400 font-cinzel">Booking Reference</span>
+              <span className="font-mono font-bold text-brand-gold text-sm tracking-wider">
+                KB-RES-{confirmedBooking.id.slice(0, 8).toUpperCase()}
+              </span>
             </div>
-            <div className="flex justify-between py-1 border-b border-brand-cardBorder/60">
-              <span className="text-gray-400">Guest Name</span>
+            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
+              <span className="text-gray-400 font-cinzel">Guest Name</span>
               <span className="font-semibold text-brand-ivory">{confirmedBooking.customerName}</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-brand-cardBorder/60">
-              <span className="text-gray-400">Date & Time</span>
-              <span className="font-semibold text-brand-ivory">{new Date(confirmedBooking.reservationDate).toLocaleDateString()} at {confirmedBooking.reservationTime}</span>
+            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
+              <span className="text-gray-400 font-cinzel">Date & Slot</span>
+              <span className="font-semibold text-brand-ivory">
+                {new Date(confirmedBooking.reservationDate).toLocaleDateString()} at {confirmedBooking.reservationTime} hrs
+              </span>
             </div>
-            <div className="flex justify-between py-1 border-b border-brand-cardBorder/60">
-              <span className="text-gray-400">Number of Guests</span>
+            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
+              <span className="text-gray-400 font-cinzel">Party Size</span>
               <span className="font-semibold text-brand-ivory">{confirmedBooking.guestCount} Guests</span>
             </div>
-            <div className="flex justify-between py-1">
-              <span className="text-gray-400">Contact Phone</span>
+            <div className="flex justify-between py-1.5">
+              <span className="text-gray-400 font-cinzel">Contact Number</span>
               <span className="font-semibold text-brand-ivory">{confirmedBooking.customerPhone}</span>
             </div>
           </div>
@@ -115,97 +124,102 @@ export default function BookingPage() {
                 setCustomerPhone('');
                 setSpecialRequests('');
               }}
-              className="px-6 py-3 rounded-xl bg-brand-cardBorder hover:bg-gray-700 text-xs font-semibold text-gray-200 transition-colors"
+              className="px-6 py-3.5 rounded-xl bg-[#12151B] hover:bg-[#1A1E26] border border-brand-cardBorder text-xs uppercase tracking-wider font-semibold text-gray-300 transition-colors"
             >
               Book Another Table
             </button>
             <a
               href="/menu"
-              className="px-6 py-3 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark text-xs font-bold transition-colors"
+              className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark text-xs uppercase tracking-[0.18em] font-bold transition-all shadow-md flex items-center justify-center gap-2"
             >
-              Browse Digital Menu
+              <span>Explore Menu</span>
+              <ChevronRight className="w-4 h-4" />
             </a>
           </div>
         </div>
       ) : (
-        <div className="bg-brand-card border border-brand-cardBorder rounded-3xl p-6 sm:p-10 space-y-8 shadow-xl">
-          <div className="text-center space-y-2">
-            <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">
-              <Sparkles className="w-4 h-4" />
-              <span>Kick Bunk Hospitality</span>
+        <div className="luxury-glass border border-brand-gold/25 rounded-3xl p-6 sm:p-12 space-y-10 shadow-2xl">
+          <div className="text-center space-y-3">
+            <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center justify-center gap-2">
+              <Sparkles className="w-4 h-4 text-brand-gold" />
+              <span>VIP Table & Cabana Concierge</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-brand-ivory">
-              Reserve Your Experience
+            <h1 className="text-3xl sm:text-5xl font-serif font-bold text-brand-ivory">
+              Reserve Your Dining Experience
             </h1>
-            <p className="text-xs text-gray-400">
-              Zero booking fees. Instant confirmation. Please arrive 15 minutes before your reserved time.
+            <p className="text-xs sm:text-sm text-gray-300 font-light max-w-lg mx-auto">
+              Zero reservation fee. Immediate confirmation. Please arrive 15 minutes prior to your booking.
             </p>
           </div>
 
           {errorMsg && (
-            <div className="p-4 rounded-xl bg-red-950/60 border border-red-500/50 text-red-300 text-xs text-center font-medium">
+            <div className="p-4 rounded-2xl bg-red-950/70 border border-red-500/50 text-red-300 text-xs text-center font-medium">
               {errorMsg}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* 1. Select Outlet */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-brand-gold">
-                1. Select Restaurant Outlet
+            <div className="space-y-3">
+              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
+                1. Select Destination Outlet
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {branches.map((b) => (
                   <div
                     key={b.id}
                     onClick={() => setSelectedBranchId(b.id)}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
                       selectedBranchId === b.id
-                        ? 'border-brand-gold bg-brand-gold/10 text-brand-gold font-semibold shadow-md'
-                        : 'border-brand-cardBorder bg-brand-dark text-gray-300 hover:border-gray-600'
+                        ? 'border-brand-gold bg-brand-gold/15 text-brand-gold shadow-gold-glow'
+                        : 'border-brand-cardBorder bg-[#10131A] text-gray-300 hover:border-brand-gold/30'
                     }`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                       <MapPin className="w-4 h-4 text-brand-gold" />
-                      <span className="text-sm">{b.name}</span>
+                      <span className="font-serif font-bold text-sm sm:text-base">{b.name}</span>
                     </div>
-                    <div className="text-[11px] text-gray-400 mt-1 pl-6">
-                      {b.city} ({b.code})
+                    <div className="text-xs text-gray-400 mt-1 pl-6 font-light">
+                      {b.city} ({b.code}) • Open 7 Days
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* 2. Date, Time & Guests */}
+            {/* 2. Date, Slot & Guests */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-brand-gold">Date</label>
+                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
+                  Date
+                </label>
                 <div className="relative">
-                  <Calendar className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
+                  <Calendar className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
                   <input
                     type="date"
                     required
                     min={new Date().toISOString().split('T')[0]}
                     value={reservationDate}
                     onChange={(e) => setReservationDate(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-10 pr-3 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-brand-gold">Time Slot</label>
+                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
+                  Time Slot
+                </label>
                 <div className="relative">
-                  <Clock className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
+                  <Clock className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
                   <select
                     value={reservationTime}
                     onChange={(e) => setReservationTime(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-10 pr-3 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
                   >
                     {['12:00', '12:30', '13:00', '13:30', '14:00', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'].map(
                       (t) => (
-                        <option key={t} value={t} className="bg-brand-dark">
+                        <option key={t} value={t} className="bg-[#0A0C0E]">
                           {t} hrs
                         </option>
                       )
@@ -215,40 +229,42 @@ export default function BookingPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-brand-gold">Guests</label>
+                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
+                  Party Size
+                </label>
                 <div className="relative">
-                  <Users className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
+                  <Users className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
                   <input
                     type="number"
                     min="1"
-                    max="30"
+                    max="40"
                     required
                     value={guestCount}
                     onChange={(e) => setGuestCount(Number(e.target.value))}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                    className="w-full pl-10 pr-3 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
                   />
                 </div>
               </div>
             </div>
 
-            {/* 3. Seating Preference */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-brand-gold">
+            {/* 3. Seating Atmosphere Preference */}
+            <div className="space-y-3">
+              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
                 Seating Atmosphere Preference
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {seatingOptions.map((opt) => (
                   <div
                     key={opt.title}
                     onClick={() => setSeatingPreference(opt.title)}
-                    className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
                       seatingPreference === opt.title
-                        ? 'border-brand-gold bg-brand-gold/10 text-brand-gold'
-                        : 'border-brand-cardBorder bg-brand-dark text-gray-300'
+                        ? 'border-brand-gold bg-brand-gold/15 text-brand-gold shadow-gold-glow'
+                        : 'border-brand-cardBorder bg-[#10131A] text-gray-300 hover:border-brand-gold/30'
                     }`}
                   >
-                    <div className="text-xs font-bold">{opt.title}</div>
-                    <div className="text-[11px] text-gray-400 mt-0.5">{opt.desc}</div>
+                    <div className="font-serif font-bold text-sm">{opt.title}</div>
+                    <div className="text-xs text-gray-400 font-light mt-1">{opt.desc}</div>
                   </div>
                 ))}
               </div>
@@ -256,50 +272,51 @@ export default function BookingPage() {
 
             {/* 4. Guest Details */}
             <div className="space-y-4 pt-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-brand-gold">
+              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
                 Primary Contact Details
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <input
                   type="text"
                   required
                   placeholder="Full Name *"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="px-3.5 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                  className="px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
                 />
                 <input
                   type="tel"
                   required
-                  placeholder="Mobile Number (e.g. 9876543210) *"
+                  placeholder="Mobile (e.g. 9980626699) *"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="px-3.5 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                  className="px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
                 />
                 <input
                   type="email"
-                  placeholder="Email Address (Optional)"
+                  placeholder="Email (Optional)"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  className="px-3.5 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                  className="px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
                 />
               </div>
 
               <textarea
-                placeholder="Special requests (e.g. Birthday celebration, anniversary cake, quiet corner)..."
+                placeholder="Special requests (e.g. Birthday celebration, anniversary cake, quiet corner cabana)..."
                 rows={2}
                 value={specialRequests}
                 onChange={(e) => setSpecialRequests(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                className="w-full px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
               />
             </div>
 
+            {/* Submit Action */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-bold text-sm transition-all shadow-xl shadow-brand-gold/20 flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-gold via-amber-500 to-yellow-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-brand-gold/20 flex items-center justify-center gap-2.5"
             >
-              <Calendar className="w-5 h-5 text-brand-dark" />
+              <Calendar className="w-4 h-4 text-brand-dark" />
               <span>{isSubmitting ? 'Confirming Reservation...' : 'Confirm Table Reservation'}</span>
             </button>
           </form>
