@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Kick Bunk 360",
+    "slug": "kickbunk360-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121417"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kickbunk.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Kick Bunk uses your location to discover the closest branch and calculate directions."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#121417"
+      },
+      "package": "com.kickbunk.app",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "INTERNET"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiUrl": "http://localhost:5000/api/v1",
+      "eas": {
+        "projectId": "kickbunk360-enterprise"
+      }
+    }
+  }
+}
