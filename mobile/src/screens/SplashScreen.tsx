@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, StatusBar, Image } from 'react-native';
 import { colors } from '../theme/colors';
 
 export default function SplashScreen({ navigation }: any) {
@@ -12,14 +12,16 @@ export default function SplashScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
-      <View style={styles.logoBadge}>
-        <Text style={styles.logoText}>KB</Text>
-      </View>
-      <Text style={styles.brandTitle}>KICK BUNK 360</Text>
-      <Text style={styles.brandSubtitle}>LUXURY CASUAL DINING & GARDEN BAR</Text>
+      <StatusBar barStyle="light-content" backgroundColor="#050505" />
+      <Image
+        source={require('../../assets/icon.png')}
+        style={styles.logoImage}
+        resizeMode="contain"
+      />
+      <Text style={styles.brandTitle}>KICK BUNK</Text>
+      <Text style={styles.brandSubtitle}>GARDEN BAR & RESTAURANT</Text>
       <View style={styles.footerTag}>
-        <Text style={styles.footerText}>Bengaluru • Tirupati</Text>
+        <Text style={styles.footerText}>Electronic City, Bengaluru</Text>
       </View>
     </View>
   );
@@ -28,36 +30,21 @@ export default function SplashScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#050505',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
   },
-  logoBadge: {
-    width: 90,
-    height: 90,
-    borderRadius: 24,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-    elevation: 8,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-  },
-  logoText: {
-    fontSize: 42,
-    fontWeight: '900',
-    color: colors.background,
-    fontFamily: 'serif',
+  logoImage: {
+    width: 140,
+    height: 140,
+    marginBottom: 24,
   },
   brandTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     color: colors.textLight,
-    letterSpacing: 2,
+    letterSpacing: 3,
     fontFamily: 'serif',
     marginBottom: 6,
   },
@@ -65,7 +52,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: colors.primary,
-    letterSpacing: 1.5,
+    letterSpacing: 2,
   },
   footerTag: {
     position: 'absolute',

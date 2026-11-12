@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Kick Bunk 360",
+    "name": "Kick Bunk",
     "slug": "kickbunk360-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#121417"
+      "backgroundColor": "#050505"
     },
     "ios": {
       "supportsTablet": true,
@@ -21,7 +21,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#121417"
+        "backgroundColor": "#050505"
       },
       "package": "com.kickbunk.app",
       "permissions": [
@@ -34,10 +34,11 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "http://localhost:5000/api/v1",
+      "apiUrl": "https://kickbunk-backend.onrender.com/api/v1",
       "eas": {
-        "projectId": "kickbunk360-enterprise"
+        "projectId": "c49a6554-e294-40c4-a069-1a5df3d2eca4"
       }
-    }
+    },
+    "owner": "anilbiradar"
   }
 }

@@ -1,12 +1,8 @@
 // Shared Backend REST API Client for Kick Bunk 360 Mobile
 import { Platform } from 'react-native';
 
-// In Android emulator: 10.0.2.2 points to host localhost; in iOS simulator: localhost.
-export const API_BASE_URL = Platform.select({
-  android: 'http://10.0.2.2:5000/api/v1',
-  ios: 'http://localhost:5000/api/v1',
-  default: 'http://localhost:5000/api/v1',
-});
+// Live Production Render Backend API URL
+export const API_BASE_URL = 'https://kickbunk-backend.onrender.com/api/v1';
 
 export async function apiRequest<T = any>(
   endpoint: string,

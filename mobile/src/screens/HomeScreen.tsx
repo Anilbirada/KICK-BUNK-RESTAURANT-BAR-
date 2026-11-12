@@ -41,12 +41,14 @@ export default function HomeScreen({ navigation }: any) {
       {/* Top Brand Bar */}
       <View style={styles.header}>
         <View style={styles.brandRow}>
-          <View style={styles.logoBadge}>
-            <Text style={styles.logoText}>KB</Text>
-          </View>
+          <Image
+            source={require('../../assets/logo.png')}
+            style={styles.logoBadge}
+            resizeMode="contain"
+          />
           <View>
-            <Text style={styles.brandName}>KICK BUNK 360</Text>
-            <Text style={styles.outletTag}>Bengaluru Flagship (Electronic City)</Text>
+            <Text style={styles.brandName}>KICK BUNK</Text>
+            <Text style={styles.outletTag}>Garden Bar & Restaurant • Bengaluru</Text>
           </View>
         </View>
 
