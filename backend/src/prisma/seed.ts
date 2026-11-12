@@ -29,6 +29,13 @@ async function main() {
     });
   }
 
+  // Check if database is already seeded
+  const existingBranch = await prisma.branch.findFirst({ where: { code: 'KB-BLR-01' } });
+  if (existingBranch) {
+    console.log('✓ Database already seeded with baseline records. Skipping duplicate seed.');
+    return;
+  }
+
   // 2. Organization
   const org = await prisma.organization.create({
     data: {
