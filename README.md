@@ -13,6 +13,23 @@
 
 ---
 
+## 🚀 Live Production Links & Mobile App Download
+
+| Component | Platform / Technology | Live Production Link | Status |
+| :--- | :--- | :--- | :--- |
+| **🌐 Customer Website** | Next.js 14 App Router | [**https://kickbunk-frontend.onrender.com**](https://kickbunk-frontend.onrender.com) | ✅ **Live** |
+| **⚡ Central Backend API** | Express + Socket.IO + Prisma | [**https://kickbunk-backend.onrender.com/api/v1**](https://kickbunk-backend.onrender.com/api/v1) | ✅ **Live** |
+| **🏥 Health Check** | System Monitoring Endpoint | [**https://kickbunk-backend.onrender.com/api/v1/health**](https://kickbunk-backend.onrender.com/api/v1/health) | ✅ **Healthy** |
+| **📊 Executive Admin Suite** | Business Owner Portal | [**https://kickbunk-frontend.onrender.com/admin**](https://kickbunk-frontend.onrender.com/admin) | ✅ **Live** |
+| **📱 Android Mobile App** | Standalone APK (`Kick Bunk.apk`) | [**Download Kick Bunk.apk (Repository)**](./Kick%20Bunk.apk) • [**Expo CDN Mirror**](https://expo.dev/artifacts/eas/EQQ_iOwetFm7-ZjhVKpq7TwsyAT_uVYpA6Eysdf4sWc.apk) | ✅ **Production Build** (63.99 MB) |
+| **🐘 Cloud Database** | PostgreSQL 16 (Render Managed) | `kickbunk360` Database | ✅ **Online** |
+
+> **Executive Admin Credentials**:
+> - Email: `owner@kickbunk.com`
+> - Password: `KickBunk@2026`
+
+---
+
 ## Table of Contents
 1. [Executive Summary & Enterprise Overview](#1-executive-summary--enterprise-overview)
 2. [The Real-World Business Problem & Industry Pain Points](#2-the-real-world-business-problem--industry-pain-points)
