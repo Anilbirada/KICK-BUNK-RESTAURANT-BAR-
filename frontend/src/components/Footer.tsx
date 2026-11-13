@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   MapPin,
@@ -9,216 +10,266 @@ import {
   Mail,
   Clock,
   Instagram,
-  ShieldCheck,
   ExternalLink,
   Navigation,
+  Calendar,
   Sparkles,
-  Camera,
-  Video
+  ShieldCheck,
+  Award,
+  Lock
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
 
+  // Hide public footer on POS & KDS terminal screens
   if (pathname.startsWith('/pos') || pathname.startsWith('/kitchen')) {
     return null;
   }
 
   return (
-    <footer className="bg-[#08090B] border-t border-brand-cardBorder text-gray-400 text-sm">
-      {/* Social & Media Presence Bar */}
-      <div className="border-b border-brand-cardBorder/60 bg-[#0E1116] py-6 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-center md:text-left">
-            <span className="w-10 h-10 rounded-xl bg-brand-gold/10 text-brand-gold border border-brand-gold/30 flex items-center justify-center shrink-0">
-              <Camera className="w-5 h-5" />
-            </span>
+    <footer className="bg-[#050505] border-t border-[#D4A017]/20 text-[#B8B1A5] text-sm relative overflow-hidden">
+      {/* Background Subtle Golden Radial Glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[radial-gradient(ellipse_at_bottom,_rgba(212,160,23,0.08)_0%,_transparent_70%)] pointer-events-none" />
+
+      {/* Top Experience Banner */}
+      <div className="border-b border-[#D4A017]/15 bg-[#0B0B0B]/80 py-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4 text-center md:text-left">
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-[#D4A017]/40 p-1 bg-[#050505] shrink-0 shadow-gold-glow">
+              <Image
+                src="/images/logo.png"
+                alt="KICK BUNK Original Logo"
+                width={56}
+                height={56}
+                className="object-contain"
+              />
+            </div>
             <div>
-              <div className="text-sm font-serif font-bold text-brand-ivory flex items-center gap-2 justify-center md:justify-start">
-                <span>Connect With Kick Bunk On Social Platforms</span>
-                <span className="text-[10px] bg-brand-gold text-brand-dark px-1.5 py-0.2 rounded font-sans font-bold">Verified</span>
+              <div className="font-cormorant text-2xl font-bold text-[#FAF8F5] tracking-wide">
+                Experience Luxury Garden Dining at Kick Bunk
               </div>
-              <div className="text-xs text-gray-400">
-                Official Instagram: <span className="text-brand-gold font-medium">@kick_bunk_gardenrestobar</span> • Verified Google & Magicpin Gallery
-              </div>
+              <p className="text-xs text-[#B8B1A5] font-light mt-0.5">
+                Authentic charcoal tandoor, royal dum biryanis, craft bar drinks & open-air garden cabanas in Bengaluru.
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-2.5">
-            <a
-              href="https://www.instagram.com/kick_bunk_gardenrestobar/"
-              target="_blank"
-              rel="noreferrer"
-              className="px-3.5 py-1.5 rounded-lg bg-brand-card border border-brand-cardBorder hover:border-pink-500/60 hover:text-pink-400 text-xs font-medium flex items-center gap-1.5 transition-colors"
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/booking"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.15em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all"
             >
-              <Instagram className="w-3.5 h-3.5 text-pink-500" />
-              <span>Instagram</span>
-              <ExternalLink className="w-3 h-3 text-gray-500" />
-            </a>
-
+              RESERVE YOUR TABLE
+            </Link>
             <a
-              href="https://magicpin.in/Bangalore/Yarandahalli/Restaurant/Kick-Bunk-Restaurant/store/621360/photos?id=6&img=Store-Images"
-              target="_blank"
-              rel="noreferrer"
-              className="px-3.5 py-1.5 rounded-lg bg-brand-card border border-brand-cardBorder hover:border-amber-500/60 hover:text-amber-400 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              href="tel:+919980626699"
+              className="px-5 py-2.5 rounded-full border border-[#D4A017]/40 text-[#FAF8F5] hover:border-[#F5D77A] hover:text-[#F5D77A] text-xs font-semibold tracking-wider transition-colors flex items-center gap-2"
             >
-              <span className="font-bold text-amber-500 text-xs">M</span>
-              <span>Magicpin</span>
-              <ExternalLink className="w-3 h-3 text-gray-500" />
-            </a>
-
-            <a
-              href="https://www.zomato.com/bangalore/kick-bunk-restaurant-electronic-city-bangalore"
-              target="_blank"
-              rel="noreferrer"
-              className="px-3.5 py-1.5 rounded-lg bg-brand-card border border-brand-cardBorder hover:border-red-500/60 hover:text-red-400 text-xs font-medium flex items-center gap-1.5 transition-colors"
-            >
-              <span className="font-bold text-red-500 text-xs">Z</span>
-              <span>Zomato</span>
-              <ExternalLink className="w-3 h-3 text-gray-500" />
-            </a>
-
-            <a
-              href="https://restaurant-guru.in/Kick-Bunk-Restaurant-and-Bar-Bengaluru"
-              target="_blank"
-              rel="noreferrer"
-              className="px-3.5 py-1.5 rounded-lg bg-brand-card border border-brand-cardBorder hover:border-brand-gold/60 hover:text-brand-gold text-xs font-medium flex items-center gap-1.5 transition-colors"
-            >
-              <span className="font-bold text-brand-gold text-xs">RG</span>
-              <span>Restaurant Guru</span>
-              <ExternalLink className="w-3 h-3 text-gray-500" />
-            </a>
-
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
-              target="_blank"
-              rel="noreferrer"
-              className="px-3.5 py-1.5 rounded-lg bg-brand-gold hover:bg-brand-goldHover text-brand-dark text-xs font-bold flex items-center gap-1.5 transition-colors shadow-sm"
-            >
-              <Navigation className="w-3.5 h-3.5" />
-              <span>Google Maps</span>
+              <Phone className="w-3.5 h-3.5 text-[#D4A017]" />
+              <span>+91 99806 26699</span>
             </a>
           </div>
         </div>
       </div>
 
-      {/* Main Footer Grid */}
+      {/* Main Footer Links & Information */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
-          {/* Brand Identity & Verified Overview */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-gold via-brand-amber to-yellow-600 flex items-center justify-center font-serif font-black text-brand-dark text-xl border border-brand-gold/40 shadow-lg shadow-brand-gold/20">
-                KB
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+          {/* Col 1 & 2: Brand Identity with Golden Logo */}
+          <div className="lg:col-span-2 space-y-5">
+            <div className="flex items-center gap-3.5">
+              <div className="relative w-14 h-14 rounded-full overflow-hidden border border-[#D4A017]/50 p-1 bg-[#08090C] shadow-gold-glow">
+                <Image
+                  src="/images/logo.png"
+                  alt="KICK BUNK Brand Logo"
+                  width={56}
+                  height={56}
+                  className="object-contain"
+                />
               </div>
-              <span className="font-serif tracking-widest text-lg font-bold text-brand-ivory">
-                KICK BUNK
-              </span>
-            </div>
-            <p className="text-xs text-gray-400 leading-relaxed font-light">
-              Premier Garden Restaurant & Bar in Bengaluru. Renowned for authentic charcoal clay tandoori grills, royal dum handi biryanis, chilled cocktails & mocktails, private garden cabanas and weekend live sports screenings.
-            </p>
-            <div className="pt-2 text-xs text-gray-400 space-y-1">
-              <div className="flex items-center gap-1.5 text-brand-gold font-medium">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Verified Outlets: Bengaluru & Tirupati</span>
+              <div>
+                <span className="font-cinzel text-2xl font-bold tracking-[0.2em] text-[#FAF8F5]">
+                  KICK BUNK
+                </span>
+                <p className="font-cormorant text-xs tracking-[0.25em] text-[#D4A017] uppercase">
+                  Restaurant & Bar • Garden Resto-Bar
+                </p>
               </div>
-              <div className="text-[11px] text-gray-500">Google Rating: 4.8 ★ (1,800+ Verified Customer Reviews)</div>
             </div>
-          </div>
 
-          {/* Bengaluru Flagship (Verified Details) */}
-          <div className="space-y-3 bg-[#0D0F14] p-5 rounded-2xl border border-brand-cardBorder">
-            <div className="flex items-center justify-between">
-              <h4 className="font-serif text-brand-gold text-base font-semibold">Bengaluru Flagship</h4>
-              <span className="text-[9px] bg-brand-green/20 text-brand-green px-1.5 py-0.5 rounded font-bold uppercase">Main Venue</span>
-            </div>
-            <p className="text-xs text-gray-300 flex items-start gap-2">
-              <MapPin className="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
-              <span>Hulimangala Main Road, Vinayaka Layout, Vabasandra, Electronic City Phase 1, Bengaluru 560105</span>
+            <p className="text-sm text-[#B8B1A5] font-light leading-relaxed max-w-sm">
+              An extraordinary culinary haven nestled in Bengaluru where timeless open-air garden ambience meets masterfully crafted food, signature resto-bar libations, and unforgettable hospitality.
             </p>
-            <p className="text-xs text-gray-300 flex items-center gap-2">
-              <Phone className="w-4 h-4 text-brand-gold shrink-0" />
-              <a href="tel:+919980626699" className="hover:text-brand-gold font-semibold">+91 99806 26699</a>
-            </p>
-            <p className="text-xs text-gray-400 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-brand-gold shrink-0" />
-              <span>11:30 AM – 11:30 PM (All 7 Days)</span>
-            </p>
-            <div className="pt-1">
+
+            <div className="pt-2 flex flex-wrap gap-2.5">
+              <a
+                href="https://www.instagram.com/kick_bunk_gardenrestobar/"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-[#0F1115] border border-[#1F242D] hover:border-pink-500/50 hover:text-pink-400 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              >
+                <Instagram className="w-3.5 h-3.5 text-pink-500" />
+                <span>Instagram</span>
+                <ExternalLink className="w-3 h-3 text-gray-500" />
+              </a>
+
               <a
                 href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs text-brand-gold hover:underline flex items-center gap-1 font-medium"
+                className="px-3 py-1.5 rounded-lg bg-[#0F1115] border border-[#1F242D] hover:border-[#D4A017]/50 hover:text-[#F5D77A] text-xs font-medium flex items-center gap-1.5 transition-colors"
               >
-                <span>View on Google Maps</span>
-                <Navigation className="w-3 h-3" />
+                <Navigation className="w-3.5 h-3.5 text-[#D4A017]" />
+                <span>Google Maps</span>
+                <ExternalLink className="w-3 h-3 text-gray-500" />
+              </a>
+
+              <a
+                href="https://magicpin.in/Bangalore/Yarandahalli/Restaurant/Kick-Bunk-Restaurant/store/621360/photos?id=6&img=Store-Images"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-[#0F1115] border border-[#1F242D] hover:border-amber-500/50 hover:text-amber-400 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              >
+                <span className="text-amber-400 font-bold text-xs">M</span>
+                <span>Magicpin (66 Photos)</span>
+                <ExternalLink className="w-3 h-3 text-gray-500" />
               </a>
             </div>
           </div>
 
-          {/* Tirupati Outlet */}
-          <div className="space-y-3 bg-[#0D0F14] p-5 rounded-2xl border border-brand-cardBorder">
-            <div className="flex items-center justify-between">
-              <h4 className="font-serif text-brand-gold text-base font-semibold">Tirupati Garden Bar</h4>
-              <span className="text-[9px] bg-brand-cardBorder text-gray-300 px-1.5 py-0.5 rounded font-bold uppercase">Branch</span>
-            </div>
-            <p className="text-xs text-gray-300 flex items-start gap-2">
-              <MapPin className="w-4 h-4 text-brand-gold shrink-0 mt-0.5" />
-              <span>Korramenugunta Road, Tata Nagar, Tirupati 517501</span>
-            </p>
-            <p className="text-xs text-gray-300 flex items-center gap-2">
-              <Phone className="w-4 h-4 text-brand-gold shrink-0" />
-              <a href="tel:+917760594868" className="hover:text-brand-gold font-medium">+91 77605 94868</a>
-            </p>
-            <p className="text-xs text-gray-400 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-brand-gold shrink-0" />
-              <span>11:30 AM – 11:00 PM (All 7 Days)</span>
-            </p>
-          </div>
-
-          {/* Navigation & Digital Portals */}
-          <div className="space-y-3">
-            <h4 className="font-serif text-brand-gold text-base font-semibold">Explore & Reserve</h4>
-            <ul className="space-y-2 text-xs">
+          {/* Col 3: Navigation */}
+          <div className="space-y-4">
+            <h4 className="font-cinzel text-xs font-semibold tracking-[0.25em] text-[#F5D77A] uppercase">
+              Explore
+            </h4>
+            <ul className="space-y-2.5 text-xs tracking-wider">
               <li>
-                <Link href="/menu" className="hover:text-brand-gold transition-colors flex items-center gap-1.5">
-                  <span>Digital Food & Bar Menu</span>
+                <Link href="/" className="hover:text-[#F5D77A] transition-colors">
+                  Home Experience
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="hover:text-brand-gold transition-colors flex items-center gap-1.5">
-                  <span>Photo Gallery & Videos</span>
+                <Link href="/about" className="hover:text-[#F5D77A] transition-colors">
+                  Our Story & Heritage
                 </Link>
               </li>
               <li>
-                <Link href="/booking" className="hover:text-brand-gold transition-colors flex items-center gap-1.5">
-                  <span>Reserve Garden Cabana / Table</span>
+                <Link href="/menu" className="hover:text-[#F5D77A] transition-colors">
+                  Food Delicacies
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-brand-gold transition-colors flex items-center gap-1.5">
-                  <span>Directions & Contact</span>
+                <Link href="/bar" className="hover:text-[#F5D77A] transition-colors">
+                  Bar & Libations
                 </Link>
               </li>
-              <li className="pt-2 border-t border-brand-cardBorder/60">
-                <Link href="/admin" className="text-brand-gold font-semibold hover:underline flex items-center gap-1.5">
-                  <span>Executive Admin Portal</span>
+              <li>
+                <Link href="/gallery" className="hover:text-[#F5D77A] transition-colors">
+                  Ambience & Gallery
+                </Link>
+              </li>
+              <li>
+                <Link href="/events" className="hover:text-[#F5D77A] transition-colors">
+                  Private Events
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-[#F5D77A] transition-colors">
+                  Concierge & Location
                 </Link>
               </li>
             </ul>
           </div>
+
+          {/* Col 4: Experiences */}
+          <div className="space-y-4">
+            <h4 className="font-cinzel text-xs font-semibold tracking-[0.25em] text-[#F5D77A] uppercase">
+              Experiences
+            </h4>
+            <ul className="space-y-2.5 text-xs tracking-wider">
+              <li>
+                <Link href="/booking" className="hover:text-[#F5D77A] transition-colors">
+                  Fairy-Lit Garden Cabanas
+                </Link>
+              </li>
+              <li>
+                <Link href="/booking" className="hover:text-[#F5D77A] transition-colors">
+                  Outdoor Terrace Deck
+                </Link>
+              </li>
+              <li>
+                <Link href="/bar" className="hover:text-[#F5D77A] transition-colors">
+                  Resto-Bar & Sports Nights
+                </Link>
+              </li>
+              <li>
+                <Link href="/events" className="hover:text-[#F5D77A] transition-colors">
+                  Birthday & Family Gatherings
+                </Link>
+              </li>
+              <li>
+                <Link href="/menu" className="hover:text-[#F5D77A] transition-colors">
+                  Charcoal Tandoori Specialties
+                </Link>
+              </li>
+              <li>
+                <Link href="/booking" className="hover:text-[#F5D77A] transition-colors">
+                  Corporate Dinner Packages
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 5: Location & Timings */}
+          <div className="space-y-4">
+            <h4 className="font-cinzel text-xs font-semibold tracking-[0.25em] text-[#F5D77A] uppercase">
+              Bengaluru Flagship
+            </h4>
+            <div className="space-y-3 text-xs">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#D4A017] shrink-0 mt-0.5" />
+                <span className="leading-relaxed">
+                  Hulimangala Main Road, Vinayaka Layout, Vabasandra, Bengaluru, Karnataka 560105
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-[#D4A017] shrink-0" />
+                <a href="tel:+919980626699" className="hover:text-[#F5D77A] transition-colors font-mono">
+                  +91 99806 26699
+                </a>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <Clock className="w-4 h-4 text-[#D4A017] shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-[#FAF8F5]">Monday – Sunday</p>
+                  <p className="text-gray-400">11:30 AM – 11:30 PM</p>
+                  <p className="text-[10px] text-[#D4A017] mt-0.5">Dinner & Garden Service from 6:30 PM</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Bottom Credits & Integrity */}
-        <div className="mt-12 pt-8 border-t border-brand-cardBorder/60 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+        {/* Bottom Copyright and Portal Links */}
+        <div className="mt-14 pt-8 border-t border-[#1F242D] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
           <div>
-            &copy; 2026 Kick Bunk Restaurant & Bar. All rights reserved.
+            © {new Date().getFullYear()} KICK BUNK RESTAURANT & BAR. All Rights Reserved.
           </div>
-          <div className="flex items-center gap-1.5 text-gray-400">
-            <ShieldCheck className="w-4 h-4 text-brand-green" />
-            <span>Digital Hospitality Architecture by <strong>RSR TECHNOLOGIES</strong> (Contact: +91 77605 94868 / +91 99453 21367)</span>
+
+          <div className="flex items-center space-x-6">
+            <Link href="/admin" className="hover:text-[#D4A017] transition-colors flex items-center gap-1">
+              <Lock className="w-3 h-3" />
+              <span>Owner Admin Suite</span>
+            </Link>
+            <Link href="/pos" className="hover:text-[#D4A017] transition-colors">
+              Billing POS
+            </Link>
+            <Link href="/kitchen" className="hover:text-amber-400 transition-colors">
+              Kitchen KDS
+            </Link>
           </div>
         </div>
       </div>

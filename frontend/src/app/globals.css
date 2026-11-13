@@ -1,73 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #08090C;
-  --foreground: #FAF8F5;
+  --background: #050505;
+  --foreground: #F4EFE5;
+  --gold-metallic: #D4A017;
+  --gold-champagne: #F5D77A;
+  --gold-dark: #8C641A;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
+  background-color: #050505;
+}
+
+/* Luxury Editorial Headings */
+h1, h2, h3, .font-luxury {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
   letter-spacing: -0.01em;
 }
 
-/* Luxury Headings */
-h1, h2, h3, .font-luxury {
+.font-cormorant {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-playfair {
   font-family: 'Playfair Display', Georgia, serif;
-  letter-spacing: -0.02em;
+}
+
+.font-manrope {
+  font-family: 'Manrope', 'Inter', sans-serif;
 }
 
 .font-cinzel {
   font-family: 'Cinzel', Georgia, serif;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
 }
 
 /* Metallic Gold Text */
 .text-gold-gradient {
-  background: linear-gradient(135deg, #DFBE50 0%, #FAF8F5 45%, #D4AF37 75%, #997B24 100%);
+  background: linear-gradient(135deg, #F5D77A 0%, #FFFFFF 35%, #D4A017 70%, #8C641A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gold-metallic {
-  background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #997B24 100%);
+  background: linear-gradient(135deg, #F5D77A 0%, #D4A017 50%, #8C641A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Luxury Glassmorphism Card */
 .luxury-glass {
-  background: linear-gradient(180deg, rgba(22, 27, 36, 0.7) 0%, rgba(10, 12, 17, 0.85) 100%);
+  background: linear-gradient(180deg, rgba(15, 17, 21, 0.75) 0%, rgba(8, 9, 12, 0.9) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 160, 23, 0.18);
 }
 
 .luxury-glass:hover {
-  border-color: rgba(212, 175, 55, 0.35);
+  border-color: rgba(212, 160, 23, 0.45);
+}
+
+.luxury-glass-ivory {
+  background: linear-gradient(180deg, rgba(244, 239, 229, 0.95) 0%, rgba(235, 227, 212, 0.95) 100%);
+  color: #0B0B0B;
+  border: 1px solid rgba(212, 160, 23, 0.3);
 }
 
 /* Custom Luxury Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #08090C;
+  background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E232E;
+  background: #1F242D;
   border-radius: 9999px;
-  border: 2px solid #08090C;
+  border: 1px solid #050505;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4AF37;
+  background: #D4A017;
+}
+
+/* Metallic Light Travel Across Logo */
+@keyframes lightTravel {
+  0% {
+    transform: translateX(-150%) skewX(-25deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-25deg);
+  }
+}
+
+.animate-light-travel {
+  animation: lightTravel 2.4s infinite ease-in-out;
 }
 
 /* Subtle Shimmer Animation */
@@ -81,7 +117,23 @@ h1, h2, h3, .font-luxury {
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(212,175,55,0.15) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(212,160,23,0.2) 50%, rgba(255,255,255,0) 100%);
   background-size: 200% 100%;
   animation: shimmer 4s infinite;
+}
+
+/* Subtle Golden Particle Pulse */
+@keyframes goldPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+}
+
+.animate-gold-pulse {
+  animation: goldPulse 4s infinite ease-in-out;
 }

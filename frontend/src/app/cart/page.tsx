@@ -114,7 +114,7 @@ export default function CartPage() {
 
   if (placedOrder) {
     return (
-      <div className="min-h-screen bg-[#08090C] py-20 px-4 max-w-2xl mx-auto text-center space-y-8 text-[#FAF8F5]">
+      <div className="min-h-screen bg-[#050505] pt-28 pb-20 px-4 max-w-2xl mx-auto text-center space-y-8 text-[#F4EFE5]">
         <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-gold/20 to-amber-600/30 text-brand-gold flex items-center justify-center mx-auto border border-brand-gold/40 shadow-gold-glow">
           <CheckCircle2 className="w-10 h-10" />
         </div>
@@ -173,7 +173,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#08090C] py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 text-[#FAF8F5]">
+    <div className="min-h-screen bg-[#050505] pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 text-[#F4EFE5]">
       <div className="space-y-2">
         <span className="text-[10px] font-cinzel tracking-[0.25em] uppercase text-brand-gold font-bold">
           Checkout & Gastronomy Summary

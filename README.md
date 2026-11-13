@@ -56,7 +56,7 @@
 ## 1. Executive Summary & Enterprise Overview
 
 - **Client:** Kick Bunk Group
-- **Development Partner:** RSR Technologies (+91 77605 94868 / +91 99453 21367)
+- **Architect & Development Partner:** Next Gen Digital Agency (Contact: +91 84317 12924)
 - **Product Name:** KICK BUNK 360
 - **Industry Vertical:** Luxury Casual Dining, Multi-Branch Garden Restaurants & Sports Bars
 - **Benchmark Reference Platform:** Toast POS

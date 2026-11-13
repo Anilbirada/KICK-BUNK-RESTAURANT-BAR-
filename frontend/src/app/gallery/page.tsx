@@ -425,7 +425,7 @@ export default function GalleryPage() {
   const currentItem = selectedIndex !== null ? filteredItems[selectedIndex] : null;
 
   return (
-    <div className="min-h-screen bg-[#0A0C0E] py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
+    <div className="min-h-screen bg-[#050505] text-[#F4EFE5] pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="text-brand-gold text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-1.5">

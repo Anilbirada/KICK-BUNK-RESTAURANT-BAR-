@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { fetchApi } from '../../lib/api';
 import {
   TrendingUp,
@@ -469,14 +470,21 @@ export default function AdminDashboardPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4">
-        <div className="bg-brand-card border border-brand-cardBorder rounded-3xl p-8 sm:p-10 max-w-md w-full space-y-6 shadow-2xl">
-          <div className="text-center space-y-2">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-gold to-brand-amber text-brand-dark flex items-center justify-center font-serif font-black text-2xl mx-auto">
-              KB
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
+        <div className="bg-[#0B0D11] border border-[#D4A017]/30 rounded-3xl p-8 sm:p-10 max-w-md w-full space-y-6 shadow-2xl">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-full overflow-hidden border border-[#D4A017]/50 p-1 bg-[#050505] mx-auto shadow-gold-glow">
+              <Image
+                src="/images/logo.png"
+                alt="KICK BUNK Official Logo"
+                width={64}
+                height={64}
+                className="object-contain"
+                priority
+              />
             </div>
-            <h1 className="text-2xl font-serif font-bold text-brand-ivory">Owner & Executive Portal</h1>
-            <p className="text-xs text-gray-400">Kick Bunk 360 Centralized Restaurant Management</p>
+            <h1 className="text-2xl font-cormorant font-bold text-white tracking-wide">Owner & Executive Portal</h1>
+            <p className="text-xs text-[#B8B1A5]">Kick Bunk Centralized Restaurant & Bar Management</p>
           </div>
 
           {loginError && (
@@ -566,8 +574,14 @@ export default function AdminDashboardPage() {
       {/* 1. TOP EXECUTIVE HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-brand-cardBorder">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-brand-gold text-brand-dark flex items-center justify-center font-serif font-black text-xl shadow-lg shadow-brand-gold/20">
-            KB
+          <div className="w-11 h-11 rounded-full overflow-hidden border border-[#D4A017]/50 p-0.5 bg-[#050505] shadow-gold-glow">
+            <Image
+              src="/images/logo.png"
+              alt="KICK BUNK"
+              width={44}
+              height={44}
+              className="object-contain"
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">

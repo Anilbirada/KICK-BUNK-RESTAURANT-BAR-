@@ -15,7 +15,7 @@ export default function OutletsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#08090C] py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 text-[#FAF8F5]">
+    <div className="min-h-screen bg-[#050505] pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16 text-[#F4EFE5]">
       {/* Luxury Editorial Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full luxury-glass border border-brand-gold/30 text-brand-gold text-[10px] font-cinzel font-semibold tracking-[0.25em] uppercase shadow-gold-glow">

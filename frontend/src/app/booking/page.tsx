@@ -1,8 +1,23 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { fetchApi } from '../../lib/api';
-import { Calendar, Users, Clock, CheckCircle2, MapPin, Sparkles, Phone, ChevronRight } from 'lucide-react';
+import {
+  Calendar,
+  Users,
+  Clock,
+  CheckCircle2,
+  MapPin,
+  Sparkles,
+  Phone,
+  ChevronRight,
+  MessageCircle,
+  Wine,
+  ShieldCheck,
+  ChevronLeft
+} from 'lucide-react';
 
 export default function BookingPage() {
   const [branches, setBranches] = useState<any[]>([]);
@@ -10,10 +25,13 @@ export default function BookingPage() {
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
   const [customerEmail, setCustomerEmail] = useState<string>('');
-  const [reservationDate, setReservationDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [reservationDate, setReservationDate] = useState<string>(() => {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+  });
   const [reservationTime, setReservationTime] = useState<string>('19:30');
   const [guestCount, setGuestCount] = useState<number>(4);
-  const [seatingPreference, setSeatingPreference] = useState<string>('Private Cabana / Gazebo');
+  const [seatingPreference, setSeatingPreference] = useState<string>('Fairy-Lit Garden Cabana');
   const [specialRequests, setSpecialRequests] = useState<string>('');
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -24,7 +42,8 @@ export default function BookingPage() {
     fetchApi('/branches').then((res) => {
       if (res.success && res.data && res.data.length > 0) {
         setBranches(res.data);
-        setSelectedBranchId(res.data[0].id);
+        const blr = res.data.find((b: any) => b.city === 'Bengaluru') || res.data[0];
+        setSelectedBranchId(blr.id);
       }
     });
   }, []);
@@ -33,194 +52,305 @@ export default function BookingPage() {
     e.preventDefault();
     setErrorMsg(null);
 
-    if (!selectedBranchId || !customerName || !customerPhone || !reservationDate || !reservationTime) {
+    if (!customerName || !customerPhone || !reservationDate || !reservationTime) {
       setErrorMsg('Please complete all mandatory reservation fields.');
       return;
     }
 
     setIsSubmitting(true);
+    const refCode = `KB-RES-${Math.floor(100000 + Math.random() * 900000)}`;
+
     const res = await fetchApi('/tables/reservations', {
       method: 'POST',
       body: JSON.stringify({
-        branchId: selectedBranchId,
+        branchId: selectedBranchId || undefined,
         customerName,
         customerPhone,
-        customerEmail,
+        customerEmail: customerEmail || undefined,
         reservationDate,
         reservationTime,
         guestCount,
-        specialRequests: `${seatingPreference ? `Seating: ${seatingPreference}. ` : ''}${specialRequests}`,
+        specialRequests: `Seating: ${seatingPreference}. ${specialRequests}`,
+        referenceNumber: refCode,
       }),
     });
 
     setIsSubmitting(false);
 
-    if (res.success && res.data) {
-      setConfirmedBooking(res.data);
+    if (res.success) {
+      setConfirmedBooking(
+        res.data || {
+          referenceNumber: refCode,
+          customerName,
+          customerPhone,
+          reservationDate,
+          reservationTime,
+          guestCount,
+          specialRequests,
+        }
+      );
     } else {
       setErrorMsg(res.message || 'Unable to confirm reservation slot. Please try another time.');
     }
   };
 
   const seatingOptions = [
-    { title: 'Private Cabana / Gazebo', desc: 'Secluded luxury dining under fairy lights for intimate groups' },
-    { title: 'Open Air Garden Patio', desc: 'Lush greenery, breezy courtyard with evening mood illumination' },
-    { title: 'Family AC Salon', desc: 'Spacious climate-controlled comfort with upholstered booths' },
-    { title: 'Resto-Bar Lounge', desc: 'Lively cocktail atmosphere next to big screen match displays' },
+    {
+      title: 'Fairy-Lit Garden Cabana',
+      desc: 'Secluded luxury dining under canopy fairy lights for intimate couples and groups',
+      tag: 'Most Popular',
+    },
+    {
+      title: 'Open Air Garden Patio',
+      desc: 'Lush greenery, breezy courtyard with evening mood illumination and decorative trees',
+      tag: 'Breezy & Lush',
+    },
+    {
+      title: 'Family AC Salon',
+      desc: 'Spacious climate-controlled comfort with plush upholstered booths and quiet atmosphere',
+      tag: 'Air Conditioned',
+    },
+    {
+      title: 'Resto-Bar Lounge',
+      desc: 'Lively cocktail atmosphere next to big screen match displays and music',
+      tag: 'Vibrant & Energetic',
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#08090C] py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto text-[#FAF8F5]">
-      {confirmedBooking ? (
-        <div className="luxury-glass border border-brand-gold/40 rounded-3xl p-8 sm:p-14 text-center space-y-8 shadow-2xl">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-gold/20 to-amber-600/30 text-brand-gold flex items-center justify-center mx-auto border border-brand-gold/40 shadow-gold-glow">
-            <CheckCircle2 className="w-10 h-10" />
+    <div className="min-h-screen bg-[#050505] pt-28 pb-20 px-4 sm:px-6 lg:px-8 text-[#F4EFE5]">
+      <div className="max-w-4xl mx-auto space-y-10">
+        {/* Reservation Header */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4A017]/15 border border-[#D4A017]/40 text-[#F5D77A] text-xs font-semibold tracking-wider uppercase">
+            <Sparkles className="w-3.5 h-3.5 text-[#D4A017]" />
+            <span>ONLINE TABLE CONCIERGE</span>
           </div>
 
-          <div className="space-y-3">
-            <span className="text-[10px] font-cinzel tracking-[0.25em] uppercase text-brand-gold font-bold">
-              VIP Reservation Confirmed
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-brand-ivory">
-              We Look Forward To Welcoming You
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-300 font-light max-w-md mx-auto">
-              Your table at <strong>{confirmedBooking.branch?.name}</strong> has been secured.
-            </p>
-          </div>
+          <h1 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-white">
+            RESERVE YOUR TABLE
+          </h1>
 
-          <div className="bg-[#050608] p-6 sm:p-8 rounded-2xl border border-brand-gold/20 max-w-md mx-auto text-left space-y-3.5 text-xs">
-            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
-              <span className="text-gray-400 font-cinzel">Booking Reference</span>
-              <span className="font-mono font-bold text-brand-gold text-sm tracking-wider">
-                KB-RES-{confirmedBooking.id.slice(0, 8).toUpperCase()}
-              </span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
-              <span className="text-gray-400 font-cinzel">Guest Name</span>
-              <span className="font-semibold text-brand-ivory">{confirmedBooking.customerName}</span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
-              <span className="text-gray-400 font-cinzel">Date & Slot</span>
-              <span className="font-semibold text-brand-ivory">
-                {new Date(confirmedBooking.reservationDate).toLocaleDateString()} at {confirmedBooking.reservationTime} hrs
-              </span>
-            </div>
-            <div className="flex justify-between py-1.5 border-b border-brand-gold/15">
-              <span className="text-gray-400 font-cinzel">Party Size</span>
-              <span className="font-semibold text-brand-ivory">{confirmedBooking.guestCount} Guests</span>
-            </div>
-            <div className="flex justify-between py-1.5">
-              <span className="text-gray-400 font-cinzel">Contact Number</span>
-              <span className="font-semibold text-brand-ivory">{confirmedBooking.customerPhone}</span>
-            </div>
-          </div>
-
-          <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
-            <button
-              onClick={() => {
-                setConfirmedBooking(null);
-                setCustomerName('');
-                setCustomerPhone('');
-                setSpecialRequests('');
-              }}
-              className="px-6 py-3.5 rounded-xl bg-[#12151B] hover:bg-[#1A1E26] border border-brand-cardBorder text-xs uppercase tracking-wider font-semibold text-gray-300 transition-colors"
-            >
-              Book Another Table
-            </button>
-            <a
-              href="/menu"
-              className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark text-xs uppercase tracking-[0.18em] font-bold transition-all shadow-md flex items-center justify-center gap-2"
-            >
-              <span>Explore Menu</span>
-              <ChevronRight className="w-4 h-4" />
-            </a>
-          </div>
+          <p className="font-manrope text-sm sm:text-base text-[#B8B1A5] font-light max-w-xl mx-auto">
+            Experience the culinary artistry and enchanting garden ambience of Kick Bunk Restaurant & Bar Bengaluru.
+          </p>
         </div>
-      ) : (
-        <div className="luxury-glass border border-brand-gold/25 rounded-3xl p-6 sm:p-12 space-y-10 shadow-2xl">
-          <div className="text-center space-y-3">
-            <div className="text-brand-gold text-xs font-cinzel tracking-[0.25em] uppercase font-semibold flex items-center justify-center gap-2">
-              <Sparkles className="w-4 h-4 text-brand-gold" />
-              <span>VIP Table & Cabana Concierge</span>
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-serif font-bold text-brand-ivory">
-              Reserve Your Dining Experience
-            </h1>
-            <p className="text-xs sm:text-sm text-gray-300 font-light max-w-lg mx-auto">
-              Zero reservation fee. Immediate confirmation. Please arrive 15 minutes prior to your booking.
-            </p>
-          </div>
 
-          {errorMsg && (
-            <div className="p-4 rounded-2xl bg-red-950/70 border border-red-500/50 text-red-300 text-xs text-center font-medium">
-              {errorMsg}
-            </div>
-          )}
+        {confirmedBooking ? (
+          /* Confirmation Screen with Customer Official Logo */
+          <div className="luxury-glass border border-[#D4A017]/50 rounded-3xl p-8 sm:p-14 text-center space-y-8 shadow-2xl relative overflow-hidden">
+            {/* Background Subtle Radial Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[radial-gradient(circle,_rgba(212,160,23,0.1)_0%,_transparent_70%)] pointer-events-none" />
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* 1. Select Outlet */}
+            {/* Official Customer Logo in Confirmation Screen */}
+            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#D4A017] p-1 bg-[#08090C] mx-auto shadow-gold-glow">
+              <Image
+                src="/images/logo.png"
+                alt="KICK BUNK Official Logo"
+                width={96}
+                height={96}
+                className="object-contain"
+                priority
+              />
+            </div>
+
             <div className="space-y-3">
-              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                1. Select Destination Outlet
+              <span className="font-mono text-xs text-[#D4A017] tracking-[0.25em] uppercase font-semibold">
+                RESERVATION CONFIRMED
+              </span>
+              <h2 className="font-cormorant text-3xl sm:text-4xl font-bold text-white">
+                We Look Forward to Welcoming You, {customerName}!
+              </h2>
+              <div className="inline-block bg-[#0B0D11] border border-[#D4A017]/40 px-6 py-2.5 rounded-full mt-2">
+                <span className="text-xs text-gray-400 uppercase tracking-widest mr-2">Booking ID:</span>
+                <span className="font-mono text-lg font-bold text-[#F5D77A]">
+                  {confirmedBooking.referenceNumber || 'KB-RES-VERIFIED'}
+                </span>
+              </div>
+            </div>
+
+            {/* Booking Details Summary Card */}
+            <div className="bg-[#08090C]/90 border border-[#1F242D] rounded-2xl p-6 max-w-lg mx-auto text-left space-y-3 text-xs sm:text-sm">
+              <div className="flex justify-between py-1.5 border-b border-[#1F242D]">
+                <span className="text-gray-400">Venue</span>
+                <span className="font-semibold text-white">Kick Bunk Bengaluru Flagship</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-[#1F242D]">
+                <span className="text-gray-400">Date & Time</span>
+                <span className="font-semibold text-[#F5D77A]">
+                  {reservationDate} at {reservationTime}
+                </span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-[#1F242D]">
+                <span className="text-gray-400">Guests</span>
+                <span className="font-semibold text-white">{guestCount} Guests</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-[#1F242D]">
+                <span className="text-gray-400">Seating Preference</span>
+                <span className="font-semibold text-[#D4A017]">{seatingPreference}</span>
+              </div>
+              <div className="flex justify-between py-1.5">
+                <span className="text-gray-400">Guest Phone</span>
+                <span className="font-mono text-white">{customerPhone}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href={`https://wa.me/919980626699?text=Hello%20Kick%20Bunk,%20I%20have%20booked%20table%20${confirmedBooking.referenceNumber}%20for%20${customerName}%20on%20${reservationDate}%20at%20${reservationTime}.`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 shadow-lg"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>Notify via WhatsApp Concierge</span>
+              </a>
+
+              <a
+                href="tel:+919980626699"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-full border border-[#D4A017]/40 text-white text-xs font-semibold tracking-wider hover:border-[#D4A017] flex items-center justify-center gap-2"
+              >
+                <Phone className="w-4 h-4 text-[#D4A017]" />
+                <span>Call Restaurant Concierge</span>
+              </a>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setConfirmedBooking(null)}
+                className="text-xs text-[#B8B1A5] hover:text-[#D4A017] underline"
+              >
+                Make Another Table Reservation
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Reservation Booking Form */
+          <form
+            onSubmit={handleSubmit}
+            className="luxury-glass border border-[#D4A017]/35 rounded-3xl p-6 sm:p-12 space-y-8 shadow-2xl"
+          >
+            {errorMsg && (
+              <div className="p-4 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200 text-xs">
+                {errorMsg}
+              </div>
+            )}
+
+            {/* Seating Preference Selector Cards */}
+            <div className="space-y-3">
+              <label className="text-xs font-semibold tracking-[0.2em] text-[#D4A017] uppercase block">
+                1. Select Desired Dining Environment
               </label>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {branches.map((b) => (
+                {seatingOptions.map((opt) => (
                   <div
-                    key={b.id}
-                    onClick={() => setSelectedBranchId(b.id)}
-                    className={`p-5 rounded-2xl border cursor-pointer transition-all ${
-                      selectedBranchId === b.id
-                        ? 'border-brand-gold bg-brand-gold/15 text-brand-gold shadow-gold-glow'
-                        : 'border-brand-cardBorder bg-[#10131A] text-gray-300 hover:border-brand-gold/30'
+                    key={opt.title}
+                    onClick={() => setSeatingPreference(opt.title)}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                      seatingPreference === opt.title
+                        ? 'bg-[#151922] border-[#D4A017] shadow-gold-glow'
+                        : 'bg-[#08090C] border-[#1F242D] hover:border-[#D4A017]/40'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <MapPin className="w-4 h-4 text-brand-gold" />
-                      <span className="font-serif font-bold text-sm sm:text-base">{b.name}</span>
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-cormorant text-lg font-bold text-white">
+                        {opt.title}
+                      </h4>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#D4A017]/20 text-[#F5D77A] border border-[#D4A017]/40">
+                        {opt.tag}
+                      </span>
                     </div>
-                    <div className="text-xs text-gray-400 mt-1 pl-6 font-light">
-                      {b.city} ({b.code}) • Open 7 Days
-                    </div>
+                    <p className="text-xs text-[#B8B1A5] font-light mt-1.5 leading-relaxed">
+                      {opt.desc}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* 2. Date, Slot & Guests */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                  Date
-                </label>
-                <div className="relative">
-                  <Calendar className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
+            {/* Guest Details */}
+            <div className="space-y-4">
+              <label className="text-xs font-semibold tracking-[0.2em] text-[#D4A017] uppercase block">
+                2. Guest & Reservation Information
+              </label>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs text-gray-300 uppercase">Your Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="e.g. Vikram Malhotra"
+                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs text-gray-300 uppercase">Contact Phone *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="+91 99806 26699"
+                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs text-gray-300 uppercase">Email Address (Optional)</label>
+                  <input
+                    type="email"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    placeholder="vikram@example.com"
+                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs text-gray-300 uppercase">Reservation Date *</label>
                   <input
                     type="date"
                     required
-                    min={new Date().toISOString().split('T')[0]}
                     value={reservationDate}
                     onChange={(e) => setReservationDate(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
+                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
                   />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                  Time Slot
-                </label>
-                <div className="relative">
-                  <Clock className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
+                <div className="space-y-2">
+                  <label className="text-xs text-gray-300 uppercase">Time Slot *</label>
                   <select
                     value={reservationTime}
                     onChange={(e) => setReservationTime(e.target.value)}
-                    className="w-full pl-10 pr-3 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
+                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
                   >
-                    {['12:00', '12:30', '13:00', '13:30', '14:00', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'].map(
-                      (t) => (
-                        <option key={t} value={t} className="bg-[#0A0C0E]">
-                          {t} hrs
+                    <option value="12:00">12:00 PM (Lunch Opening)</option>
+                    <option value="13:00">01:00 PM (Lunch Dining)</option>
+                    <option value="14:00">02:00 PM (Late Lunch)</option>
+                    <option value="18:30">06:30 PM (Evening Sunset Service)</option>
+                    <option value="19:30">07:30 PM (Fairy-Lit Dinner)</option>
+                    <option value="20:30">08:30 PM (Peak Dinner & Cabana)</option>
+                    <option value="21:30">09:30 PM (Late Night Resto-Bar)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs text-gray-300 uppercase">Number of Guests *</label>
+                  <select
+                    value={guestCount}
+                    onChange={(e) => setGuestCount(Number(e.target.value))}
+                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20, 25, 30].map(
+                      (num) => (
+                        <option key={num} value={num}>
+                          {num} {num === 1 ? 'Guest' : 'Guests'}
                         </option>
                       )
                     )}
@@ -229,99 +359,29 @@ export default function BookingPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                  Party Size
-                </label>
-                <div className="relative">
-                  <Users className="w-4 h-4 absolute left-3.5 top-3.5 text-gray-400" />
-                  <input
-                    type="number"
-                    min="1"
-                    max="40"
-                    required
-                    value={guestCount}
-                    onChange={(e) => setGuestCount(Number(e.target.value))}
-                    className="w-full pl-10 pr-3 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
-                  />
-                </div>
+                <label className="text-xs text-gray-300 uppercase">Special Requests & Occasion Notes</label>
+                <textarea
+                  rows={3}
+                  value={specialRequests}
+                  onChange={(e) => setSpecialRequests(e.target.value)}
+                  placeholder="e.g. Birthday anniversary celebration, quiet corner table, high chair required..."
+                  className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                />
               </div>
             </div>
 
-            {/* 3. Seating Atmosphere Preference */}
-            <div className="space-y-3">
-              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                Seating Atmosphere Preference
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {seatingOptions.map((opt) => (
-                  <div
-                    key={opt.title}
-                    onClick={() => setSeatingPreference(opt.title)}
-                    className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                      seatingPreference === opt.title
-                        ? 'border-brand-gold bg-brand-gold/15 text-brand-gold shadow-gold-glow'
-                        : 'border-brand-cardBorder bg-[#10131A] text-gray-300 hover:border-brand-gold/30'
-                    }`}
-                  >
-                    <div className="font-serif font-bold text-sm">{opt.title}</div>
-                    <div className="text-xs text-gray-400 font-light mt-1">{opt.desc}</div>
-                  </div>
-                ))}
-              </div>
+            <div className="pt-4">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-4 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.2em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all disabled:opacity-50"
+              >
+                {isSubmitting ? 'CONFIRMING TABLE RESERVATION...' : 'COMPLETE RESERVATION'}
+              </button>
             </div>
-
-            {/* 4. Guest Details */}
-            <div className="space-y-4 pt-2">
-              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                Primary Contact Details
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input
-                  type="text"
-                  required
-                  placeholder="Full Name *"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
-                />
-                <input
-                  type="tel"
-                  required
-                  placeholder="Mobile (e.g. 9980626699) *"
-                  value={customerPhone}
-                  onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
-                />
-                <input
-                  type="email"
-                  placeholder="Email (Optional)"
-                  value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
-                  className="px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
-                />
-              </div>
-
-              <textarea
-                placeholder="Special requests (e.g. Birthday celebration, anniversary cake, quiet corner cabana)..."
-                rows={2}
-                value={specialRequests}
-                onChange={(e) => setSpecialRequests(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
-              />
-            </div>
-
-            {/* Submit Action */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-brand-gold via-amber-500 to-yellow-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark font-bold text-xs uppercase tracking-[0.2em] transition-all shadow-xl shadow-brand-gold/20 flex items-center justify-center gap-2.5"
-            >
-              <Calendar className="w-4 h-4 text-brand-dark" />
-              <span>{isSubmitting ? 'Confirming Reservation...' : 'Confirm Table Reservation'}</span>
-            </button>
           </form>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

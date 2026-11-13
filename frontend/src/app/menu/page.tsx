@@ -86,7 +86,7 @@ export default function MenuPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#08090C] py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 text-[#FAF8F5]">
+    <div className="min-h-screen bg-[#050505] pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 text-[#F4EFE5]">
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-brand-gold to-amber-600 text-brand-dark px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider animate-bounce">

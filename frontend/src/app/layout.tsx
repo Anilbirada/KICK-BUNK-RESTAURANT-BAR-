@@ -3,43 +3,48 @@ import './globals.css';
 import { CartProvider } from '../lib/cartContext';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { LoadingScreen } from '../components/LoadingScreen';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kickbunk.com'),
-  title: 'Kick Bunk Restaurant & Bar | Bengaluru Flagship | Garden Dining & Charcoal Tandoor',
+  title: 'KICK BUNK – Restaurant & Bar | Bengaluru Luxury Garden Resto-Bar',
   description:
-    'Experience Kick Bunk Restaurant & Bar in Bengaluru (Hulimangala Main Road, Electronic City Phase 1). Authentic charcoal clay-oven tandoor, royal dum biryani, open-air garden cabanas, live sports screening and full resto-bar. Call: +91 99806 26699.',
+    'Discover KICK BUNK Restaurant & Bar in Bengaluru. An extraordinary luxury garden resto-bar experience with charcoal clay-oven tandoor, signature cocktails, private cabanas, and night ambience on Hulimangala Main Road. Call: +91 99806 26699.',
   keywords: [
     'Kick Bunk',
     'Kick Bunk Restaurant and Bar',
     'Kick Bunk Bengaluru',
     'Garden Restaurant Bengaluru',
-    'Resto Bar Electronic City',
+    'Luxury Resto Bar Electronic City',
     'Hulimangala Main Road restaurant',
-    'Open air dining Bengaluru',
+    'Open air garden cabanas',
     'Tandoori kebabs Bengaluru',
-    'Cabana dining Bangalore',
-    'Best family garden restaurant',
+    'Cocktail bar Bangalore',
   ],
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/icon.png',
+  },
   authors: [{ name: 'Kick Bunk Hospitality Group' }],
-  creator: 'RSR Technologies',
+  creator: 'Kick Bunk',
   publisher: 'Kick Bunk Hospitality Group',
   formatDetection: {
     telephone: true,
     address: true,
   },
   openGraph: {
-    title: 'Kick Bunk Restaurant & Bar | Bengaluru Garden Dining & Resto-Bar',
+    title: 'KICK BUNK – Restaurant & Bar | Bengaluru Flagship',
     description:
-      'Lush open-air garden dining, private cabanas, charcoal clay-oven tandoors, and vibrant resto-bar on Hulimangala Main Road, Bengaluru. Call +91 99806 26699.',
+      'Where dining meets the art of experience. Discover luxury open-air garden dining, authentic charcoal tandoor, craft libations, and private cabanas in Bengaluru.',
     url: 'https://kickbunk.com',
-    siteName: 'Kick Bunk Restaurant & Bar',
+    siteName: 'KICK BUNK Restaurant & Bar',
     images: [
       {
         url: '/images/kickbunk/google_01_garden_lights_night.jpg',
         width: 1200,
         height: 800,
-        alt: 'Kick Bunk Bengaluru Garden Cabanas and Night Lights',
+        alt: 'Kick Bunk Restaurant & Bar Bengaluru Garden Ambience at Night',
       },
     ],
     locale: 'en_IN',
@@ -47,9 +52,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kick Bunk Restaurant & Bar | Bengaluru Garden Dining',
+    title: 'KICK BUNK – Restaurant & Bar | Luxury Garden Dining',
     description:
-      'Lush open-air garden cabanas, charcoal tandoor kebabs, dum biryani, and full resto-bar in Bengaluru. Call: +91 99806 26699.',
+      'Lush open-air garden cabanas, charcoal tandoor kebabs, craft cocktail bar in Bengaluru. Call: +91 99806 26699.',
     images: ['/images/kickbunk/google_01_garden_lights_night.jpg'],
   },
   robots: {
@@ -66,18 +71,19 @@ export default function RootLayout({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
-    name: 'Kick Bunk Restaurant & Bar',
+    name: 'KICK BUNK Restaurant & Bar',
     image: [
       'https://kickbunk.com/images/kickbunk/google_01_garden_lights_night.jpg',
       'https://kickbunk.com/images/kickbunk/magicpin_02_entrance_night.webp',
       'https://kickbunk.com/images/kickbunk/magicpin_01_kalmi_kebab.webp',
+      'https://kickbunk.com/images/logo.png',
     ],
     '@id': 'https://kickbunk.com',
     url: 'https://kickbunk.com',
     telephone: '+919980626699',
     priceRange: '₹₹',
     menu: 'https://kickbunk.com/menu',
-    servesCuisine: ['North Indian', 'Tandoori', 'Biryani', 'South Indian', 'Chinese', 'Bar Snacks'],
+    servesCuisine: ['North Indian', 'Tandoori', 'Biryani', 'Continental', 'Bar Delights', 'Mocktails & Cocktails'],
     address: {
       '@type': 'PostalAddress',
       streetAddress: 'Hulimangala Main Road, Vinayaka Layout, Vabasandra',
@@ -109,10 +115,10 @@ export default function RootLayout({
     ],
     sameAs: [
       'https://www.instagram.com/kick_bunk_gardenrestobar/',
+      'https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru',
       'https://magicpin.in/Bangalore/Yarandahalli/Restaurant/Kick-Bunk-Restaurant/store/621360/photos?id=6&img=Store-Images',
       'https://restaurant-guru.in/Kick-Bunk-Restaurant-and-Bar-Bengaluru',
       'https://www.zomato.com/bangalore/kick-bunk-restaurant-electronic-city-bangalore',
-      'https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru',
     ],
   };
 
@@ -124,7 +130,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-brand-dark text-brand-ivory min-h-screen flex flex-col antialiased selection:bg-brand-gold selection:text-brand-dark">
+      <body className="bg-[#050505] text-[#F4EFE5] min-h-screen flex flex-col antialiased selection:bg-[#D4A017] selection:text-[#050505]">
+        <LoadingScreen />
         <CartProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
