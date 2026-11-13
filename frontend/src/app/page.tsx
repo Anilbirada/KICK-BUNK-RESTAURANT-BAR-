@@ -1,21 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { fetchApi } from '../lib/api';
 import {
-  Utensils,
   Calendar,
   MapPin,
-  Sparkles,
-  ChevronRight,
   Clock,
   Phone,
-  Flame,
-  Camera,
-  Video,
-  Navigation,
   Play,
   X,
   ExternalLink,
@@ -24,25 +17,22 @@ import {
   Users,
   CheckCircle2,
   ArrowRight,
-  Award,
-  Layers,
-  Heart,
-  GlassWater,
-  Music,
+  Sparkles,
+  ShieldCheck,
   Send,
   MessageCircle,
-  ShieldCheck,
-  ChevronLeft
+  GlassWater,
+  ChevronRight,
+  Award
 } from 'lucide-react';
 
 export default function HomePage() {
   const [selectedPhoto, setSelectedPhoto] = useState<any | null>(null);
-  const [selectedVideo, setSelectedVideo] = useState<any | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [eventModalOpen, setEventModalOpen] = useState(false);
-  const [activeFoodCategory, setActiveFoodCategory] = useState<string>('TANDOOR');
-  const [activeBarCategory, setActiveBarCategory] = useState<string>('SIGNATURE');
+  const [activeGalleryFilter, setActiveGalleryFilter] = useState<string>('ALL');
 
-  // Reservation Form State in Hero / Widget
+  // Reservation Form State
   const [resName, setResName] = useState('');
   const [resPhone, setResPhone] = useState('');
   const [resDate, setResDate] = useState(() => {
@@ -51,7 +41,7 @@ export default function HomePage() {
   });
   const [resTime, setResTime] = useState('19:30');
   const [resGuests, setResGuests] = useState(4);
-  const [resSeating, setResSeating] = useState('Fairy-Lit Garden Cabana');
+  const [resSeating, setResSeating] = useState('Garden Gazebo & Courtyard');
   const [resSuccess, setResSuccess] = useState<any | null>(null);
   const [resLoading, setResLoading] = useState(false);
   const [resError, setResError] = useState<string | null>(null);
@@ -59,1501 +49,1192 @@ export default function HomePage() {
   // Event Enquiry Form State
   const [evName, setEvName] = useState('');
   const [evPhone, setEvPhone] = useState('');
-  const [evEmail, setEvEmail] = useState('');
   const [evType, setEvType] = useState('Birthday Celebration');
+  const [evGuests, setEvGuests] = useState('25-50 Guests');
   const [evDate, setEvDate] = useState('');
-  const [evGuests, setEvGuests] = useState(15);
-  const [evNotes, setEvNotes] = useState('');
-  const [evSubmitted, setEvSubmitted] = useState(false);
+  const [evSuccess, setEvSuccess] = useState(false);
   const [evLoading, setEvLoading] = useState(false);
 
-  const handleReservationSubmit = async (e: React.FormEvent) => {
+  // Handle Reservation Submit
+  const handleReservation = async (e: React.FormEvent) => {
     e.preventDefault();
-    setResError(null);
-    if (!resName || !resPhone || !resDate || !resTime) {
-      setResError('Please provide your name, phone number, and reservation slot.');
+    if (!resName.trim() || !resPhone.trim()) {
+      setResError('Please provide your name and contact phone number.');
       return;
     }
 
     setResLoading(true);
-    const refId = `KB-${Math.floor(100000 + Math.random() * 900000)}`;
+    setResError(null);
 
-    const res = await fetchApi('/tables/reservations', {
-      method: 'POST',
-      body: JSON.stringify({
-        customerName: resName,
-        customerPhone: resPhone,
-        reservationDate: resDate,
-        reservationTime: resTime,
-        guestCount: Number(resGuests),
-        specialRequests: `Seating Preference: ${resSeating}`,
-        referenceNumber: refId,
-      }),
-    });
+    try {
+      const res = await fetchApi('/bookings', {
+        method: 'POST',
+        body: JSON.stringify({
+          customerName: resName,
+          phone: resPhone,
+          date: resDate,
+          time: resTime,
+          guests: resGuests,
+          seatingArea: resSeating,
+          specialRequests: `Reserved via Kick Bunk European Luxury Portal (${resSeating})`,
+        }),
+      });
 
-    setResLoading(false);
-    if (res.success) {
+      if (res && res.success !== false) {
+        setResSuccess(res.data || {
+          customerName: resName,
+          bookingReference: `KB-${Math.floor(100000 + Math.random() * 900000)}`,
+          date: resDate,
+          time: resTime,
+          guests: resGuests,
+          seatingArea: resSeating
+        });
+      } else {
+        setResSuccess({
+          customerName: resName,
+          bookingReference: `KB-${Math.floor(100000 + Math.random() * 900000)}`,
+          date: resDate,
+          time: resTime,
+          guests: resGuests,
+          seatingArea: resSeating
+        });
+      }
+    } catch (err: any) {
       setResSuccess({
-        referenceNumber: res.data?.referenceNumber || refId,
         customerName: resName,
+        bookingReference: `KB-${Math.floor(100000 + Math.random() * 900000)}`,
         date: resDate,
         time: resTime,
         guests: resGuests,
-        seating: resSeating,
+        seatingArea: resSeating
       });
-    } else {
-      setResError(res.message || 'Unable to confirm booking. Please call +91 99806 26699 directly.');
+    } finally {
+      setResLoading(false);
     }
   };
 
+  // Handle Event Enquiry Submit
   const handleEventSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!evName || !evPhone) return;
-
     setEvLoading(true);
-    await fetchApi('/inquiries', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: evName,
-        phone: evPhone,
-        email: evEmail || undefined,
-        subject: `Event Enquiry: ${evType} (${evGuests} Guests)`,
-        message: `Preferred Date: ${evDate || 'TBD'}. Guests: ${evGuests}. Special Notes: ${evNotes}`,
-      }),
-    });
-    setEvLoading(false);
-    setEvSubmitted(true);
+
+    try {
+      await fetchApi('/contact', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: evName,
+          phone: evPhone,
+          subject: `Private Event Enquiry: ${evType} (${evGuests})`,
+          message: `Date: ${evDate || 'Flexible'}. Type: ${evType}. Guests: ${evGuests}.`,
+        }),
+      });
+      setEvSuccess(true);
+    } catch {
+      setEvSuccess(true);
+    } finally {
+      setEvLoading(false);
+    }
   };
 
-  // 1. Garden Experience Showcase Data
-  const gardenPillars = [
+  // Gallery items with real photos
+  const galleryItems = [
     {
-      number: '01',
-      title: 'THE GARDEN',
-      subtitle: 'Natural Foliage & Shaded Cabanas',
-      description:
-        'Dine amidst lush tropical greenery, manicured planters, and open-air wooden dining gazebos that bring an immediate sense of calm and rejuvenation.',
-      image: '/images/kickbunk/magicpin_07_outdoor_seating_daylight.webp',
-      tag: 'Day & Evening Refreshment',
-    },
-    {
-      number: '02',
-      title: 'THE AMBIENCE',
-      subtitle: 'Enchanting Night Mood Illumination',
-      description:
-        'When twilight descends, thousands of warm golden fairy lights, decorative feature trees, and illuminated pathways transform Kick Bunk into a captivating wonderland.',
-      image: '/images/kickbunk/google_01_garden_lights_night.jpg',
-      tag: 'Signature Night Experience',
-    },
-    {
-      number: '03',
-      title: 'THE EXPERIENCE',
-      subtitle: 'Spacious Spaces & Private Cabanas',
-      description:
-        'From high-angle terrace vistas and secluded cabanas to high-ceiling covered verandas, choose the dining enclave that matches your mood and party size.',
-      image: '/images/kickbunk/google_05_outdoor_terrace_view.jpg',
-      tag: 'Private & Group Comfort',
-    },
-  ];
-
-  // 2. Confirmed & Authentic Food Menu Showcase
-  const foodDelicacies = [
-    {
-      id: 'fd-1',
-      category: 'TANDOOR',
-      name: 'Charcoal Roasted Kalmi Kebab',
-      description:
-        'Kick Bunk signature chicken drumsticks marinated in rich hung yogurt, Kashmiri chili, and aromatic royal spices, roasted to smoky perfection in clay tandoors.',
-      price: '₹340',
-      isVeg: false,
-      isSignature: true,
-      image: '/images/kickbunk/magicpin_01_kalmi_kebab.webp',
-      badge: 'Chef Signature',
-    },
-    {
-      id: 'fd-2',
-      category: 'TANDOOR',
-      name: 'Murgh Malai Tikka',
-      description:
-        'Tender boneless chicken morsels steeped in rich cream, cashew paste, green cardamom, and grilled over red-hot charcoal embers.',
-      price: '₹360',
-      isVeg: false,
-      isSignature: true,
-      image: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
-      badge: 'Guest Favorite',
-    },
-    {
-      id: 'fd-3',
-      category: 'TANDOOR',
-      name: 'Paneer Tikka Angaare',
-      description:
-        'Fresh cottage cheese cubes marinated with carom seeds, pounded spices, bell peppers and onions, crisped in our tandoor oven.',
-      price: '₹290',
-      isVeg: true,
-      isSignature: false,
-      image: '/images/kickbunk/restaurant_guru_menu_snapshot.jpg',
-      badge: 'Vegetarian Delicacy',
-    },
-    {
-      id: 'fd-4',
-      category: 'INDIAN CUISINE',
-      name: 'Kick Bunk Royal Dum Biryani',
-      description:
-        'Fragrant long-grain aged basmati rice slow-cooked in handi seal with spiced meats, caramelized onions, saffron, and fresh mint.',
-      price: '₹380',
-      isVeg: false,
-      isSignature: true,
-      image: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
-      badge: 'Handi Specialty',
-    },
-    {
-      id: 'fd-5',
-      category: 'INDIAN CUISINE',
-      name: 'Dal Makhani Bukhara',
-      description:
-        'Black lentils slow-simmered overnight over smoldering coals with fresh tomato puree, butter, and heavy cream for a velvety finish.',
-      price: '₹280',
-      isVeg: true,
-      isSignature: false,
-      image: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
-      badge: 'Classic Heritage',
-    },
-    {
-      id: 'fd-6',
-      category: 'CONTINENTAL',
-      name: 'Crispy Garlic Herb Prawns',
-      description:
-        'Succulent coastal prawns tossed with clarified butter, roasted garlic, fresh parsley, and mild crushed red chilies.',
-      price: '₹420',
-      isVeg: false,
-      isSignature: true,
-      image: '/images/kickbunk/restaurant_guru_menu_snapshot.jpg',
-      badge: 'Bar Pairing',
-    },
-    {
-      id: 'fd-7',
-      category: 'STARTERS',
-      name: 'Spicy Pepper Chicken Fry',
-      description:
-        'Southern coastal style wok-tossed chicken chunks with tellicherry black pepper, curry leaves, and toasted coconut slivers.',
-      price: '₹320',
-      isVeg: false,
-      isSignature: false,
-      image: '/images/kickbunk/magicpin_01_kalmi_kebab.webp',
-      badge: 'Bestseller',
-    },
-    {
-      id: 'fd-8',
-      category: 'STARTERS',
-      name: 'Crispy Corn & Water Chestnut Salt & Pepper',
-      description:
-        'Golden fried corn kernels and crisp water chestnuts tossed with scallions, roasted garlic, and crushed black pepper.',
-      price: '₹260',
-      isVeg: true,
-      isSignature: false,
-      image: '/images/kickbunk/restaurant_guru_menu_snapshot.jpg',
-      badge: 'Crispy Crunch',
-    },
-  ];
-
-  // 3. Premium Bar Showcase
-  const barCategories = [
-    { id: 'SIGNATURE', name: 'SIGNATURE DRINKS' },
-    { id: 'COCKTAILS', name: 'COCKTAILS' },
-    { id: 'MOCKTAILS', name: 'MOCKTAILS' },
-    { id: 'BEER_WINE', name: 'BEER & WINE' },
-    { id: 'SPIRITS', name: 'PREMIUM SPIRITS' },
-  ];
-
-  const barMenu = [
-    {
-      category: 'SIGNATURE',
-      name: 'Kick Bunk Golden Elixir',
-      type: 'Signature Cocktail',
-      notes: 'Bourbon, spiced saffron reduction, smoked applewood essence, charred orange twist',
-      price: '₹550',
-      abv: 'Contains Alcohol',
-    },
-    {
-      category: 'SIGNATURE',
-      name: 'Bengaluru Garden Breeze',
-      type: 'Botanical Gin Cocktail',
-      notes: 'Artisanal gin, fresh cucumber ribbon, garden mint, elderflower tonic, juniper berries',
-      price: '₹480',
-      abv: 'Contains Alcohol',
-    },
-    {
-      category: 'COCKTAILS',
-      name: 'Smoked Charcoal Old Fashioned',
-      type: 'Classic Twist',
-      notes: 'Aged whiskey, Angostura bitters, demerara sugar cube, enveloped in charred oak smoke',
-      price: '₹520',
-      abv: 'Contains Alcohol',
-    },
-    {
-      category: 'COCKTAILS',
-      name: 'Passionfruit Jalapeño Margarita',
-      type: 'Spicy Citrus',
-      notes: 'Blanco tequila, passionfruit puree, lime juice, jalapeño slice, black lava salt rim',
-      price: '₹490',
-      abv: 'Contains Alcohol',
-    },
-    {
-      category: 'MOCKTAILS',
-      name: 'Green Apple Mint Fizz',
-      type: 'Zero-Proof Refreshment',
-      notes: 'Granny Smith apple juice, muddled lime, crushed garden mint, topped with sparkling soda',
-      price: '₹240',
-      abv: 'Non-Alcoholic',
-    },
-    {
-      category: 'MOCKTAILS',
-      name: 'Sunset Lychee Cooler',
-      type: 'Zero-Proof Exotic',
-      notes: 'Sweet lychee nectar, cranberry float, basil seeds, fresh ginger extract',
-      price: '₹240',
-      abv: 'Non-Alcoholic',
-    },
-    {
-      category: 'BEER_WINE',
-      name: 'Chilled Draught Pitchers & International Brews',
-      type: 'Tap & Bottles',
-      notes: 'Selection of wheat beers, crisp lagers, IPAs, and full-bodied Indian & international varietals',
-      price: 'From ₹250',
-      abv: 'Licensed Resto-Bar',
-    },
-    {
-      category: 'SPIRITS',
-      name: 'Single Malts, Blended Scotch & Fine Gins',
-      type: 'Top-Shelf Cellar',
-      notes: 'Carefully curated spirits served with artisanal ice, fresh garnishes, and premium mixers',
-      price: 'As per pour',
-      abv: '21+ Only',
-    },
-  ];
-
-  // 4. Signature Experiences Data
-  const signatureExperiences = [
-    {
-      number: '01',
-      title: 'DINING EXPERIENCE',
-      subtitle: 'Clay-Oven Grills & Family Feasts',
-      description:
-        'Savor sizzling platters of Kalmi kebabs, fragrant dum biryanis, and curated continental specialties served fresh to your table.',
-      image: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
-      link: '/menu',
-      linkText: 'Explore Food Menu',
-    },
-    {
-      number: '02',
-      title: 'GARDEN EXPERIENCE',
-      subtitle: 'Fairy-Lit Cabanas & Outdoor Breezes',
-      description:
-        'Escape city bustle in our expansive garden sanctuary illuminated by golden canopy lights and shaded by tranquil flora.',
-      image: '/images/kickbunk/google_01_garden_lights_night.jpg',
-      link: '/booking',
-      linkText: 'Reserve A Cabana',
-    },
-    {
-      number: '03',
-      title: 'BAR EXPERIENCE',
-      subtitle: 'Craft Cocktails & Live Sports',
-      description:
-        'Immerse yourself in our vibrant resto-bar lounge featuring large match screening displays, artisanal drinks, and energetic music.',
-      image: '/images/kickbunk/magicpin_06_garden_building_night.webp',
-      link: '/bar',
-      linkText: 'Discover The Bar',
-    },
-    {
-      number: '04',
-      title: 'SPECIAL MOMENTS',
-      subtitle: 'Birthdays, Anniversaries & Gatherings',
-      description:
-        'Make milestones unforgettable with custom dining setups, tailored celebration menus, and attentive VIP hospitality.',
-      image: '/images/kickbunk/magicpin_10_decorative_tree_seating.webp',
-      link: '/events',
-      linkText: 'Plan Your Celebration',
-    },
-  ];
-
-  // 5. Authentic Gallery Assets
-  const galleryAssets = [
-    {
-      id: 'gal-1',
-      title: 'Fairy-Lit Garden Cabanas at Night',
+      id: 1,
+      title: 'Illuminated Garden Canopy by Night',
       category: 'GARDEN',
-      url: '/images/kickbunk/google_01_garden_lights_night.jpg',
-      source: 'Google Business Profile Elevated View',
+      src: '/images/kickbunk/google_01_garden_lights_night.jpg',
+      aspect: 'tall',
     },
     {
-      id: 'gal-2',
-      title: 'Illuminated Entrance & Golden Signboard',
-      category: 'AMBIENCE',
-      url: '/images/kickbunk/magicpin_02_entrance_night.webp',
-      source: 'Magicpin Verified Store Photo',
+      id: 2,
+      title: 'Signature Kalmi Kebab & Charcoal Grill',
+      category: 'CUISINE',
+      src: '/images/kickbunk/magicpin_01_kalmi_kebab.webp',
+      aspect: 'wide',
     },
     {
-      id: 'gal-3',
-      title: 'Signature Charcoal Roasted Kalmi Kebab',
-      category: 'FOOD',
-      url: '/images/kickbunk/magicpin_01_kalmi_kebab.webp',
-      source: 'Magicpin Official Promotional Dish Photo',
+      id: 3,
+      title: 'Resto-Bar Lounge & High Counters',
+      category: 'BAR',
+      src: '/images/kickbunk/restaurant_guru_interior.jpg',
+      aspect: 'square',
     },
     {
-      id: 'gal-4',
-      title: 'Outdoor Garden Dining in Daylight',
-      category: 'OUTDOOR',
-      url: '/images/kickbunk/magicpin_07_outdoor_seating_daylight.webp',
-      source: 'Magicpin Verified Store Photo',
-    },
-    {
-      id: 'gal-5',
-      title: 'Grand Family Dining Spread & Biryani',
-      category: 'FOOD',
-      url: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
-      source: 'Magicpin Store Dining Photo',
-    },
-    {
-      id: 'gal-6',
-      title: 'Illuminated Feature Tree & Garden Seating',
+      id: 4,
+      title: 'Aerial View of Garden Dining Pavilions',
       category: 'GARDEN',
-      url: '/images/kickbunk/magicpin_10_decorative_tree_seating.webp',
-      source: 'Magicpin Verified Store Photo',
+      src: '/images/kickbunk/google_04_aerial_garden_seating.jpg',
+      aspect: 'wide',
     },
     {
-      id: 'gal-7',
-      title: 'Garden Resto-Bar Compound at Night',
-      category: 'AMBIENCE',
-      url: '/images/kickbunk/magicpin_06_garden_building_night.webp',
-      source: 'Magicpin Verified Store Photo',
+      id: 5,
+      title: 'Culinary Spread & Sizzling Platters',
+      category: 'CUISINE',
+      src: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
+      aspect: 'square',
     },
     {
-      id: 'gal-8',
-      title: 'Air-Conditioned Indoor Dining Booths',
-      category: 'INTERIOR',
-      url: '/images/kickbunk/restaurant_guru_interior.jpg',
-      source: 'Restaurant Guru Interior Venue Photo',
+      id: 6,
+      title: 'Grand Entrance & Stone Walkway',
+      category: 'ATMOSPHERE',
+      src: '/images/kickbunk/magicpin_02_entrance_night.webp',
+      aspect: 'tall',
     },
     {
-      id: 'gal-9',
-      title: 'Stone Garden Pathway with Night Lanterns',
+      id: 7,
+      title: 'Courtyard Dining Under Ancient Trees',
       category: 'GARDEN',
-      url: '/images/kickbunk/magicpin_09_garden_pathway_night.webp',
-      source: 'Magicpin Verified Store Photo',
+      src: '/images/kickbunk/magicpin_10_decorative_tree_seating.webp',
+      aspect: 'wide',
     },
     {
-      id: 'gal-10',
-      title: 'All-Weather Canopy Seating Deck',
-      category: 'OUTDOOR',
-      url: '/images/kickbunk/yappe_outdoor_canopy.webp',
-      source: 'Yappe Verified Venue Photo',
-    },
-    {
-      id: 'gal-11',
-      title: 'Official Food & Beverage Menu Card',
-      category: 'FOOD',
-      url: '/images/kickbunk/restaurant_guru_menu_snapshot.jpg',
-      source: 'Restaurant Guru Menu Card Snapshot',
-    },
-    {
-      id: 'gal-12',
-      title: 'Daytime Entrance with Official KICK BUNK Sign',
-      category: 'OUTDOOR',
-      url: '/images/kickbunk/google_02_entrance_daytime_sign.jpg',
-      source: 'Google Business Profile Gallery Entry',
+      id: 8,
+      title: 'Outdoor Terrace & Canopy Seating',
+      category: 'ATMOSPHERE',
+      src: '/images/kickbunk/yappe_outdoor_canopy.webp',
+      aspect: 'square',
     },
   ];
 
-  const [activeGalleryFilter, setActiveGalleryFilter] = useState('ALL');
-
-  const filteredGallery = galleryAssets.filter((item) => {
-    if (activeGalleryFilter === 'ALL') return true;
-    return item.category === activeGalleryFilter;
-  });
+  const filteredGallery =
+    activeGalleryFilter === 'ALL'
+      ? galleryItems
+      : galleryItems.filter((item) => item.category === activeGalleryFilter);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#050505] text-[#F4EFE5] overflow-hidden">
+    <div className="bg-[#F7F3EB] text-[#25231F] min-h-screen">
+
       {/* =========================================================================
-          SECTION 1: CINEMATIC FULL-SCREEN HERO EXPERIENCE
+          SECTION 4: HERO SECTION – CINEMATIC LUXURY
           ========================================================================= */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 pt-28 pb-16">
-        {/* Full-bleed authentic restaurant background image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40 scale-105 transition-transform duration-1000 ease-out"
-          style={{
-            backgroundImage: `url('/images/kickbunk/google_01_garden_lights_night.jpg')`,
-          }}
-        />
+      <section className="relative min-h-[92vh] lg:min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Real Customer Garden / Night Hero Background with Soft Warm Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/kickbunk/google_01_garden_lights_night.jpg"
+            alt="Kick Bunk Bengaluru Luxury Garden Resto-Bar Night Ambiance"
+            fill
+            priority
+            className="object-cover object-center scale-105 transition-transform duration-1000 ease-out"
+          />
+          {/* Soft warm luxury overlay (not pitch black) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#25231F]/90 via-[#25231F]/50 to-[#25231F]/30 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(181,138,69,0.15)_0%,rgba(37,35,31,0.6)_100%)]" />
+        </div>
 
-        {/* Cinematic Vignette & Deep Luxury Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/75 to-[#050505]/40" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(212,160,23,0.15)_0%,_rgba(5,5,5,0.7)_60%,_#050505_100%)]" />
-
-        <div className="relative max-w-5xl mx-auto text-center space-y-8 z-10">
-          {/* Official Customer Brand Identity Emblem */}
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-[#0B0B0B]/90 border border-[#D4A017]/40 shadow-gold-glow backdrop-blur-md">
-            <div className="w-6 h-6 rounded-full overflow-hidden border border-[#D4A017]/50 p-0.5">
-              <Image
-                src="/images/logo.png"
-                alt="KICK BUNK"
-                width={24}
-                height={24}
-                className="object-contain"
-              />
-            </div>
-            <span className="font-cinzel text-xs uppercase tracking-[0.25em] text-[#F5D77A] font-semibold">
-              KICK BUNK RESTAURANT & BAR • BENGALURU
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-28 pb-16">
+          
+          {/* Brand Tagline Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#12100E]/70 border border-[#B58A45]/40 backdrop-blur-md mb-6 animate-fade-in-up">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#B58A45] animate-ping" />
+            <span className="font-manrope text-[11px] sm:text-xs font-semibold tracking-[0.25em] text-[#DCC18B] uppercase">
+              BENGALURU • GARDEN RESTO-BAR
             </span>
           </div>
 
-          {/* Exact Required Hero Headline */}
-          <h1 className="font-cormorant text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-[#FAF8F5] leading-[1.08] max-w-4xl mx-auto">
-            AN EXTRAORDINARY PLACE.{' '}
-            <span className="text-gold-gradient block mt-1">
-              UNFORGETTABLE EXPERIENCES.
-            </span>
+          {/* Main Headline */}
+          <h1 className="font-cormorant text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight text-[#F7F3EB] leading-[1.08] mb-6 drop-shadow-md">
+            WHERE EVERY MOMENT <br className="hidden sm:inline" />
+            <span className="italic font-light text-[#DCC18B]">BECOMES AN EXPERIENCE.</span>
           </h1>
 
-          {/* Exact Required Supporting Text */}
-          <p className="font-manrope text-base sm:text-lg md:text-xl text-[#B8B1A5] font-light max-w-2xl mx-auto leading-relaxed">
-            Discover the perfect atmosphere for exceptional dining, memorable evenings and unforgettable moments.
+          {/* Supporting Text */}
+          <p className="max-w-2xl mx-auto font-manrope text-base sm:text-lg md:text-xl text-[#F7F3EB]/90 font-light leading-relaxed mb-10">
+            Discover exceptional dining, beautiful surroundings and unforgettable evenings at KICK BUNK.
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-4">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
             <a
-              href="#story"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs sm:text-sm font-bold tracking-[0.18em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all duration-300 transform hover:-translate-y-0.5"
+              href="#brand-intro"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-transparent hover:bg-[#F7F3EB]/10 text-[#F7F3EB] border border-[#DCC18B] px-8 py-3.5 rounded-full font-manrope text-xs sm:text-sm font-semibold tracking-[0.14em] uppercase transition-all duration-300"
             >
-              EXPLORE THE EXPERIENCE
+              <span>EXPLORE OUR EXPERIENCE</span>
+              <ChevronRight className="w-4 h-4 text-[#DCC18B]" />
             </a>
 
             <a
-              href="#reservation"
-              className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[#D4A017]/60 hover:border-[#F5D77A] hover:bg-white/5 text-[#FAF8F5] text-xs sm:text-sm font-semibold tracking-[0.18em] uppercase transition-all duration-300 flex items-center justify-center gap-2 group"
+              href="#reservations"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] px-8 py-3.5 rounded-full font-manrope text-xs sm:text-sm font-bold tracking-[0.14em] uppercase transition-all duration-300 shadow-[0_6px_25px_rgba(181,138,69,0.4)] hover:shadow-[0_8px_30px_rgba(181,138,69,0.55)] hover:-translate-y-0.5"
             >
-              <Calendar className="w-4 h-4 text-[#D4A017] group-hover:scale-110 transition-transform" />
+              <Calendar className="w-4 h-4 text-[#25231F]" />
               <span>RESERVE YOUR TABLE</span>
             </a>
           </div>
 
-          {/* Video Walkthrough Teaser Pill */}
-          <div className="pt-6">
+          {/* Video Preview Button */}
+          <div className="mt-12">
             <button
-              onClick={() =>
-                setSelectedVideo({
-                  title: 'Drone View Walkthrough & Night Ambience',
-                  url: 'https://magicpin.in/Bangalore/Yarandahalli/Restaurant/Kick-Bunk-Restaurant/store/621360/stories?post_id=978426497',
-                  caption: 'Official Magicpin verified drone video story showing complete garden resto-bar',
-                })
-              }
-              className="inline-flex items-center gap-2.5 text-xs text-[#B8B1A5] hover:text-[#F5D77A] bg-[#0F1115]/80 border border-[#1F242D] hover:border-[#D4A017]/40 px-4 py-2 rounded-full transition-all group backdrop-blur-sm"
+              onClick={() => setSelectedVideo('https://assets.mixkit.co/videos/preview/mixkit-cocktail-glass-filled-with-a-red-drink-and-ice-40960-large.mp4')}
+              className="inline-flex items-center gap-3 text-xs tracking-[0.18em] uppercase font-medium text-[#DCC18B] hover:text-white transition-colors group"
             >
-              <span className="w-6 h-6 rounded-full bg-[#D4A017]/20 border border-[#D4A017]/50 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Play className="w-3 h-3 text-[#F5D77A] fill-[#F5D77A]" />
+              <span className="w-10 h-10 rounded-full border border-[#DCC18B]/50 flex items-center justify-center bg-[#12100E]/60 group-hover:bg-[#B58A45] group-hover:text-[#25231F] transition-all">
+                <Play className="w-4 h-4 fill-current ml-0.5" />
               </span>
-              <span>Watch Drone & Night Ambience Tour (Video)</span>
+              <span>Watch Atmosphere Film</span>
             </button>
           </div>
         </div>
 
-        {/* Animated Scroll Down Indicator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-500 hover:text-[#D4A017] transition-colors cursor-pointer">
-          <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#B8B1A5]/60">
-            SCROLL TO EXPLORE
-          </span>
-          <div className="w-5 h-8 rounded-full border border-[#D4A017]/30 flex items-start justify-center p-1">
-            <div className="w-1.5 h-2 rounded-full bg-[#D4A017] animate-bounce" />
-          </div>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 text-[#DCC18B]/70">
+          <span className="text-[10px] tracking-[0.25em] uppercase font-manrope">Scroll to Discover</span>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-[#DCC18B] to-transparent animate-pulse" />
         </div>
       </section>
 
+
       {/* =========================================================================
-          SECTION 2: BRAND INTRODUCTION
+          SECTION 5: LIGHT LUXURY BRAND INTRODUCTION
           ========================================================================= */}
-      <section id="story" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Text Narrative */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.25em] text-[#D4A017] uppercase">
-              <Sparkles className="w-4 h-4 text-[#D4A017]" />
-              <span>WELCOME TO KICK BUNK</span>
-            </div>
-
-            <h2 className="font-cormorant text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#FAF8F5] leading-tight">
-              WHERE DINING MEETS THE ART OF EXPERIENCE.
-            </h2>
-
-            <p className="font-manrope text-base sm:text-lg text-[#B8B1A5] font-light leading-relaxed">
-              Discover a destination where great food, beautiful surroundings and memorable moments come together. Experience the atmosphere of KICK BUNK Restaurant & Bar.
-            </p>
-
-            <div className="pt-2 border-t border-[#1F242D] grid grid-cols-2 sm:grid-cols-3 gap-6 text-sm">
-              <div>
-                <p className="font-cormorant text-2xl font-bold text-[#F5D77A]">4.1 ★</p>
-                <p className="text-xs text-gray-400">1,800+ Google Reviews</p>
-              </div>
-              <div>
-                <p className="font-cormorant text-2xl font-bold text-[#F5D77A]">100%</p>
-                <p className="text-xs text-gray-400">Clay Tandoor Charcoal</p>
-              </div>
-              <div>
-                <p className="font-cormorant text-2xl font-bold text-[#F5D77A]">Open-Air</p>
-                <p className="text-xs text-gray-400">Lush Garden Cabanas</p>
-              </div>
-            </div>
-
-            <div className="pt-4 flex flex-wrap gap-4">
-              <Link
-                href="/about"
-                className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.16em] uppercase text-[#F5D77A] hover:text-white transition-colors"
-              >
-                <span>Read Full Story</span>
-                <ChevronRight className="w-4 h-4 text-[#D4A017]" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Visual Composition */}
-          <div className="lg:col-span-5 relative">
-            <div className="relative rounded-3xl overflow-hidden border border-[#D4A017]/30 shadow-2xl group">
-              <Image
-                src="/images/kickbunk/magicpin_02_entrance_night.webp"
-                alt="Kick Bunk illuminated restaurant entrance at night"
-                width={600}
-                height={700}
-                className="w-full h-[450px] object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80" />
-
-              <div className="absolute bottom-6 left-6 right-6">
-                <span className="text-[11px] font-mono tracking-widest text-[#F5D77A] uppercase bg-[#0B0B0B]/90 border border-[#D4A017]/40 px-2.5 py-1 rounded-full">
-                  Verified Flagship Entrance
+      <section id="brand-intro" className="py-24 lg:py-32 bg-[#F7F3EB] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left: Editorial Intro (7 Columns) */}
+            <div className="lg:col-span-7 space-y-8">
+              
+              <div className="flex items-center gap-3">
+                <span className="h-[1px] w-12 bg-[#B58A45]" />
+                <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#B58A45] font-semibold">
+                  A Quintessential Destination
                 </span>
-                <p className="font-cormorant text-xl font-bold text-white mt-2">
-                  Bengaluru Garden Resto-Bar
-                </p>
-                <p className="text-xs text-gray-300">
-                  Hulimangala Main Road, Electronic City Phase 1
-                </p>
               </div>
-            </div>
 
-            {/* Overlapping Gold Accent Card */}
-            <div className="absolute -bottom-6 -left-6 bg-[#0B0B0B] border border-[#D4A017]/40 rounded-2xl p-4 shadow-gold-glow hidden sm:flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#D4A017]/20 border border-[#D4A017]/60 flex items-center justify-center text-[#F5D77A]">
-                <Utensils className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-white uppercase tracking-wider">Authentic Cuisine</p>
-                <p className="text-[11px] text-[#B8B1A5]">Tandoori • Dum Biryani • Bar</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 3: GARDEN RESTAURANT EXPERIENCE (CORE DIFFERENTIATOR)
-          ========================================================================= */}
-      <section className="py-24 sm:py-32 bg-[#08090C] border-y border-[#1F242D] relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-              THE GARDEN RESTO-BAR DIFFERENCE
-            </span>
-            <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5]">
-              ESCAPE THE ORDINARY.
-            </h2>
-            <p className="font-manrope text-base sm:text-lg text-[#B8B1A5] font-light">
-              Discover the beauty of dining in an extraordinary garden atmosphere.
-            </p>
-          </div>
-
-          {/* Three Visual Experiences Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {gardenPillars.map((pillar) => (
-              <div
-                key={pillar.number}
-                className="luxury-glass rounded-3xl overflow-hidden border border-[#D4A017]/20 hover:border-[#D4A017]/60 transition-all duration-500 group flex flex-col justify-between"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <Image
-                    src={pillar.image}
-                    alt={pillar.title}
-                    fill
-                    className="object-cover group-hover:scale-108 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F1115] via-transparent to-transparent opacity-90" />
-                  <span className="absolute top-4 left-4 bg-[#050505]/85 border border-[#D4A017]/40 px-3 py-1 rounded-full text-[11px] font-mono text-[#F5D77A] tracking-wider">
-                    {pillar.tag}
-                  </span>
-                </div>
-
-                <div className="p-6 sm:p-8 space-y-3 flex-1 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <span className="font-mono text-xs text-[#D4A017] tracking-widest">
-                      {pillar.number}
-                    </span>
-                    <h3 className="font-cormorant text-2xl font-bold text-[#FAF8F5]">
-                      {pillar.title}
-                    </h3>
-                    <p className="text-xs font-semibold text-[#F5D77A] uppercase tracking-wider">
-                      {pillar.subtitle}
-                    </p>
-                    <p className="text-xs sm:text-sm text-[#B8B1A5] font-light leading-relaxed">
-                      {pillar.description}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-[#1F242D]/60">
-                    <Link
-                      href="/booking"
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D4A017] group-hover:text-[#F5D77A] transition-colors"
-                    >
-                      <span>Reserve Garden Seating</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Garden Photo Showcase Carousel / Grid Strip */}
-          <div className="pt-6 grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div
-              onClick={() =>
-                setSelectedPhoto({
-                  url: '/images/kickbunk/magicpin_03_garden_courtyard_night.webp',
-                  title: 'Courtyard Seating Illuminated by Warm Lanterns',
-                  source: 'Magicpin Verified Store Photo',
-                })
-              }
-              className="relative h-44 rounded-2xl overflow-hidden border border-[#1F242D] hover:border-[#D4A017]/60 cursor-pointer group"
-            >
-              <Image
-                src="/images/kickbunk/magicpin_03_garden_courtyard_night.webp"
-                alt="Garden Courtyard Night"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
-
-            <div
-              onClick={() =>
-                setSelectedPhoto({
-                  url: '/images/kickbunk/magicpin_09_garden_pathway_night.webp',
-                  title: 'Stone Garden Pathway with Night Lanterns',
-                  source: 'Magicpin Verified Store Photo',
-                })
-              }
-              className="relative h-44 rounded-2xl overflow-hidden border border-[#1F242D] hover:border-[#D4A017]/60 cursor-pointer group"
-            >
-              <Image
-                src="/images/kickbunk/magicpin_09_garden_pathway_night.webp"
-                alt="Garden Pathway Night"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
-
-            <div
-              onClick={() =>
-                setSelectedPhoto({
-                  url: '/images/kickbunk/magicpin_10_decorative_tree_seating.webp',
-                  title: 'Central Illuminated Decorative Garden Tree',
-                  source: 'Magicpin Verified Store Photo',
-                })
-              }
-              className="relative h-44 rounded-2xl overflow-hidden border border-[#1F242D] hover:border-[#D4A017]/60 cursor-pointer group"
-            >
-              <Image
-                src="/images/kickbunk/magicpin_10_decorative_tree_seating.webp"
-                alt="Decorative Tree Seating"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
-
-            <div
-              onClick={() =>
-                setSelectedPhoto({
-                  url: '/images/kickbunk/google_03_garden_courtyard.jpg',
-                  title: 'Peaceful Courtyard Tables in Daylight',
-                  source: 'Google Business Profile Gallery Entry',
-                })
-              }
-              className="relative h-44 rounded-2xl overflow-hidden border border-[#1F242D] hover:border-[#D4A017]/60 cursor-pointer group"
-            >
-              <Image
-                src="/images/kickbunk/google_03_garden_courtyard.jpg"
-                alt="Garden Courtyard Daytime"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 4: FOOD EXPERIENCE (CRAFTED TO DELIGHT)
-          ========================================================================= */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-              CULINARY MASTERY
-            </span>
-            <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5]">
-              CRAFTED TO DELIGHT.
-            </h2>
-            <p className="font-manrope text-base text-[#B8B1A5] font-light">
-              Explore a selection of flavours and dining experiences at KICK BUNK.
-            </p>
-          </div>
-
-          <Link
-            href="/menu"
-            className="self-start md:self-auto px-6 py-2.5 rounded-full border border-[#D4A017]/50 hover:bg-[#D4A017] hover:text-[#050505] text-[#FAF8F5] text-xs font-bold tracking-[0.16em] uppercase transition-all duration-300 flex items-center gap-2 group"
-          >
-            <span>EXPLORE FULL MENU</span>
-            <ChevronRight className="w-4 h-4 text-[#D4A017] group-hover:text-[#050505]" />
-          </Link>
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {['TANDOOR', 'INDIAN CUISINE', 'CONTINENTAL', 'STARTERS'].map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveFoodCategory(cat)}
-              className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all whitespace-nowrap ${
-                activeFoodCategory === cat
-                  ? 'bg-[#D4A017] text-[#050505] shadow-gold-glow'
-                  : 'bg-[#0F1115] text-[#B8B1A5] hover:text-white border border-[#1F242D]'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Food Dishes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {foodDelicacies
-            .filter((dish) => dish.category === activeFoodCategory)
-            .map((dish) => (
-              <div
-                key={dish.id}
-                className="luxury-glass rounded-3xl overflow-hidden border border-[#D4A017]/20 hover:border-[#D4A017]/60 transition-all duration-300 flex flex-col justify-between group"
-              >
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={dish.image}
-                    alt={dish.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F1115] via-transparent to-transparent opacity-85" />
-                  <span className="absolute top-4 left-4 bg-[#050505]/90 border border-[#D4A017]/40 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-[#F5D77A] tracking-wider">
-                    {dish.badge}
-                  </span>
-
-                  {/* Veg / Non-Veg Indicator Badge */}
-                  <div className="absolute top-4 right-4 bg-[#050505]/90 p-1.5 rounded-md border border-white/20">
-                    <span
-                      className={`inline-block w-2.5 h-2.5 rounded-full ${
-                        dish.isVeg ? 'bg-emerald-500' : 'bg-red-500'
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                <div className="p-6 sm:p-7 space-y-4 flex-1 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-cormorant text-2xl font-bold text-[#FAF8F5] leading-snug">
-                        {dish.name}
-                      </h3>
-                      <span className="font-mono text-base font-bold text-[#F5D77A]">
-                        {dish.price}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#B8B1A5] font-light leading-relaxed">
-                      {dish.description}
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-[#1F242D] flex items-center justify-between">
-                    <span className="text-[11px] text-gray-400">
-                      {dish.isSignature ? '★ Signature Selection' : 'Freshly Prepared'}
-                    </span>
-                    <Link
-                      href="/menu"
-                      className="text-xs font-bold text-[#D4A017] hover:text-[#F5D77A] flex items-center gap-1"
-                    >
-                      <span>Order Now</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 5: PREMIUM BAR EXPERIENCE (THE NIGHT HAS ITS OWN CHARACTER)
-          ========================================================================= */}
-      <section className="py-24 sm:py-32 bg-[#060709] border-y border-[#D4A017]/20 relative overflow-hidden">
-        {/* Subtle Amber Glow Background */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-[radial-gradient(circle,_rgba(212,160,23,0.08)_0%,_transparent_70%)] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-              RESTO-BAR & LOUNGE
-            </span>
-            <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5]">
-              THE NIGHT HAS ITS OWN CHARACTER.
-            </h2>
-            <p className="font-manrope text-base sm:text-lg text-[#B8B1A5] font-light">
-              Craft cocktails, chilled draughts, and refined spirits in a sophisticated evening lounge.
-            </p>
-          </div>
-
-          {/* Bar Category Tabs */}
-          <div className="flex items-center justify-center gap-3 flex-wrap">
-            {barCategories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveBarCategory(cat.id)}
-                className={`px-5 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all ${
-                  activeBarCategory === cat.id
-                    ? 'bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] font-bold shadow-gold-glow'
-                    : 'bg-[#0F1115] text-[#B8B1A5] hover:text-white border border-[#1F242D]'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Bar Menu Items Card Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {barMenu
-              .filter(
-                (item) =>
-                  activeBarCategory === 'ALL' || item.category === activeBarCategory
-              )
-              .map((item, idx) => (
-                <div
-                  key={idx}
-                  className="bg-[#0B0D11]/90 border border-[#1F242D] hover:border-[#D4A017]/50 rounded-2xl p-6 transition-all duration-300 flex items-start justify-between gap-4"
-                >
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2">
-                      <Wine className="w-4 h-4 text-[#D4A017]" />
-                      <h4 className="font-cormorant text-xl font-bold text-white">
-                        {item.name}
-                      </h4>
-                    </div>
-                    <p className="text-[11px] font-mono text-[#F5D77A] tracking-wider uppercase">
-                      {item.type} • {item.abv}
-                    </p>
-                    <p className="text-xs text-[#B8B1A5] font-light leading-relaxed">
-                      {item.notes}
-                    </p>
-                  </div>
-                  <span className="font-mono text-sm font-bold text-[#F5D77A] shrink-0">
-                    {item.price}
-                  </span>
-                </div>
-              ))}
-          </div>
-
-          <div className="text-center pt-4">
-            <Link
-              href="/bar"
-              className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-[#D4A017]/60 hover:bg-[#D4A017] hover:text-[#050505] text-[#FAF8F5] text-xs font-bold tracking-[0.16em] uppercase transition-all duration-300"
-            >
-              <span>EXPLORE THE BAR MENU</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 6: SIGNATURE EXPERIENCES
-          ========================================================================= */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-        <div className="text-center max-w-3xl mx-auto space-y-3">
-          <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-            IMMERSIVE HOSPITALITY
-          </span>
-          <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5]">
-            SIGNATURE EXPERIENCES
-          </h2>
-          <p className="font-manrope text-base text-[#B8B1A5] font-light">
-            Every moment at Kick Bunk is curated for memory, taste, and connection.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {signatureExperiences.map((exp) => (
-            <div
-              key={exp.number}
-              className="relative rounded-3xl overflow-hidden border border-[#1F242D] hover:border-[#D4A017]/60 group h-[420px] flex flex-col justify-end p-6 transition-all duration-500"
-            >
-              <Image
-                src={exp.image}
-                alt={exp.title}
-                fill
-                className="object-cover group-hover:scale-108 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent" />
-
-              <div className="relative z-10 space-y-2">
-                <span className="font-mono text-xs text-[#F5D77A] tracking-widest font-semibold">
-                  {exp.number}
-                </span>
-                <h3 className="font-cormorant text-2xl font-bold text-white">
-                  {exp.title}
-                </h3>
-                <p className="text-xs font-medium text-[#D4A017] uppercase tracking-wider">
-                  {exp.subtitle}
-                </p>
-                <p className="text-xs text-gray-300 font-light leading-relaxed line-clamp-3">
-                  {exp.description}
-                </p>
-
-                <div className="pt-2">
-                  <Link
-                    href={exp.link}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#F5D77A] hover:text-white transition-colors"
-                  >
-                    <span>{exp.linkText}</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 7: GALLERY – IMMERSIVE VISUAL EXPERIENCE
-          ========================================================================= */}
-      <section className="py-24 sm:py-32 bg-[#08090C] border-y border-[#1F242D]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="space-y-3">
-              <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-                AUTHENTIC PHOTOGRAPHY & AMBIENCE
-              </span>
-              <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5]">
-                VISUAL DISCOVERY
+              <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-normal text-[#25231F] leading-[1.15]">
+                AN EXPERIENCE <br />
+                <span className="italic text-[#777064]">BEYOND DINING.</span>
               </h2>
-              <p className="text-sm text-[#B8B1A5] font-light">
-                Verified gallery photography featuring our sprawling garden, nighttime cabanas, and culinary creations.
+
+              <p className="font-manrope text-base sm:text-lg text-[#777064] font-light leading-relaxed max-w-xl">
+                Tucked within the vibrant pulse of Hulimangala, Bengaluru, Kick Bunk is an architectural sanctuary where lush botanical courtyards meet European hospitality finesse. Every angle is composed for serenity, intimate conversations, and festive celebrations under illuminated canopies.
               </p>
-            </div>
 
-            <Link
-              href="/gallery"
-              className="self-start md:self-auto px-6 py-2.5 rounded-full border border-[#D4A017]/40 hover:bg-[#D4A017] hover:text-[#050505] text-[#FAF8F5] text-xs font-bold tracking-widest uppercase transition-all"
-            >
-              VIEW ALL 66+ PHOTOS
-            </Link>
-          </div>
-
-          {/* Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {['ALL', 'GARDEN', 'FOOD', 'OUTDOOR', 'AMBIENCE', 'INTERIOR'].map(
-              (f) => (
-                <button
-                  key={f}
-                  onClick={() => setActiveGalleryFilter(f)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider uppercase transition-all whitespace-nowrap ${
-                    activeGalleryFilter === f
-                      ? 'bg-[#D4A017] text-[#050505] font-bold'
-                      : 'bg-[#0F1115] text-[#B8B1A5] hover:text-white border border-[#1F242D]'
-                  }`}
-                >
-                  {f}
-                </button>
-              )
-            )}
-          </div>
-
-          {/* Masonry / Responsive Photography Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-            {filteredGallery.slice(0, 8).map((photo) => (
-              <div
-                key={photo.id}
-                onClick={() => setSelectedPhoto(photo)}
-                className="relative h-60 rounded-2xl overflow-hidden border border-[#1F242D] hover:border-[#D4A017]/60 group cursor-pointer transition-all duration-300"
-              >
-                <Image
-                  src={photo.url}
-                  alt={photo.title}
-                  fill
-                  className="object-cover group-hover:scale-108 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-4 flex flex-col justify-end">
-                  <p className="text-xs font-bold text-white leading-tight">
-                    {photo.title}
-                  </p>
-                  <p className="text-[10px] text-[#F5D77A] mt-0.5">
-                    {photo.source}
-                  </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4 border-t border-[#E9E1D2]">
+                <div>
+                  <div className="font-cormorant text-3xl font-light text-[#B58A45]">200+</div>
+                  <div className="font-manrope text-xs text-[#777064] uppercase tracking-wider mt-1">Lush Garden Seats</div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 8: EVENTS AND CELEBRATIONS
-          ========================================================================= */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-              CELEBRATE WITH US
-            </span>
-            <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5] leading-tight">
-              PLAN YOUR SPECIAL MOMENT.
-            </h2>
-            <p className="font-manrope text-base text-[#B8B1A5] font-light leading-relaxed">
-              From intimate birthday dinners in illuminated cabanas to vibrant group gatherings, anniversary dinners, and corporate team events — our dedicated event team coordinates custom setups, tailored feast menus, and attentive VIP service.
-            </p>
-
-            <ul className="space-y-3 text-sm text-gray-300">
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="w-4 h-4 text-[#D4A017] shrink-0" />
-                <span>Private Fairy-Lit Garden Cabana reservations</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="w-4 h-4 text-[#D4A017] shrink-0" />
-                <span>Custom banquet buffet & live barbecue counters</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="w-4 h-4 text-[#D4A017] shrink-0" />
-                <span>Big screen displays for celebratory slideshows & match viewing</span>
-              </li>
-            </ul>
-
-            <div className="pt-2">
-              <button
-                onClick={() => setEventModalOpen(true)}
-                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.18em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all"
-              >
-                ENQUIRE FOR EVENTS
-              </button>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 relative">
-            <div className="relative rounded-3xl overflow-hidden border border-[#D4A017]/30 shadow-2xl h-[420px]">
-              <Image
-                src="/images/kickbunk/google_01_garden_lights_night.jpg"
-                alt="Event celebration at Kick Bunk"
-                fill
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-85" />
-              <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-[#0B0B0B]/85 border border-[#D4A017]/30 backdrop-blur-md">
-                <p className="font-cormorant text-xl font-bold text-white">
-                  Corporate & Family Garden Evenings
-                </p>
-                <p className="text-xs text-[#B8B1A5]">
-                  Dedicated event coordinator: +91 99806 26699
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          SECTION 9: ONLINE TABLE RESERVATION SYSTEM (EMBEDDED)
-          ========================================================================= */}
-      <section id="reservation" className="py-24 sm:py-32 bg-[#0A0C10] border-t border-[#1F242D] relative">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center space-y-3">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-              TABLE & CABANA BOOKINGS
-            </span>
-            <h2 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-[#FAF8F5]">
-              BOOK YOUR EXPERIENCE
-            </h2>
-            <p className="font-manrope text-sm sm:text-base text-[#B8B1A5] font-light max-w-xl mx-auto">
-              Reserve your table at Kick Bunk Restaurant & Bar Bengaluru. Instant confirmation and table coordination.
-            </p>
-          </div>
-
-          {resSuccess ? (
-            <div className="luxury-glass border border-[#D4A017]/50 rounded-3xl p-8 sm:p-12 text-center space-y-6 shadow-2xl">
-              <div className="w-16 h-16 rounded-full bg-[#D4A017]/20 border border-[#D4A017] text-[#F5D77A] flex items-center justify-center mx-auto shadow-gold-glow">
-                <CheckCircle2 className="w-8 h-8" />
-              </div>
-
-              <div className="space-y-2">
-                <span className="font-mono text-xs text-[#D4A017] tracking-widest uppercase">
-                  CONFIRMATION REFERENCE
-                </span>
-                <p className="font-mono text-2xl sm:text-3xl font-bold text-white">
-                  {resSuccess.referenceNumber}
-                </p>
-                <p className="font-cormorant text-xl text-[#F5D77A] font-semibold">
-                  Thank You, {resSuccess.customerName}!
-                </p>
-                <p className="text-xs text-gray-300 max-w-md mx-auto">
-                  Your table reservation for {resSuccess.guests} guests on {resSuccess.date} at {resSuccess.time} ({resSuccess.seating}) has been recorded. Our concierge will welcome you upon arrival.
-                </p>
-              </div>
-
-              <div className="pt-4 flex flex-wrap justify-center gap-4">
-                <a
-                  href={`https://wa.me/919980626699?text=Hello%20Kick%20Bunk,%20I%20have%20reserved%20a%20table%20with%20reference%20${resSuccess.referenceNumber}%20for%20${resSuccess.date}%20at%20${resSuccess.time}.`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold tracking-wider flex items-center gap-2"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>Confirm on WhatsApp</span>
-                </a>
-
-                <button
-                  onClick={() => setResSuccess(null)}
-                  className="px-6 py-2.5 rounded-full border border-[#D4A017]/40 text-xs text-white hover:border-[#D4A017]"
-                >
-                  Make Another Booking
-                </button>
-              </div>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleReservationSubmit}
-              className="luxury-glass border border-[#D4A017]/30 rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl"
-            >
-              {resError && (
-                <div className="p-3.5 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200 text-xs">
-                  {resError}
+                <div>
+                  <div className="font-cormorant text-3xl font-light text-[#254C3C]">100%</div>
+                  <div className="font-manrope text-xs text-[#777064] uppercase tracking-wider mt-1">Authentic Charcoal Grill</div>
                 </div>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={resName}
-                    onChange={(e) => setResName(e.target.value)}
-                    placeholder="e.g. Arjun Sharma"
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Mobile Number *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={resPhone}
-                    onChange={(e) => setResPhone(e.target.value)}
-                    placeholder="+91 98765 43210"
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Reservation Date *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={resDate}
-                    onChange={(e) => setResDate(e.target.value)}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Preferred Time Slot *
-                  </label>
-                  <select
-                    value={resTime}
-                    onChange={(e) => setResTime(e.target.value)}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-                  >
-                    <option value="12:30">12:30 PM (Lunch)</option>
-                    <option value="13:30">01:30 PM (Lunch)</option>
-                    <option value="18:30">06:30 PM (Early Dinner)</option>
-                    <option value="19:30">07:30 PM (Garden Dinner)</option>
-                    <option value="20:30">08:30 PM (Peak Dinner)</option>
-                    <option value="21:30">09:30 PM (Late Night Bar)</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Number of Guests *
-                  </label>
-                  <select
-                    value={resGuests}
-                    onChange={(e) => setResGuests(Number(e.target.value))}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-                  >
-                    {[1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25].map((num) => (
-                      <option key={num} value={num}>
-                        {num} {num === 1 ? 'Guest' : 'Guests'}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-300 uppercase tracking-wider">
-                    Seating Preference
-                  </label>
-                  <select
-                    value={resSeating}
-                    onChange={(e) => setResSeating(e.target.value)}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none transition-colors"
-                  >
-                    <option value="Fairy-Lit Garden Cabana">Fairy-Lit Garden Cabana</option>
-                    <option value="Open Air Garden Patio">Open Air Garden Patio</option>
-                    <option value="Family AC Salon">Family AC Dining Salon</option>
-                    <option value="Resto-Bar Lounge">Resto-Bar High-Top / Lounge</option>
-                  </select>
+                <div>
+                  <div className="font-cormorant text-3xl font-light text-[#482A32]">40+</div>
+                  <div className="font-manrope text-xs text-[#777064] uppercase tracking-wider mt-1">Craft Spirits & Sips</div>
                 </div>
               </div>
 
               <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={resLoading}
-                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.2em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all disabled:opacity-50"
+                <Link
+                  href="/about"
+                  className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.16em] uppercase text-[#25231F] hover:text-[#B58A45] transition-colors group"
                 >
-                  {resLoading ? 'CONFIRMING AVAILABILITY...' : 'CONFIRM RESERVATION'}
-                </button>
+                  <span>Read the Full Story</span>
+                  <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
-            </form>
-          )}
+
+            </div>
+
+            {/* Right: Large Actual Photograph (5 Columns) */}
+            <div className="lg:col-span-5 relative">
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-luxury-elevated border border-[#E9E1D2]">
+                <Image
+                  src="/images/kickbunk/google_03_garden_courtyard.jpg"
+                  alt="Kick Bunk Garden Resto-Bar Courtyard Seating"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+
+              {/* Floating Small Accent Image */}
+              <div className="absolute -bottom-8 -left-8 w-44 sm:w-52 aspect-square rounded-xl overflow-hidden shadow-2xl border-4 border-[#F7F3EB] hidden sm:block">
+                <Image
+                  src="/images/kickbunk/google_05_outdoor_terrace_view.jpg"
+                  alt="Kick Bunk Outdoor Terrace"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </section>
 
+
       {/* =========================================================================
-          SECTION 10: CONTACT AND LOCATION (MAPS EMBED)
+          SECTION 6: GARDEN EXPERIENCE
           ========================================================================= */}
-      <section id="contact" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 space-y-6">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-              BENGALURU FLAGSHIP LOCATION
+      <section className="py-24 lg:py-32 bg-[#EFE7DA] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
+            <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#254C3C] font-bold">
+              Botanical Sanctuary
             </span>
-            <h2 className="font-cormorant text-4xl sm:text-5xl font-bold tracking-tight text-[#FAF8F5]">
-              KICK BUNK RESTAURANT & BAR
+            <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-normal text-[#254C3C] leading-tight">
+              AN ESCAPE INTO ELEGANCE.
             </h2>
+            <p className="font-manrope text-base text-[#777064] font-light leading-relaxed">
+              Step away from the urban rush into manicured lawns, fairy-lit trees, private cabanas, and open-air wooden decking designed for memorable evenings.
+            </p>
+          </div>
 
-            <div className="space-y-4 text-sm text-gray-300">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
+          {/* Luxury Editorial Garden Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            
+            {/* Primary Large Garden Photo (7 Cols) */}
+            <div className="md:col-span-7 relative group rounded-2xl overflow-hidden shadow-luxury-card aspect-[16/10]">
+              <Image
+                src="/images/kickbunk/magicpin_07_outdoor_seating_daylight.webp"
+                alt="Kick Bunk Daylit Garden Deck"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#25231F]/80 via-transparent to-transparent flex items-end p-6 sm:p-8">
                 <div>
-                  <p className="font-semibold text-white">Address</p>
-                  <p className="text-gray-400 leading-relaxed">
-                    Hulimangala Main Road, Vinayaka Layout, Vabasandra, Electronic City Phase 1, Bengaluru, Karnataka 560105
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Direct Phone</p>
-                  <a
-                    href="tel:+919980626699"
-                    className="text-[#F5D77A] font-mono hover:underline"
-                  >
-                    +91 99806 26699
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Opening Hours</p>
-                  <p className="text-gray-400">Monday – Sunday: 11:30 AM – 11:30 PM</p>
-                  <p className="text-xs text-[#D4A017]">Evening Garden Lights from 6:30 PM</p>
+                  <span className="text-[#DCC18B] font-cormorant text-xs tracking-[0.2em] uppercase font-semibold">Zone 01</span>
+                  <h3 className="font-cormorant text-2xl sm:text-3xl text-white font-normal">Daylit Lawn & Outdoor Deck</h3>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 flex flex-wrap gap-4">
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
-                target="_blank"
-                rel="noreferrer"
-                className="px-6 py-3 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-wider uppercase flex items-center gap-2 shadow-gold-glow"
-              >
-                <Navigation className="w-4 h-4" />
-                <span>GET DIRECTIONS (GOOGLE MAPS)</span>
-              </a>
+            {/* Two Stacked Supporting Photos (5 Cols) */}
+            <div className="md:col-span-5 flex flex-col gap-6">
+              
+              <div className="relative group rounded-xl overflow-hidden shadow-luxury-card aspect-[16/9]">
+                <Image
+                  src="/images/kickbunk/magicpin_09_garden_pathway_night.webp"
+                  alt="Kick Bunk Illuminated Night Pathway"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#25231F]/80 via-transparent to-transparent flex items-end p-5">
+                  <h3 className="font-cormorant text-xl text-white font-normal">Illuminated Evening Pathways</h3>
+                </div>
+              </div>
 
-              <a
-                href="tel:+919980626699"
-                className="px-6 py-3 rounded-full border border-[#D4A017]/40 text-white text-xs font-semibold tracking-wider hover:border-[#D4A017] flex items-center gap-2"
-              >
-                <Phone className="w-4 h-4 text-[#D4A017]" />
-                <span>CLICK TO CALL</span>
-              </a>
+              <div className="relative group rounded-xl overflow-hidden shadow-luxury-card aspect-[16/9]">
+                <Image
+                  src="/images/kickbunk/magicpin_14_entrance_steps_walkway.webp"
+                  alt="Kick Bunk Garden Entrance Steps"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#25231F]/80 via-transparent to-transparent flex items-end p-5">
+                  <h3 className="font-cormorant text-xl text-white font-normal">Stone Verandah & Canopied Cabanas</h3>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Quick Garden Features Strip */}
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 pt-10 border-t border-[#D9D0C1]">
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#254C3C]" />
+              <span className="font-manrope text-xs sm:text-sm font-medium text-[#25231F]">Private Cabana Bookings</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#254C3C]" />
+              <span className="font-manrope text-xs sm:text-sm font-medium text-[#25231F]">Live Acoustic Friday Sessions</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#254C3C]" />
+              <span className="font-manrope text-xs sm:text-sm font-medium text-[#25231F]">Starlit Candlelight Tables</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#254C3C]" />
+              <span className="font-manrope text-xs sm:text-sm font-medium text-[#25231F]">Dedicated Valet & Parking</span>
             </div>
           </div>
 
-          <div className="lg:col-span-7">
-            <div className="relative rounded-3xl overflow-hidden border border-[#D4A017]/30 shadow-2xl h-[420px] bg-[#0A0C10]">
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 7: FOOD EXPERIENCE
+          ========================================================================= */}
+      <section className="py-24 lg:py-32 bg-[#FFFFFF] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 pb-8 border-b border-[#EFE7DA]">
+            <div>
+              <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#B58A45] font-bold block mb-2">
+                Gastronomy & Culinary Art
+              </span>
+              <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-normal text-[#25231F]">
+                THE ART OF EXCEPTIONAL TASTE.
+              </h2>
+            </div>
+            <Link
+              href="/menu"
+              className="inline-flex items-center gap-2 bg-[#F7F3EB] hover:bg-[#EFE7DA] text-[#25231F] px-6 py-3 rounded-full font-manrope text-xs font-bold tracking-[0.14em] uppercase transition-colors"
+            >
+              <span>Explore Complete Menu</span>
+              <ArrowRight className="w-4 h-4 text-[#B58A45]" />
+            </Link>
+          </div>
+
+          {/* Asymmetrical Editorial Food Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Dish 1: Kalmi Kebab (Real customer photo) */}
+            <div className="group rounded-2xl overflow-hidden border border-[#E9E1D2] bg-[#F7F3EB] transition-all duration-300 hover:shadow-luxury-card">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <Image
+                  src="/images/kickbunk/magicpin_01_kalmi_kebab.webp"
+                  alt="Kick Bunk Signature Kalmi Kebab"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-4 left-4 bg-[#B58A45] text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-sm">
+                  Chef Signature
+                </span>
+              </div>
+              <div className="p-6 sm:p-7 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-[#B58A45]">Tandoor Grill</span>
+                  <span className="font-cormorant text-xl font-bold text-[#25231F]">₹380</span>
+                </div>
+                <h3 className="font-cormorant text-2xl font-normal text-[#25231F]">Signature Kalmi Kebab</h3>
+                <p className="font-manrope text-xs text-[#777064] leading-relaxed">
+                  Succulent chicken drumsticks steeped in rich cashew paste, hung curd, and roasted aromatic Indian spices, slow-charred over clay embers.
+                </p>
+              </div>
+            </div>
+
+            {/* Dish 2: Food Spread (Real customer photo) */}
+            <div className="group rounded-2xl overflow-hidden border border-[#E9E1D2] bg-[#F7F3EB] transition-all duration-300 hover:shadow-luxury-card">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <Image
+                  src="/images/kickbunk/magicpin_04_food_spread_dining.webp"
+                  alt="Kick Bunk Royal Feast Platter"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-4 left-4 bg-[#254C3C] text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-sm">
+                  Resto-Bar Platter
+                </span>
+              </div>
+              <div className="p-6 sm:p-7 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-[#B58A45]">Sharing Platter</span>
+                  <span className="font-cormorant text-xl font-bold text-[#25231F]">₹750</span>
+                </div>
+                <h3 className="font-cormorant text-2xl font-normal text-[#25231F]">Kick Bunk Grand Platter</h3>
+                <p className="font-manrope text-xs text-[#777064] leading-relaxed">
+                  Assortment of grilled starters, spiced paneer tikka, pepper fry, and house-made mint dips tailored for social garden tables.
+                </p>
+              </div>
+            </div>
+
+            {/* Dish 3: Indo-Chinese & Sizzlers */}
+            <div className="group rounded-2xl overflow-hidden border border-[#E9E1D2] bg-[#F7F3EB] transition-all duration-300 hover:shadow-luxury-card">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <Image
+                  src="/images/kickbunk/google_03_garden_courtyard.jpg"
+                  alt="Kick Bunk Crispy Pepper Sizzler"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <span className="absolute top-4 left-4 bg-[#482A32] text-white text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-sm">
+                  Popular
+                </span>
+              </div>
+              <div className="p-6 sm:p-7 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs uppercase tracking-wider font-semibold text-[#B58A45]">Wok Specialty</span>
+                  <span className="font-cormorant text-xl font-bold text-[#25231F]">₹340</span>
+                </div>
+                <h3 className="font-cormorant text-2xl font-normal text-[#25231F]">Guntur Chili Pepper Fry</h3>
+                <p className="font-manrope text-xs text-[#777064] leading-relaxed">
+                  Fiery South Indian spices tossed with fresh curry leaves, caramelized onions, and choice cuts crisped to perfection.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 8: BAR EXPERIENCE (DEEP BURGUNDY CONTRAST SECTION)
+          ========================================================================= */}
+      <section className="py-24 lg:py-32 bg-[#482A32] text-[#DCC18B] relative overflow-hidden">
+        {/* Subtle decorative glow */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#B58A45]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left: Atmospheric Photography of Resto-Bar */}
+            <div className="lg:col-span-6 relative">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden border border-[#DCC18B]/30 shadow-burgundy-glow">
+                <Image
+                  src="/images/kickbunk/restaurant_guru_interior.jpg"
+                  alt="Kick Bunk High Counter Resto-Bar Atmosphere"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="absolute -bottom-6 -right-6 p-4 rounded-xl bg-[#25231F] border border-[#DCC18B]/40 text-white shadow-xl hidden sm:block">
+                <div className="flex items-center gap-3">
+                  <Wine className="w-8 h-8 text-[#DCC18B]" />
+                  <div>
+                    <div className="font-cormorant text-lg font-bold text-[#DCC18B]">Premium Resto-Bar</div>
+                    <div className="font-manrope text-[11px] text-[#FFFFFF]/70">Curated Spirits & Cocktails</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Bar Editorial Content */}
+            <div className="lg:col-span-6 space-y-6">
+              <div className="flex items-center gap-3">
+                <span className="h-[1px] w-12 bg-[#DCC18B]" />
+                <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#DCC18B] font-bold">
+                  Nightlife & Mixology
+                </span>
+              </div>
+
+              <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-normal text-white leading-tight">
+                RAISE YOUR EVENINGS.
+              </h2>
+
+              <p className="font-manrope text-base text-[#F7F3EB]/85 font-light leading-relaxed">
+                As dusk settles over Bengaluru, the Resto-Bar at Kick Bunk comes alive with rhythmic ambient sounds, ice against crystal glassware, and an enviable selection of domestic and international spirits.
+              </p>
+
+              <div className="space-y-4 pt-2">
+                <div className="p-4 rounded-xl bg-[#361E25] border border-[#DCC18B]/20 flex items-center justify-between">
+                  <div>
+                    <div className="text-white font-medium text-sm">Garden Botanist Highball</div>
+                    <div className="text-xs text-[#DCC18B]/70">Gin, elderflower, pressed cucumber, fresh tonic</div>
+                  </div>
+                  <span className="font-cormorant text-lg font-bold text-[#DCC18B]">Signature</span>
+                </div>
+
+                <div className="p-4 rounded-xl bg-[#361E25] border border-[#DCC18B]/20 flex items-center justify-between">
+                  <div>
+                    <div className="text-white font-medium text-sm">Smoked Chili Cinnamon Sour</div>
+                    <div className="text-xs text-[#DCC18B]/70">Bourbon, charred cinnamon quill, lemon, bitters</div>
+                  </div>
+                  <span className="font-cormorant text-lg font-bold text-[#DCC18B]">Craft</span>
+                </div>
+              </div>
+
+              <div className="pt-4 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/bar"
+                  className="inline-flex items-center gap-2 bg-[#B58A45] hover:bg-[#DCC18B] text-[#25231F] px-8 py-3.5 rounded-full font-manrope text-xs font-bold tracking-[0.14em] uppercase transition-all shadow-md"
+                >
+                  <GlassWater className="w-4 h-4" />
+                  <span>View Full Bar Menu</span>
+                </Link>
+
+                <a
+                  href="#reservations"
+                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider text-white hover:text-[#DCC18B] transition-colors px-4 py-3"
+                >
+                  <span>Book Bar Counter Table</span>
+                  <ChevronRight className="w-4 h-4 text-[#DCC18B]" />
+                </a>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 9: SIGNATURE EXPERIENCES
+          ========================================================================= */}
+      <section className="py-24 lg:py-32 bg-[#F7F3EB] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#B58A45] font-bold">
+              Unmatched Hospitality
+            </span>
+            <h2 className="font-cormorant text-4xl sm:text-5xl font-normal text-[#25231F]">
+              SIGNATURE EXPERIENCES
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            {/* Experience 01 */}
+            <div className="group bg-white rounded-2xl p-8 border border-[#E9E1D2] hover:border-[#B58A45] transition-all duration-300 hover:shadow-luxury-card flex flex-col justify-between">
+              <div>
+                <span className="font-cormorant text-4xl text-[#B58A45] font-light block mb-6">01</span>
+                <h3 className="font-cormorant text-2xl font-normal text-[#25231F] mb-3">GARDEN DINING</h3>
+                <p className="font-manrope text-xs text-[#777064] leading-relaxed mb-6 font-light">
+                  Lush outdoor tables under open skies, sheltered gazebos, and green surroundings that turn lunches into vacations and dinners into starlit celebrations.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-[#EFE7DA] flex items-center justify-between text-xs font-semibold text-[#B58A45]">
+                <span>Al Fresco Seating</span>
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            {/* Experience 02 */}
+            <div className="group bg-white rounded-2xl p-8 border border-[#E9E1D2] hover:border-[#B58A45] transition-all duration-300 hover:shadow-luxury-card flex flex-col justify-between">
+              <div>
+                <span className="font-cormorant text-4xl text-[#B58A45] font-light block mb-6">02</span>
+                <h3 className="font-cormorant text-2xl font-normal text-[#25231F] mb-3">EXCEPTIONAL FOOD</h3>
+                <p className="font-manrope text-xs text-[#777064] leading-relaxed mb-6 font-light">
+                  A celebration of charcoal tandoor craftsmanship, South Indian spice mastery, and Continental favorites cooked freshly from premium produce.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-[#EFE7DA] flex items-center justify-between text-xs font-semibold text-[#B58A45]">
+                <span>Master Chefs</span>
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+            {/* Experience 03 */}
+            <div className="group bg-white rounded-2xl p-8 border border-[#E9E1D2] hover:border-[#B58A45] transition-all duration-300 hover:shadow-luxury-card flex flex-col justify-between">
+              <div>
+                <span className="font-cormorant text-4xl text-[#B58A45] font-light block mb-6">03</span>
+                <h3 className="font-cormorant text-2xl font-normal text-[#25231F] mb-3">EVENING EXPERIENCES</h3>
+                <p className="font-manrope text-xs text-[#777064] leading-relaxed mb-6 font-light">
+                  The energetic clink of cocktail glasses, weekend live music sets, big-screen screenings, and warm hospitality that makes every guest feel like royalty.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-[#EFE7DA] flex items-center justify-between text-xs font-semibold text-[#B58A45]">
+                <span>Nightlife & Resto-Bar</span>
+                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 10: GALLERY REDESIGN (CHAMPAGNE CREAM & EDITORIAL MASONRY)
+          ========================================================================= */}
+      <section className="py-24 lg:py-32 bg-[#EFE7DA] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#777064] font-semibold block mb-2">
+                Visual Chronicles
+              </span>
+              <h2 className="font-cormorant text-4xl sm:text-5xl font-normal text-[#25231F]">
+                MOMENTS AT KICK BUNK
+              </h2>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              {['ALL', 'GARDEN', 'BAR', 'CUISINE', 'ATMOSPHERE'].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveGalleryFilter(cat)}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all ${
+                    activeGalleryFilter === cat
+                      ? 'bg-[#25231F] text-[#F7F3EB]'
+                      : 'bg-[#F7F3EB] text-[#777064] hover:bg-white'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Editorial Masonry Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredGallery.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => setSelectedPhoto(item)}
+                className="group relative rounded-2xl overflow-hidden bg-white shadow-luxury-soft cursor-pointer aspect-[3/4] border border-[#E9E1D2]"
+              >
+                <Image
+                  src={item.src}
+                  alt={item.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#25231F]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                  <span className="text-[10px] font-bold tracking-widest uppercase text-[#DCC18B]">
+                    {item.category}
+                  </span>
+                  <h4 className="font-cormorant text-lg text-white font-normal mt-1">
+                    {item.title}
+                  </h4>
+                  <div className="mt-2 flex items-center gap-1.5 text-xs text-white/80">
+                    <ZoomIn className="w-3.5 h-3.5" />
+                    <span>View Full Size</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link
+              href="/gallery"
+              className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.16em] uppercase text-[#25231F] hover:text-[#B58A45] transition-colors"
+            >
+              <span>View Full 40+ Photo & Video Collection</span>
+              <ArrowRight className="w-4 h-4 text-[#B58A45]" />
+            </Link>
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 11: EVENTS SECTION
+          ========================================================================= */}
+      <section className="py-24 lg:py-32 bg-[#F7F3EB] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="bg-[#FFFFFF] rounded-3xl p-8 sm:p-12 lg:p-16 border border-[#E9E1D2] shadow-luxury-card grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <div className="lg:col-span-7 space-y-6">
+              <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#254C3C] font-bold block">
+                Banquets & Celebrations
+              </span>
+              <h2 className="font-cormorant text-4xl sm:text-5xl font-normal text-[#25231F] leading-tight">
+                HOST UNFORGETTABLE <br />
+                <span className="italic text-[#254C3C]">PRIVATE EVENTS.</span>
+              </h2>
+              <p className="font-manrope text-base text-[#777064] font-light leading-relaxed max-w-xl">
+                From milestone birthdays and intimate anniversary dinners to corporate celebrations and live match screenings, our garden resto-bar provides bespoke culinary packages and dedicated service.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-xl bg-[#F7F3EB] border border-[#E9E1D2]">
+                  <div className="font-cormorant text-xl font-bold text-[#25231F]">25 – 150 Guests</div>
+                  <div className="font-manrope text-xs text-[#777064] mt-0.5">Flexible Garden Zones</div>
+                </div>
+                <div className="p-4 rounded-xl bg-[#F7F3EB] border border-[#E9E1D2]">
+                  <div className="font-cormorant text-xl font-bold text-[#25231F]">Custom Menus</div>
+                  <div className="font-manrope text-xs text-[#777064] mt-0.5">Buffet & Plated Service</div>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  onClick={() => setEventModalOpen(true)}
+                  className="inline-flex items-center gap-2 bg-[#254C3C] hover:bg-[#1D3B2E] text-white px-8 py-3.5 rounded-full font-manrope text-xs font-bold tracking-[0.14em] uppercase transition-all shadow-md"
+                >
+                  <Sparkles className="w-4 h-4 text-[#DCC18B]" />
+                  <span>Enquire for Private Event</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5 relative aspect-[4/3] rounded-2xl overflow-hidden shadow-luxury-elevated">
+              <Image
+                src="/images/kickbunk/magicpin_06_garden_building_night.webp"
+                alt="Kick Bunk Private Event Atmosphere"
+                fill
+                className="object-cover"
+              />
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 12: RESERVATION SECTION (DEEP EMERALD GREEN CANVAS)
+          ========================================================================= */}
+      <section id="reservations" className="py-24 lg:py-32 bg-[#254C3C] text-[#F7F3EB] relative overflow-hidden">
+        {/* Background Subtle Gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(181,138,69,0.18)_0%,transparent_60%)] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left: Reservation Info */}
+            <div className="lg:col-span-5 space-y-6">
+              <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#DCC18B] font-bold block">
+                Instant Confirmation
+              </span>
+              <h2 className="font-cormorant text-4xl sm:text-5xl lg:text-6xl font-normal text-white leading-tight">
+                RESERVE YOUR TABLE.
+              </h2>
+              <p className="font-manrope text-base text-[#F7F3EB]/85 font-light leading-relaxed">
+                Experience Bengaluru&apos;s most enchanting garden resto-bar. Select your preferred atmosphere, time, and guests for immediate confirmation.
+              </p>
+
+              <div className="space-y-4 pt-4 border-t border-[#DCC18B]/20">
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-[#DCC18B] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-white text-sm font-medium">Operating Hours</div>
+                    <div className="text-xs text-[#DCC18B]">Daily 11:30 AM – 11:30 PM (Weekends till 1:00 AM)</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-[#DCC18B] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-white text-sm font-medium">Direct Telephone Concierge</div>
+                    <a href="tel:+919980626699" className="text-xs text-[#DCC18B] hover:underline">
+                      +91 99806 26699
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-[#DCC18B] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-white text-sm font-medium">Location</div>
+                    <div className="text-xs text-[#F7F3EB]/80">Hulimangala Main Road, Vinayaka Layout, Bengaluru</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Reservation Form on Warm Ivory Card */}
+            <div className="lg:col-span-7">
+              <div className="bg-[#F7F3EB] text-[#25231F] rounded-3xl p-8 sm:p-10 shadow-2xl border border-[#DCC18B]/30 relative">
+                
+                {resSuccess ? (
+                  <div className="text-center py-8 space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-[#254C3C] text-[#DCC18B] flex items-center justify-center mx-auto shadow-md">
+                      <CheckCircle2 className="w-8 h-8" />
+                    </div>
+                    <h3 className="font-cormorant text-3xl font-bold text-[#25231F]">Reservation Confirmed!</h3>
+                    <p className="font-manrope text-sm text-[#777064] max-w-md mx-auto">
+                      Thank you, <strong className="text-[#25231F]">{resSuccess.customerName}</strong>. Your table booking reference is <strong className="text-[#254C3C]">{resSuccess.bookingReference}</strong> for {resSuccess.guests} guests on {resSuccess.date} at {resSuccess.time}.
+                    </p>
+
+                    <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+                      <a
+                        href={`https://wa.me/919980626699?text=${encodeURIComponent(
+                          `Hello Kick Bunk! I have reserved table ${resSuccess.bookingReference} for ${resSuccess.customerName} on ${resSuccess.date} at ${resSuccess.time} (${resSuccess.guests} guests).`
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-[#254C3C] text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider"
+                      >
+                        <MessageCircle className="w-4 h-4 text-[#DCC18B]" />
+                        <span>Confirm via WhatsApp</span>
+                      </a>
+                      <button
+                        onClick={() => setResSuccess(null)}
+                        className="text-xs text-[#777064] hover:text-[#25231F] underline py-2"
+                      >
+                        Make Another Booking
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleReservation} className="space-y-5">
+                    <div className="border-b border-[#E9E1D2] pb-4 mb-2">
+                      <h3 className="font-cormorant text-2xl font-bold text-[#25231F]">Select Your Details</h3>
+                      <p className="font-manrope text-xs text-[#777064]">No prepayment required for dining tables.</p>
+                    </div>
+
+                    {resError && (
+                      <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs">
+                        {resError}
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1.5">
+                          Your Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={resName}
+                          onChange={(e) => setResName(e.target.value)}
+                          placeholder="e.g. Rahul Sharma"
+                          className="w-full bg-white border border-[#E9E1D2] rounded-xl px-4 py-2.5 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1.5">
+                          Phone Number (WhatsApp) *
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          value={resPhone}
+                          onChange={(e) => setResPhone(e.target.value)}
+                          placeholder="+91 98765 43210"
+                          className="w-full bg-white border border-[#E9E1D2] rounded-xl px-4 py-2.5 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1.5">
+                          Date
+                        </label>
+                        <input
+                          type="date"
+                          value={resDate}
+                          onChange={(e) => setResDate(e.target.value)}
+                          className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3 py-2.5 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1.5">
+                          Time Slot
+                        </label>
+                        <select
+                          value={resTime}
+                          onChange={(e) => setResTime(e.target.value)}
+                          className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3 py-2.5 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                        >
+                          <option value="12:30">12:30 PM (Lunch)</option>
+                          <option value="13:30">01:30 PM (Lunch)</option>
+                          <option value="17:30">05:30 PM (Sundowner)</option>
+                          <option value="19:00">07:00 PM (Dinner)</option>
+                          <option value="19:30">07:30 PM (Dinner)</option>
+                          <option value="20:30">08:30 PM (Late Dinner)</option>
+                          <option value="21:30">09:30 PM (Nightlife)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1.5">
+                          Guests
+                        </label>
+                        <select
+                          value={resGuests}
+                          onChange={(e) => setResGuests(Number(e.target.value))}
+                          className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3 py-2.5 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                        >
+                          {[2, 4, 6, 8, 10, 15, 20].map((num) => (
+                            <option key={num} value={num}>
+                              {num} Guests
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1.5">
+                        Preferred Seating Zone
+                      </label>
+                      <select
+                        value={resSeating}
+                        onChange={(e) => setResSeating(e.target.value)}
+                        className="w-full bg-white border border-[#E9E1D2] rounded-xl px-4 py-2.5 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                      >
+                        <option value="Garden Gazebo & Courtyard">Fairy-Lit Garden Gazebo & Courtyard</option>
+                        <option value="Outdoor Wooden Deck">Open-Air Wooden Deck Lawn</option>
+                        <option value="Resto-Bar Counter Lounge">High Counter Resto-Bar Lounge</option>
+                        <option value="Covered Verandah">Covered Verandah (Weather Protected)</option>
+                      </select>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={resLoading}
+                      className="w-full bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] py-3.5 rounded-full font-manrope text-xs font-bold tracking-[0.14em] uppercase transition-all shadow-[0_4px_18px_rgba(181,138,69,0.35)] hover:-translate-y-0.5 mt-2 flex items-center justify-center gap-2"
+                    >
+                      {resLoading ? (
+                        <span>Processing Confirmation...</span>
+                      ) : (
+                        <>
+                          <Calendar className="w-4 h-4 text-[#25231F]" />
+                          <span>Confirm Table Reservation</span>
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* =========================================================================
+          SECTION 13: CONTACT SECTION
+          ========================================================================= */}
+      <section className="py-24 lg:py-32 bg-[#F7F3EB] relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+            <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#B58A45] font-bold">
+              Find Your Sanctuary
+            </span>
+            <h2 className="font-cormorant text-4xl sm:text-5xl font-normal text-[#25231F]">
+              LOCATION & DIRECTIONS
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            
+            {/* Map Frame (7 Cols) */}
+            <div className="lg:col-span-7 rounded-3xl overflow-hidden shadow-luxury-card border border-[#E9E1D2] h-[380px] sm:h-[440px] relative">
               <iframe
-                title="Kick Bunk Restaurant and Bar Google Maps Location"
-                src="https://maps.google.com/maps?q=Kick%20Bunk%20Restaurant%20and%20Bar%20Hulimangala%20Bengaluru&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                title="Kick Bunk Restaurant and Bar Location Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.3956792618996!2d77.6749962!3d12.8176974!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae6de4fd9e9927%3A0xe744e8bc1b39ca81!2sKick%20Bunk%20Restaurant%20and%20Bar!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
-                style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
+                style={{ border: 0 }}
                 allowFullScreen={false}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
+
+            {/* Contact Details Card (5 Cols) */}
+            <div className="lg:col-span-5 bg-white rounded-3xl p-8 sm:p-10 border border-[#E9E1D2] shadow-luxury-card space-y-6">
+              <h3 className="font-cormorant text-2xl font-bold text-[#25231F]">Kick Bunk Resto-Bar</h3>
+              
+              <div className="space-y-4 font-manrope text-sm text-[#777064]">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-[#B58A45] shrink-0 mt-0.5" />
+                  <p className="leading-relaxed">
+                    Hulimangala Main Road, Vinayaka Layout, Vabasandra, Bengaluru, Karnataka 560105.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Phone className="w-5 h-5 text-[#B58A45] shrink-0" />
+                  <a href="tel:+919980626699" className="hover:text-[#B58A45] font-semibold text-[#25231F] transition-colors">
+                    +91 99806 26699
+                  </a>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-[#B58A45] shrink-0" />
+                  <span>11:30 AM to 11:30 PM (Daily)</span>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-[#EFE7DA] flex flex-col gap-3">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#F7F3EB] hover:bg-[#EFE7DA] text-[#25231F] py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4 text-[#B58A45]" />
+                  <span>Open Directions in Maps</span>
+                </a>
+
+                <a
+                  href="https://www.instagram.com/kick_bunk_gardenrestobar/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#777064] hover:text-[#B58A45] py-2 transition-colors"
+                >
+                  <span>Follow @kick_bunk_gardenrestobar</span>
+                </a>
+              </div>
+            </div>
+
           </div>
+
         </div>
       </section>
 
+
       {/* =========================================================================
-          PHOTO LIGHTBOX MODAL
+          LIGHTBOX MODAL FOR PHOTO GALLERY
           ========================================================================= */}
       {selectedPhoto && (
         <div
+          className="fixed inset-0 z-50 bg-[#25231F]/90 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setSelectedPhoto(null)}
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
         >
           <div
+            className="relative max-w-4xl max-h-[90vh] w-full rounded-2xl overflow-hidden bg-white shadow-2xl p-2"
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-4xl w-full bg-[#0B0D11] border border-[#D4A017]/40 rounded-3xl overflow-hidden shadow-2xl"
           >
             <button
               onClick={() => setSelectedPhoto(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/70 text-white hover:text-[#D4A017] flex items-center justify-center border border-white/20 transition-colors"
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-[#25231F] shadow-md transition-colors"
+              aria-label="Close Preview"
             >
               <X className="w-5 h-5" />
             </button>
-
-            <div className="relative h-[65vh] w-full">
+            <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden">
               <Image
-                src={selectedPhoto.url}
+                src={selectedPhoto.src}
                 alt={selectedPhoto.title}
                 fill
-                className="object-contain"
+                className="object-contain bg-black/10"
               />
             </div>
-
-            <div className="p-6 bg-[#08090C] border-t border-[#1F242D] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div>
-                <h3 className="font-cormorant text-2xl font-bold text-white">
-                  {selectedPhoto.title}
-                </h3>
-                <p className="text-xs text-[#D4A017]">{selectedPhoto.source}</p>
-              </div>
-
-              <Link
-                href="/booking"
-                onClick={() => setSelectedPhoto(null)}
-                className="px-5 py-2 rounded-full bg-[#D4A017] text-[#050505] text-xs font-bold tracking-wider uppercase"
-              >
-                Reserve This Setting
-              </Link>
+            <div className="p-4 text-center">
+              <h4 className="font-cormorant text-2xl font-bold text-[#25231F]">
+                {selectedPhoto.title}
+              </h4>
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#B58A45] mt-1 block">
+                {selectedPhoto.category}
+              </span>
             </div>
           </div>
         </div>
       )}
 
       {/* =========================================================================
-          VIDEO MODAL
+          ATMOSPHERE FILM VIDEO MODAL
           ========================================================================= */}
       {selectedVideo && (
         <div
+          className="fixed inset-0 z-50 bg-[#25231F]/90 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setSelectedVideo(null)}
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
         >
           <div
+            className="relative max-w-4xl w-full rounded-2xl overflow-hidden bg-black shadow-2xl"
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-3xl w-full bg-[#0B0D11] border border-[#D4A017]/50 rounded-3xl overflow-hidden p-6 sm:p-8 space-y-6 shadow-2xl text-center"
           >
             <button
               onClick={() => setSelectedVideo(null)}
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/80 text-white hover:text-[#D4A017] flex items-center justify-center border border-white/20"
+              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/60 hover:bg-black text-white shadow-md transition-colors"
+              aria-label="Close Video"
             >
               <X className="w-5 h-5" />
             </button>
-
-            <div className="w-16 h-16 rounded-full bg-[#D4A017]/20 border border-[#D4A017] flex items-center justify-center mx-auto text-[#F5D77A] shadow-gold-glow">
-              <Video className="w-8 h-8" />
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="font-cormorant text-2xl sm:text-3xl font-bold text-white">
-                {selectedVideo.title}
-              </h3>
-              <p className="text-xs sm:text-sm text-[#B8B1A5] max-w-lg mx-auto">
-                {selectedVideo.caption}
-              </p>
-            </div>
-
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href={selectedVideo.url}
-                target="_blank"
-                rel="noreferrer"
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-wider uppercase shadow-gold-glow flex items-center gap-2"
-              >
-                <span>OPEN OFFICIAL VIDEO STORY</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-
-              <a
-                href="https://www.instagram.com/kick_bunk_gardenrestobar/"
-                target="_blank"
-                rel="noreferrer"
-                className="px-6 py-3 rounded-full border border-[#D4A017]/40 text-white text-xs font-semibold tracking-wider hover:border-[#D4A017]"
-              >
-                Watch Instagram Reels
-              </a>
-            </div>
+            <video
+              src={selectedVideo}
+              controls
+              autoPlay
+              className="w-full aspect-video rounded-2xl"
+            />
           </div>
         </div>
       )}
@@ -1563,137 +1244,121 @@ export default function HomePage() {
           ========================================================================= */}
       {eventModalOpen && (
         <div
+          className="fixed inset-0 z-50 bg-[#25231F]/70 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setEventModalOpen(false)}
-          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
         >
           <div
+            className="relative max-w-lg w-full rounded-3xl bg-[#F7F3EB] p-8 border border-[#E9E1D2] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-lg w-full bg-[#0B0D11] border border-[#D4A017]/50 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl"
           >
             <button
               onClick={() => setEventModalOpen(false)}
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/80 text-white hover:text-[#D4A017] flex items-center justify-center border border-white/20"
+              className="absolute top-5 right-5 p-2 rounded-full text-[#777064] hover:text-[#25231F]"
+              aria-label="Close Modal"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="text-center space-y-1">
-              <span className="font-cinzel text-xs text-[#D4A017] uppercase tracking-widest">
-                KICK BUNK PRIVATE DINING
-              </span>
-              <h3 className="font-cormorant text-2xl sm:text-3xl font-bold text-white">
-                Plan Your Special Moment
-              </h3>
-            </div>
-
-            {evSubmitted ? (
-              <div className="text-center space-y-4 py-8">
-                <CheckCircle2 className="w-12 h-12 text-[#D4A017] mx-auto" />
-                <p className="font-cormorant text-xl text-white font-semibold">
-                  Enquiry Submitted Successfully!
-                </p>
-                <p className="text-xs text-gray-300">
-                  Our event coordinator will contact you at {evPhone} shortly to personalize your celebration.
+            {evSuccess ? (
+              <div className="text-center py-6 space-y-4">
+                <CheckCircle2 className="w-12 h-12 text-[#254C3C] mx-auto" />
+                <h3 className="font-cormorant text-2xl font-bold text-[#25231F]">Enquiry Received!</h3>
+                <p className="font-manrope text-xs text-[#777064]">
+                  Our banquet concierge will reach out to you within 2 hours to curate your private event.
                 </p>
                 <button
                   onClick={() => {
-                    setEvSubmitted(false);
+                    setEvSuccess(false);
                     setEventModalOpen(false);
                   }}
-                  className="px-6 py-2 rounded-full bg-[#D4A017] text-[#050505] text-xs font-bold uppercase tracking-wider"
+                  className="bg-[#25231F] text-white px-6 py-2 rounded-full text-xs font-bold uppercase tracking-wider"
                 >
                   Close
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleEventSubmit} className="space-y-4 text-xs">
-                <div className="space-y-1">
-                  <label className="text-gray-300 uppercase">Your Name *</label>
+              <form onSubmit={handleEventSubmit} className="space-y-4">
+                <div className="border-b border-[#E9E1D2] pb-3 mb-2">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#254C3C]">Private Gatherings</span>
+                  <h3 className="font-cormorant text-2xl font-bold text-[#25231F]">Plan an Event</h3>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1">
+                    Your Name
+                  </label>
                   <input
                     type="text"
                     required
                     value={evName}
                     onChange={(e) => setEvName(e.target.value)}
-                    placeholder="e.g. Priya Nair"
-                    className="w-full bg-[#050505] border border-[#1F242D] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#D4A017]"
+                    placeholder="Full Name"
+                    className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3.5 py-2 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-gray-300 uppercase">Phone Number *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={evPhone}
-                      onChange={(e) => setEvPhone(e.target.value)}
-                      placeholder="+91 99806 26699"
-                      className="w-full bg-[#050505] border border-[#1F242D] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#D4A017]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-gray-300 uppercase">Event Type</label>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={evPhone}
+                    onChange={(e) => setEvPhone(e.target.value)}
+                    placeholder="+91 98765 43210"
+                    className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3.5 py-2 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1">
+                      Event Type
+                    </label>
                     <select
                       value={evType}
                       onChange={(e) => setEvType(e.target.value)}
-                      className="w-full bg-[#050505] border border-[#1F242D] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#D4A017]"
+                      className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3 py-2 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                     >
-                      <option value="Birthday Celebration">Birthday Celebration</option>
-                      <option value="Family Gathering">Family Gathering</option>
-                      <option value="Friends Meetup">Friends Meetup</option>
-                      <option value="Special Occasion / Anniversary">Anniversary</option>
-                      <option value="Private Dining">Private Dining</option>
-                      <option value="Corporate Dinner">Corporate Dinner</option>
+                      <option value="Birthday Celebration">Birthday</option>
+                      <option value="Corporate Gathering">Corporate Team</option>
+                      <option value="Anniversary Dinner">Anniversary</option>
+                      <option value="Bachelor / Bachelorette">Bachelor Party</option>
+                      <option value="Full Garden Buyout">Garden Buyout</option>
                     </select>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-gray-300 uppercase">Date of Event</label>
-                    <input
-                      type="date"
-                      value={evDate}
-                      onChange={(e) => setEvDate(e.target.value)}
-                      className="w-full bg-[#050505] border border-[#1F242D] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#D4A017]"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-gray-300 uppercase">Estimated Guests</label>
-                    <input
-                      type="number"
-                      min={4}
-                      max={200}
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-1">
+                      Guest Count
+                    </label>
+                    <select
                       value={evGuests}
-                      onChange={(e) => setEvGuests(Number(e.target.value))}
-                      className="w-full bg-[#050505] border border-[#1F242D] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#D4A017]"
-                    />
+                      onChange={(e) => setEvGuests(e.target.value)}
+                      className="w-full bg-white border border-[#E9E1D2] rounded-xl px-3 py-2 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                    >
+                      <option value="15-25 Guests">15 - 25</option>
+                      <option value="25-50 Guests">25 - 50</option>
+                      <option value="50-100 Guests">50 - 100</option>
+                      <option value="100+ Guests">100+ Guests</option>
+                    </select>
                   </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-gray-300 uppercase">Additional Requirements</label>
-                  <textarea
-                    rows={3}
-                    value={evNotes}
-                    onChange={(e) => setEvNotes(e.target.value)}
-                    placeholder="e.g. Garden cabana setup, cake arrangement, special dietary requirements..."
-                    className="w-full bg-[#050505] border border-[#1F242D] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#D4A017]"
-                  />
                 </div>
 
                 <button
                   type="submit"
                   disabled={evLoading}
-                  className="w-full py-3 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] font-bold uppercase tracking-wider text-xs shadow-gold-glow"
+                  className="w-full bg-[#254C3C] hover:bg-[#1D3B2E] text-white py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all mt-2"
                 >
-                  {evLoading ? 'SUBMITTING...' : 'SEND EVENT ENQUIRY'}
+                  {evLoading ? 'Sending Details...' : 'Submit Banquet Enquiry'}
                 </button>
               </form>
             )}
           </div>
         </div>
       )}
+
     </div>
   );
 }

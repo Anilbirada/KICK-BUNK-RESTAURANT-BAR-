@@ -5,20 +5,25 @@
 @tailwind utilities;
 
 :root {
-  --background: #050505;
-  --foreground: #F4EFE5;
-  --gold-metallic: #D4A017;
-  --gold-champagne: #F5D77A;
-  --gold-dark: #8C641A;
+  --bg-ivory: #F7F3EB;
+  --bg-cream: #EFE7DA;
+  --bg-white: #FFFFFF;
+  --text-charcoal: #25231F;
+  --text-warmgrey: #777064;
+  --gold-antique: #B58A45;
+  --gold-champagne: #DCC18B;
+  --green-emerald: #254C3C;
+  --burgundy-deep: #482A32;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--text-charcoal);
+  background-color: var(--bg-ivory);
   font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   letter-spacing: -0.01em;
-  background-color: #050505;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Luxury Editorial Headings */
@@ -35,105 +40,93 @@ h1, h2, h3, .font-luxury {
   font-family: 'Playfair Display', Georgia, serif;
 }
 
-.font-manrope {
-  font-family: 'Manrope', 'Inter', sans-serif;
-}
-
 .font-cinzel {
   font-family: 'Cinzel', Georgia, serif;
   letter-spacing: 0.12em;
 }
 
-/* Metallic Gold Text */
-.text-gold-gradient {
-  background: linear-gradient(135deg, #F5D77A 0%, #FFFFFF 35%, #D4A017 70%, #8C641A 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.font-manrope {
+  font-family: 'Manrope', 'Inter', sans-serif;
 }
 
-.text-gold-metallic {
-  background: linear-gradient(135deg, #F5D77A 0%, #D4A017 50%, #8C641A 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Antique Gold Underline Hover Effect */
+.nav-link-gold {
+  position: relative;
+  transition: color 0.3s ease;
 }
 
-/* Luxury Glassmorphism Card */
-.luxury-glass {
-  background: linear-gradient(180deg, rgba(15, 17, 21, 0.75) 0%, rgba(8, 9, 12, 0.9) 100%);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(212, 160, 23, 0.18);
+.nav-link-gold::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--gold-antique);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.luxury-glass:hover {
-  border-color: rgba(212, 160, 23, 0.45);
+.nav-link-gold:hover::after,
+.nav-link-gold.active::after {
+  width: 100%;
 }
 
-.luxury-glass-ivory {
-  background: linear-gradient(180deg, rgba(244, 239, 229, 0.95) 0%, rgba(235, 227, 212, 0.95) 100%);
-  color: #0B0B0B;
-  border: 1px solid rgba(212, 160, 23, 0.3);
+/* Refined Editorial Gold Accents */
+.text-gold-antique {
+  color: var(--gold-antique);
 }
 
-/* Custom Luxury Scrollbar */
+.text-gold-champagne {
+  color: var(--gold-champagne);
+}
+
+.bg-gold-antique {
+  background-color: var(--gold-antique);
+}
+
+.border-gold-antique {
+  border-color: var(--gold-antique);
+}
+
+/* Luxury Plaque for Logo against Ivory */
+.logo-plaque {
+  background: #12100E;
+  border: 1px solid rgba(181, 138, 69, 0.45);
+  box-shadow: 0 4px 14px rgba(18, 16, 14, 0.18);
+  border-radius: 9999px;
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Custom Refined Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: var(--bg-ivory);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1F242D;
+  background: #D9D2C5;
   border-radius: 9999px;
-  border: 1px solid #050505;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D4A017;
+  background: var(--gold-antique);
 }
 
-/* Metallic Light Travel Across Logo */
-@keyframes lightTravel {
-  0% {
-    transform: translateX(-150%) skewX(-25deg);
+/* Subtle Shimmer & Revelations */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  100% {
-    transform: translateX(250%) skewX(-25deg);
-  }
-}
-
-.animate-light-travel {
-  animation: lightTravel 2.4s infinite ease-in-out;
-}
-
-/* Subtle Shimmer Animation */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(212,160,23,0.2) 50%, rgba(255,255,255,0) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 4s infinite;
-}
-
-/* Subtle Golden Particle Pulse */
-@keyframes goldPulse {
-  0%, 100% {
-    opacity: 0.3;
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.02);
-  }
-}
-
-.animate-gold-pulse {
-  animation: goldPulse 4s infinite ease-in-out;
+.animate-fade-in-up {
+  animation: fadeInSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

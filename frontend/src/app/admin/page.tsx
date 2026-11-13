@@ -470,66 +470,66 @@ export default function AdminDashboardPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4">
-        <div className="bg-[#0B0D11] border border-[#D4A017]/30 rounded-3xl p-8 sm:p-10 max-w-md w-full space-y-6 shadow-2xl">
+      <div className="min-h-screen bg-[#F7F3EB] flex items-center justify-center p-4">
+        <div className="bg-white border border-[#E9E1D2] rounded-3xl p-8 sm:p-10 max-w-md w-full space-y-6 shadow-luxury-card">
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 rounded-full overflow-hidden border border-[#D4A017]/50 p-1 bg-[#050505] mx-auto shadow-gold-glow">
+            <div className="logo-plaque w-16 h-16 mx-auto">
               <Image
                 src="/images/logo.png"
                 alt="KICK BUNK Official Logo"
                 width={64}
                 height={64}
-                className="object-contain"
+                className="object-contain rounded-full"
                 priority
               />
             </div>
-            <h1 className="text-2xl font-cormorant font-bold text-white tracking-wide">Owner & Executive Portal</h1>
-            <p className="text-xs text-[#B8B1A5]">Kick Bunk Centralized Restaurant & Bar Management</p>
+            <h1 className="text-2xl font-cormorant font-bold text-[#25231F] tracking-wide">Owner & Executive Portal</h1>
+            <p className="text-xs text-[#777064]">Kick Bunk Centralized Restaurant & Bar Management</p>
           </div>
 
           {loginError && (
-            <div className="p-3 rounded-xl bg-red-950/60 border border-red-500/50 text-red-300 text-xs text-center font-medium">
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs text-center font-medium">
               {loginError}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-300">Email Address</label>
+              <label className="text-xs font-semibold text-[#777064]">Email Address</label>
               <input
                 type="email"
                 required
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F7F3EB] border border-[#E9E1D2] text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-gray-300">Password</label>
+              <label className="text-xs font-semibold text-[#777064]">Password</label>
               <input
                 type="password"
                 required
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-brand-dark border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#F7F3EB] border border-[#E9E1D2] text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-brand-gold hover:bg-brand-goldHover text-brand-dark font-bold text-xs transition-all shadow-lg shadow-brand-gold/20 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] font-manrope font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
               <span>{loading ? 'Authenticating...' : 'Sign In as Business Owner'}</span>
             </button>
           </form>
 
-          <div className="p-3 bg-brand-dark rounded-xl border border-brand-cardBorder/60 text-[11px] text-gray-400 space-y-1">
-            <div className="font-semibold text-gray-300">Verified Credentials:</div>
-            <div>Owner: <code className="text-brand-gold">owner@kickbunk.com</code> / <code className="text-brand-gold">KickBunk@2026</code></div>
-            <div>Admin: <code className="text-brand-gold">admin@kickbunk.com</code> / <code className="text-brand-gold">KickBunk@2026</code></div>
+          <div className="p-3.5 bg-[#F7F3EB] rounded-2xl border border-[#E9E1D2] text-[11px] text-[#777064] space-y-1">
+            <div className="font-semibold text-[#25231F]">Verified Demo Credentials:</div>
+            <div>Owner: <code className="text-[#B58A45] font-bold">owner@kickbunk.com</code> / <code className="text-[#B58A45] font-bold">KickBunk@2026</code></div>
+            <div>Admin: <code className="text-[#B58A45] font-bold">admin@kickbunk.com</code> / <code className="text-[#B58A45] font-bold">KickBunk@2026</code></div>
           </div>
         </div>
       </div>

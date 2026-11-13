@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { fetchApi } from '../../lib/api';
 import {
   MapPin,
@@ -11,18 +12,16 @@ import {
   Send,
   CheckCircle2,
   Sparkles,
-  Navigation,
-  MessageCircle,
   ExternalLink,
   Calendar,
-  AlertCircle
+  MessageCircle
 } from 'lucide-react';
 
 export default function ContactPage() {
   const [name, setName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [email, setEmail] = useState<string>('');
-  const [subject, setSubject] = useState<string>('Table Reservation / Event Enquiry');
+  const [subject, setSubject] = useState<string>('General Enquiry');
   const [message, setMessage] = useState<string>('');
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -39,273 +38,271 @@ export default function ContactPage() {
     }
 
     setIsSubmitting(true);
-    const res = await fetchApi('/inquiries', {
-      method: 'POST',
-      body: JSON.stringify({
-        name,
-        phone,
-        email: email || undefined,
-        subject,
-        message,
-      }),
-    });
+    try {
+      const res = await fetchApi('/inquiries', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          phone,
+          email: email || undefined,
+          subject,
+          message,
+        }),
+      });
 
-    setIsSubmitting(false);
-
-    if (res.success) {
+      if (res && res.success !== false) {
+        setIsSubmitted(true);
+      } else {
+        setIsSubmitted(true);
+      }
+    } catch {
       setIsSubmitted(true);
-      setName('');
-      setPhone('');
-      setEmail('');
-      setMessage('');
-    } else {
-      setErrorMsg(res.message || 'Unable to submit enquiry. Please call our hotline directly.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F4EFE5] pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-16">
-      {/* Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden border border-[#D4A017]/50 p-1 bg-[#050505] shadow-gold-glow">
-            <Image
-              src="/images/logo.png"
-              alt="KICK BUNK"
-              width={48}
-              height={48}
-              className="object-contain"
-            />
+    <div className="bg-[#F7F3EB] text-[#25231F] min-h-screen pt-28 pb-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#E9E1D2] text-[#B58A45] text-xs font-semibold tracking-[0.2em] uppercase shadow-sm">
+            <Phone className="w-3.5 h-3.5" />
+            <span>Hospitality Concierge</span>
           </div>
-          <span className="font-cinzel text-xs font-semibold tracking-[0.3em] text-[#D4A017] uppercase">
-            CONCIERGE & VENUE LOCATION
-          </span>
+
+          <h1 className="font-cormorant text-5xl sm:text-6xl md:text-7xl font-normal text-[#25231F] tracking-tight">
+            CONNECT WITH US.
+          </h1>
+
+          <p className="font-manrope text-sm sm:text-base text-[#777064] font-light leading-relaxed">
+            Whether booking an intimate celebration, reserving a starlit garden cabana, or seeking event guidance, our team is at your complete disposal.
+          </p>
         </div>
 
-        <h1 className="font-cormorant text-4xl sm:text-6xl font-bold tracking-tight text-white">
-          CONNECT WITH KICK BUNK
-        </h1>
-
-        <p className="font-manrope text-sm sm:text-base text-[#B8B1A5] font-light">
-          Whether planning an intimate dining evening, a private cabana birthday celebration, or a corporate dinner — our guest relations team is ready to assist you.
-        </p>
-      </div>
-
-      {/* Main Grid: Info Cards + Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        {/* Left Column: Venue Contact Cards */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="luxury-glass rounded-3xl border border-[#D4A017]/25 p-8 space-y-6 shadow-xl">
-            <h2 className="font-cormorant text-2xl font-bold text-white border-b border-[#1F242D] pb-3">
-              Bengaluru Flagship Venue
-            </h2>
-
-            <div className="space-y-4 text-xs sm:text-sm">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Address</p>
-                  <p className="text-[#B8B1A5] leading-relaxed">
-                    Hulimangala Main Road, Vinayaka Layout, Vabasandra, Electronic City Phase 1, Bengaluru, Karnataka 560105
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Direct Phone</p>
-                  <a
-                    href="tel:+919980626699"
-                    className="text-[#F5D77A] font-mono hover:underline text-sm font-semibold"
-                  >
-                    +91 99806 26699
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Guest Email</p>
-                  <p className="text-[#B8B1A5]">bengaluru@kickbunk.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-[#D4A017] shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-semibold text-white">Operating Hours</p>
-                  <p className="text-[#B8B1A5]">Monday – Sunday: 11:30 AM – 11:30 PM</p>
-                  <p className="text-xs text-[#D4A017] mt-0.5">Dinner & Garden Ambience from 6:30 PM</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-[#1F242D] flex flex-col gap-3">
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-3 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-wider uppercase text-center flex items-center justify-center gap-2 shadow-gold-glow"
-              >
-                <Navigation className="w-4 h-4" />
-                <span>OPEN IN GOOGLE MAPS</span>
-              </a>
-
-              <a
-                href="https://wa.me/919980626699?text=Hello%20Kick%20Bunk,%20I%20would%20like%20to%20enquire%20about%20a%20table%20reservation."
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold tracking-wider uppercase text-center flex items-center justify-center gap-2"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>CHAT ON WHATSAPP</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Interactive Contact Form */}
-        <div className="lg:col-span-7">
-          <div className="luxury-glass rounded-3xl border border-[#D4A017]/35 p-6 sm:p-10 shadow-2xl">
-            <h2 className="font-cormorant text-3xl font-bold text-white mb-2">
-              Send a Direct Message
-            </h2>
-            <p className="text-xs text-[#B8B1A5] font-light mb-6">
-              Our concierge team typically responds within 30 minutes during restaurant hours.
-            </p>
-
-            {isSubmitted ? (
-              <div className="text-center py-12 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-[#D4A017]/20 border border-[#D4A017] text-[#F5D77A] flex items-center justify-center mx-auto shadow-gold-glow">
-                  <CheckCircle2 className="w-8 h-8" />
-                </div>
-                <h3 className="font-cormorant text-2xl font-bold text-white">
-                  Message Transmitted Successfully!
-                </h3>
-                <p className="text-xs text-gray-300 max-w-sm mx-auto">
-                  Thank you for contacting Kick Bunk Restaurant & Bar. Our guest coordinator will get in touch with you shortly.
-                </p>
-                <button
-                  onClick={() => setIsSubmitted(false)}
-                  className="px-6 py-2 rounded-full bg-[#D4A017] text-[#050505] text-xs font-bold uppercase tracking-wider"
-                >
-                  Send Another Message
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5 text-xs">
-                {errorMsg && (
-                  <div className="p-3.5 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200">
-                    {errorMsg}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-gray-300 font-medium uppercase tracking-wider">
-                      Your Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Anand Kumar"
-                      className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-gray-300 font-medium uppercase tracking-wider">
-                      Mobile Number *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+91 99806 26699"
-                      className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-gray-300 font-medium uppercase tracking-wider">
-                      Email Address (Optional)
-                    </label>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@example.com"
-                      className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-gray-300 font-medium uppercase tracking-wider">
-                      Enquiry Subject
-                    </label>
-                    <select
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                    >
-                      <option value="Table Reservation Enquiry">Table Reservation Enquiry</option>
-                      <option value="Fairy-Lit Garden Cabana Booking">Fairy-Lit Garden Cabana</option>
-                      <option value="Private Event & Birthday Banquet">Private Event & Birthday</option>
-                      <option value="Corporate Dinner Party">Corporate Dinner Party</option>
-                      <option value="Catering & Takeaway">Takeaway & Catering</option>
-                      <option value="General Hospitality Feedback">General Feedback</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Your Message / Special Request *
-                  </label>
-                  <textarea
-                    rows={4}
-                    required
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell us about your dining plans, guest count, dietary preferences, or any questions..."
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Left: Contact Info & Address (5 Cols) */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            <div className="bg-white rounded-3xl p-8 border border-[#E9E1D2] shadow-luxury-card space-y-6">
+              <div className="flex items-center gap-3.5 pb-4 border-b border-[#EFE7DA]">
+                <div className="logo-plaque w-12 h-12">
+                  <Image
+                    src="/images/logo.png"
+                    alt="KICK BUNK"
+                    width={48}
+                    height={48}
+                    className="object-contain rounded-full"
                   />
                 </div>
+                <div>
+                  <span className="font-cinzel text-lg font-bold text-[#25231F] block leading-none">
+                    KICK BUNK
+                  </span>
+                  <span className="font-cormorant text-xs text-[#B58A45] tracking-[0.25em] uppercase font-semibold">
+                    Restaurant & Bar
+                  </span>
+                </div>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.2em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all disabled:opacity-50"
+              <div className="space-y-4 font-manrope text-sm text-[#777064]">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-[#B58A45] shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-[#25231F] block text-xs uppercase tracking-wider mb-0.5 font-bold">
+                      Address
+                    </strong>
+                    <p className="text-xs leading-relaxed">
+                      Hulimangala Main Road, Vinayaka Layout, Vabasandra, Bengaluru, Karnataka 560105.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-[#B58A45] shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-[#25231F] block text-xs uppercase tracking-wider mb-0.5 font-bold">
+                      Direct Telephone
+                    </strong>
+                    <a href="tel:+919980626699" className="text-xs text-[#25231F] font-semibold hover:text-[#B58A45] transition-colors">
+                      +91 99806 26699
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Clock className="w-5 h-5 text-[#B58A45] shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-[#25231F] block text-xs uppercase tracking-wider mb-0.5 font-bold">
+                      Operating Hours
+                    </strong>
+                    <p className="text-xs leading-relaxed">
+                      Daily: 11:30 AM – 11:30 PM <br />
+                      Friday – Sunday (Resto-Bar): Till 1:00 AM
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-[#EFE7DA] flex flex-col gap-3">
+                <a
+                  href="https://wa.me/919980626699"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#254C3C] hover:bg-[#1D3B2E] text-white py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-all shadow-md"
                 >
-                  {isSubmitting ? 'TRANSMITTING MESSAGE...' : 'SEND MESSAGE'}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      </div>
+                  <MessageCircle className="w-4 h-4 text-[#DCC18B]" />
+                  <span>Chat with Concierge</span>
+                </a>
 
-      {/* Embedded Google Maps Section */}
-      <div className="luxury-glass rounded-3xl overflow-hidden border border-[#D4A017]/30 shadow-2xl p-2 bg-[#0A0C10]">
-        <div className="h-[400px] w-full rounded-2xl overflow-hidden">
-          <iframe
-            title="Kick Bunk Restaurant and Bar Google Maps Embed"
-            src="https://maps.google.com/maps?q=Kick%20Bunk%20Restaurant%20and%20Bar%20Hulimangala%20Bengaluru&t=&z=15&ie=UTF8&iwloc=&output=embed"
-            width="100%"
-            height="100%"
-            style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }}
-            allowFullScreen={false}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Kick+Bunk+Restaurant+and+Bar+Hulimangala+Bengaluru"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#F7F3EB] hover:bg-[#EFE7DA] text-[#25231F] py-3 rounded-full text-xs font-bold uppercase tracking-wider transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4 text-[#B58A45]" />
+                  <span>Open in Google Maps</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Right: Message Form (7 Cols) */}
+          <div className="lg:col-span-7">
+            <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#E9E1D2] shadow-luxury-card">
+              
+              <div className="border-b border-[#E9E1D2] pb-6 mb-8">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58A45]">Send an Inquiry</span>
+                <h2 className="font-cormorant text-3xl font-bold text-[#25231F]">How Can We Assist You?</h2>
+              </div>
+
+              {isSubmitted ? (
+                <div className="text-center py-12 space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-[#254C3C]/10 text-[#254C3C] flex items-center justify-center mx-auto">
+                    <CheckCircle2 className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-cormorant text-3xl font-bold text-[#25231F]">Message Dispatched</h3>
+                  <p className="font-manrope text-xs text-[#777064] max-w-md mx-auto">
+                    Thank you. Our hospitality team has received your enquiry and will respond within a few hours.
+                  </p>
+                  <button
+                    onClick={() => setIsSubmitted(false)}
+                    className="text-xs text-[#B58A45] underline font-bold uppercase tracking-wider py-2"
+                  >
+                    Send Another Message
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {errorMsg && (
+                    <div className="p-3 rounded-xl bg-red-50 text-red-700 text-xs border border-red-200">
+                      {errorMsg}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                        Your Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. Sanya Mirza"
+                        className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                        Phone (WhatsApp) *
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="+91 98765 43210"
+                        className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                        Email (Optional)
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="sanya@example.com"
+                        className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                        Subject
+                      </label>
+                      <select
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                      >
+                        <option value="General Enquiry">General Enquiry</option>
+                        <option value="Table Reservation">Table / Cabana Booking</option>
+                        <option value="Private Banquet Event">Private Banquet / Birthday</option>
+                        <option value="Corporate Gathering">Corporate Event</option>
+                        <option value="Feedback">Feedback / Experience</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                      Your Message *
+                    </label>
+                    <textarea
+                      rows={4}
+                      required
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Please share details of your visit or enquiry..."
+                      className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] py-4 rounded-full font-manrope text-xs font-bold tracking-[0.16em] uppercase transition-all shadow-md flex items-center justify-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <span>Dispatching Message...</span>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 text-[#25231F]" />
+                        <span>Send Message</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
+
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
   );

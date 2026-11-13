@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { fetchApi } from '../../lib/api';
 import { useCart } from '../../lib/cartContext';
-import { Search, Flame, Plus, Check, ShoppingBag, X, Sparkles, Clock, Leaf } from 'lucide-react';
+import { Search, Flame, Plus, Check, ShoppingBag, X, Sparkles, Clock, Leaf, Utensils } from 'lucide-react';
 
 export default function MenuPage() {
   const { addItem, items: cartItems } = useCart();
@@ -24,14 +25,19 @@ export default function MenuPage() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const [catsRes, itemsRes] = await Promise.all([
-        fetchApi('/menu/categories'),
-        fetchApi('/menu/items'),
-      ]);
+      try {
+        const [catsRes, itemsRes] = await Promise.all([
+          fetchApi('/menu/categories'),
+          fetchApi('/menu/items'),
+        ]);
 
-      if (catsRes.success && catsRes.data) setCategories(catsRes.data);
-      if (itemsRes.success && itemsRes.data) setMenuItems(itemsRes.data);
-      setLoading(false);
+        if (catsRes && catsRes.success && catsRes.data) setCategories(catsRes.data);
+        if (itemsRes && itemsRes.success && itemsRes.data) setMenuItems(itemsRes.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
     }
     loadData();
   }, []);
@@ -59,345 +65,269 @@ export default function MenuPage() {
     addItem({
       menuItemId: activeItem.id,
       name: activeItem.name,
+      variantId: selectedVariant?.id,
+      variantName: selectedVariant ? selectedVariant.name : undefined,
+      addonIds: selectedAddons,
+      addonNames: addonNames.length > 0 ? addonNames : undefined,
+      imageUrl: activeItem.imageUrl,
+      isVeg: Boolean(activeItem.isVeg),
       price: unitPrice,
       quantity: 1,
-      variantId: selectedVariant?.id,
-      variantName: selectedVariant?.name,
-      addonIds: selectedAddons,
-      addonNames,
-      imageUrl: activeItem.images?.[0]?.imageUrl,
-      isVeg: activeItem.isVeg,
       specialNotes: specialNotes || undefined,
     });
 
-    setShowToast(`Added "${activeItem.name}" to your order`);
+    setShowToast(`Added "${activeItem.name}" to your order.`);
     setTimeout(() => setShowToast(null), 3000);
     setActiveItem(null);
   };
 
   const filteredItems = menuItems.filter((item) => {
-    const matchesCategory = selectedCategory === 'all' || item.categoryId === selectedCategory;
-    const matchesVeg = !vegOnly || item.isVeg;
+    const matchesCategory =
+      selectedCategory === 'all' || item.categoryId === selectedCategory;
     const matchesSearch =
-      !searchQuery ||
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    return matchesCategory && matchesVeg && matchesSearch;
+    const matchesVeg = vegOnly ? item.isVeg : true;
+    return matchesCategory && matchesSearch && matchesVeg;
   });
 
   return (
-    <div className="min-h-screen bg-[#050505] pt-28 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12 text-[#F4EFE5]">
+    <div className="bg-[#F7F3EB] text-[#25231F] min-h-screen pt-28 pb-24">
+      
       {/* Toast Notification */}
       {showToast && (
-        <div className="fixed bottom-8 right-8 z-50 bg-gradient-to-r from-brand-gold to-amber-600 text-brand-dark px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs font-bold uppercase tracking-wider animate-bounce">
-          <Check className="w-4 h-4 text-brand-dark" />
-          <span>{showToast}</span>
+        <div className="fixed bottom-6 right-6 z-50 bg-[#254C3C] text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#DCC18B]/30 animate-fade-in-up">
+          <Check className="w-4 h-4 text-[#DCC18B]" />
+          <span className="font-manrope text-xs font-semibold">{showToast}</span>
         </div>
       )}
 
-      {/* Luxury Editorial Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full luxury-glass border border-brand-gold/30 text-brand-gold text-[10px] font-cinzel font-semibold tracking-[0.25em] uppercase shadow-gold-glow">
-          <Flame className="w-3.5 h-3.5 text-brand-amber" />
-          <span>Charcoal Tandoor • Biryani Handis • Resto-Bar Cocktails</span>
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 text-center space-y-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#E9E1D2] text-[#B58A45] text-xs font-semibold tracking-[0.2em] uppercase shadow-sm">
+          <Utensils className="w-3.5 h-3.5" />
+          <span>Curated Culinary Collection</span>
         </div>
-        <h1 className="text-4xl sm:text-6xl font-serif font-bold text-brand-ivory leading-tight">
-          The Culinary Catalogue
+
+        <h1 className="font-cormorant text-5xl sm:text-6xl md:text-7xl font-normal text-[#25231F] tracking-tight">
+          THE ART OF TASTE.
         </h1>
-        <p className="text-sm sm:text-base text-gray-300 font-light max-w-2xl mx-auto leading-relaxed">
-          Experience authentic clay tandoori grills, fragrant royal dum biryanis, and crafted resto-bar infusions, prepared to perfection at our Bengaluru Flagship & Tirupati branches.
+
+        <p className="max-w-2xl mx-auto font-manrope text-sm sm:text-base text-[#777064] font-light leading-relaxed">
+          From fiery clay-tandoor kebabs and spiced pan-fried delicacies to rich gravies and continental pairings, every plate is crafted with seasonal ingredients and traditional flair.
         </p>
 
-        {/* Snapshot Link & Table Concierge */}
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
-          <a
-            href="/images/kickbunk/restaurant_guru_menu_snapshot.jpg"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl luxury-glass border border-brand-gold/40 text-brand-gold hover:text-white text-xs font-cinzel font-semibold uppercase tracking-wider transition-all shadow-md hover:shadow-gold-glow"
-          >
-            <span>Verified Menu Snapshot (Original)</span>
-          </a>
-
-          <a
-            href="tel:+919980626699"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#12151B] hover:bg-[#1A1E26] border border-brand-cardBorder text-gray-300 hover:text-brand-gold text-xs font-medium transition-colors"
-          >
-            <span>Direct Concierge: +91 99806 26699</span>
-          </a>
-        </div>
-      </div>
-
-      {/* Controls: Search, Veg Toggle & Category Filters */}
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-          {/* Search Box */}
-          <div className="relative w-full sm:w-96">
-            <Search className="w-4 h-4 absolute left-4 top-3.5 text-gray-400" />
+        {/* Search & Veg Filter */}
+        <div className="max-w-xl mx-auto pt-6 flex flex-col sm:flex-row items-center gap-3">
+          <div className="relative w-full">
+            <Search className="w-4 h-4 text-[#777064] absolute left-4 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search delicacies (e.g. Kalmi Kebab, Biryani)..."
+              placeholder="Search dishes (e.g. Kalmi Kebab, Paneer, Biryani)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 rounded-2xl luxury-glass border border-brand-cardBorder text-brand-ivory placeholder-gray-500 text-xs sm:text-sm focus:outline-none focus:border-brand-gold transition-all"
+              className="w-full bg-white border border-[#E9E1D2] rounded-full pl-11 pr-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45] shadow-sm"
             />
           </div>
 
-          {/* Pure Vegetarian Switch */}
           <button
             onClick={() => setVegOnly(!vegOnly)}
-            className={`flex items-center gap-2 px-5 py-3 rounded-2xl border text-xs font-cinzel uppercase tracking-wider font-semibold transition-all ${
+            className={`whitespace-nowrap px-5 py-3 rounded-full text-xs font-bold tracking-wider uppercase transition-all duration-300 flex items-center gap-2 border ${
               vegOnly
-                ? 'bg-brand-green/20 border-brand-green text-brand-green shadow-md shadow-brand-green/20'
-                : 'luxury-glass border-brand-cardBorder text-gray-300 hover:border-brand-gold/40'
+                ? 'bg-[#254C3C] text-white border-[#254C3C] shadow-md'
+                : 'bg-white text-[#777064] border-[#E9E1D2] hover:bg-[#EFE7DA]'
             }`}
           >
-            <Leaf className={`w-3.5 h-3.5 ${vegOnly ? 'text-brand-green' : 'text-gray-400'}`} />
-            <span>Pure Vegetarian Only</span>
+            <Leaf className={`w-3.5 h-3.5 ${vegOnly ? 'text-[#DCC18B]' : 'text-green-600'}`} />
+            <span>Veg Only</span>
           </button>
         </div>
 
-        {/* Category Pills Bar */}
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-3 scrollbar-none">
+        {/* Category Filter Pills */}
+        <div className="pt-6 flex flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setSelectedCategory('all')}
-            className={`px-5 py-2.5 rounded-xl text-xs font-cinzel uppercase tracking-wider font-semibold whitespace-nowrap transition-all ${
+            className={`px-5 py-2.5 rounded-full font-manrope text-xs font-bold tracking-[0.14em] uppercase transition-all ${
               selectedCategory === 'all'
-                ? 'bg-gradient-to-r from-brand-gold to-amber-600 text-brand-dark shadow-lg shadow-brand-gold/25 font-bold'
-                : 'luxury-glass text-gray-300 border border-brand-cardBorder hover:border-brand-gold/40'
+                ? 'bg-[#25231F] text-white shadow-md'
+                : 'bg-white text-[#777064] hover:bg-[#EFE7DA] border border-[#E9E1D2]'
             }`}
           >
-            All Categories ({menuItems.length})
+            All Categories
           </button>
-          {categories.map((c) => (
+          {categories.map((cat) => (
             <button
-              key={c.id}
-              onClick={() => setSelectedCategory(c.id)}
-              className={`px-5 py-2.5 rounded-xl text-xs font-cinzel uppercase tracking-wider font-semibold whitespace-nowrap transition-all ${
-                selectedCategory === c.id
-                  ? 'bg-gradient-to-r from-brand-gold to-amber-600 text-brand-dark shadow-lg shadow-brand-gold/25 font-bold'
-                  : 'luxury-glass text-gray-300 border border-brand-cardBorder hover:border-brand-gold/40'
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-5 py-2.5 rounded-full font-manrope text-xs font-bold tracking-[0.14em] uppercase transition-all ${
+                selectedCategory === cat.id
+                  ? 'bg-[#25231F] text-white shadow-md'
+                  : 'bg-white text-[#777064] hover:bg-[#EFE7DA] border border-[#E9E1D2]'
               }`}
             >
-              {c.name} ({c._count?.items || 0})
+              {cat.name}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Dishes Catalogue Grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-pulse">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-72 luxury-glass rounded-3xl border border-brand-cardBorder" />
-          ))}
-        </div>
-      ) : filteredItems.length === 0 ? (
-        <div className="text-center py-24 space-y-4 luxury-glass rounded-3xl p-12 border border-brand-gold/15">
-          <div className="text-gray-400 text-lg font-serif">No delicacies found matching your selection.</div>
-          <button
-            onClick={() => {
-              setSelectedCategory('all');
-              setSearchQuery('');
-              setVegOnly(false);
-            }}
-            className="text-xs uppercase tracking-wider font-bold text-brand-gold hover:underline"
-          >
-            Reset All Filters
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className="luxury-glass rounded-3xl overflow-hidden border border-brand-gold/20 hover:border-brand-gold/60 transition-all duration-500 flex flex-col justify-between group shadow-luxury-card hover:shadow-gold-glow"
-            >
-              <div className="relative h-56 overflow-hidden bg-black">
-                <img
-                  src={item.images?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=600&q=80'}
-                  alt={item.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C0E] via-transparent to-transparent opacity-80" />
-
-                <div className="absolute top-3 left-3 flex gap-2">
-                  <span
-                    className={`w-5 h-5 rounded-md border flex items-center justify-center text-[10px] bg-black/80 backdrop-blur-md ${
-                      item.isVeg ? 'border-brand-green text-brand-green' : 'border-red-500 text-red-500'
-                    }`}
-                  >
-                    ●
-                  </span>
-                  {item.isBestSeller && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-brand-gold text-brand-dark text-[9px] font-extrabold uppercase tracking-widest font-cinzel shadow">
-                      Signature
+      {/* Menu Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {loading ? (
+          <div className="text-center py-24 space-y-3">
+            <div className="w-8 h-8 border-2 border-[#B58A45] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="font-manrope text-xs text-[#777064] tracking-wider uppercase">Loading Chef Creations...</p>
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div className="text-center py-20 bg-white rounded-3xl p-8 border border-[#E9E1D2] max-w-md mx-auto">
+            <p className="font-cormorant text-2xl text-[#25231F]">No Dishes Found</p>
+            <p className="font-manrope text-xs text-[#777064] mt-2">Try clearing your search query or selecting a different category.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredItems.map((item) => (
+              <div
+                key={item.id}
+                className="group bg-white rounded-2xl overflow-hidden border border-[#E9E1D2] hover:border-[#B58A45] transition-all duration-300 hover:shadow-luxury-card flex flex-col justify-between"
+              >
+                <div className="relative aspect-[16/10] overflow-hidden bg-[#EFE7DA]">
+                  <Image
+                    src={item.imageUrl || '/images/kickbunk/magicpin_04_food_spread_dining.webp'}
+                    alt={item.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <span
+                      className={`w-4 h-4 rounded-full flex items-center justify-center border text-[9px] font-bold ${
+                        item.isVeg
+                          ? 'border-green-600 text-green-700 bg-white'
+                          : 'border-red-600 text-red-700 bg-white'
+                      }`}
+                    >
+                      {item.isVeg ? '●' : '▲'}
                     </span>
-                  )}
+                    {item.isSignature && (
+                      <span className="bg-[#B58A45] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full shadow-sm">
+                        Signature
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg text-[10px] font-medium text-gray-300 border border-white/10 flex items-center gap-1">
-                  <Clock className="w-3 h-3 text-brand-gold" />
-                  <span>{item.prepTimeMin} mins</span>
-                </div>
-              </div>
-
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-1.5">
-                  <h3 className="font-serif font-bold text-lg text-brand-ivory group-hover:text-brand-gold transition-colors">
-                    {item.name}
-                  </h3>
-                  <p className="text-xs text-gray-400 font-light line-clamp-2 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-brand-gold/15">
+                <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-[9px] font-cinzel tracking-wider text-gray-400 uppercase">Starting At</span>
-                    <div className="text-brand-gold font-serif font-bold text-xl">
-                      ₹{item.basePrice}
+                    <div className="flex items-start justify-between gap-3 mb-1">
+                      <h3 className="font-cormorant text-2xl font-normal text-[#25231F] leading-snug">
+                        {item.name}
+                      </h3>
+                      <span className="font-cormorant text-xl font-bold text-[#B58A45] shrink-0">
+                        ₹{item.basePrice}
+                      </span>
                     </div>
+
+                    <p className="font-manrope text-xs text-[#777064] font-light leading-relaxed line-clamp-2">
+                      {item.description || 'Authentic garden culinary preparation slow-cooked with proprietary spice blends.'}
+                    </p>
                   </div>
 
-                  <button
-                    onClick={() => openCustomizer(item)}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark font-bold text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-1.5 group-hover:shadow-gold-glow"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Select & Add</span>
-                  </button>
+                  <div className="pt-4 border-t border-[#EFE7DA] flex items-center justify-between">
+                    <span className="text-[11px] text-[#777064]">
+                      {item.variants && item.variants.length > 0 ? `${item.variants.length} Portions Available` : 'Fresh Daily'}
+                    </span>
+                    <button
+                      onClick={() => openCustomizer(item)}
+                      className="inline-flex items-center gap-1.5 bg-[#F7F3EB] hover:bg-[#B58A45] text-[#25231F] hover:text-white px-4 py-2 rounded-full font-manrope text-xs font-bold uppercase tracking-wider transition-colors duration-300"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add to Order</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
-      {/* LUXURY PORTION & CUSTOMIZATION MODAL */}
+      {/* Item Customizer Modal */}
       {activeItem && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6">
-          <div className="luxury-glass border border-brand-gold/40 rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl">
-            <div className="flex items-start justify-between pb-4 border-b border-brand-gold/20">
-              <div>
-                <span className="text-[10px] font-cinzel uppercase tracking-[0.2em] text-brand-gold">
-                  Delicacy Customizer
-                </span>
-                <h3 className="font-serif text-2xl font-bold text-brand-ivory">{activeItem.name}</h3>
-                <p className="text-xs text-gray-300 font-light mt-1">{activeItem.description}</p>
-              </div>
-              <button
-                onClick={() => setActiveItem(null)}
-                className="p-2 rounded-full bg-brand-gold/10 text-brand-gold hover:text-white hover:bg-brand-gold/30 transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
+        <div
+          className="fixed inset-0 z-50 bg-[#25231F]/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setActiveItem(null)}
+        >
+          <div
+            className="relative max-w-lg w-full bg-[#F7F3EB] rounded-3xl p-8 border border-[#E9E1D2] shadow-2xl space-y-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setActiveItem(null)}
+              className="absolute top-5 right-5 p-2 rounded-full text-[#777064] hover:text-[#25231F]"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="border-b border-[#E9E1D2] pb-4">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#B58A45]">Order Customization</span>
+              <h3 className="font-cormorant text-2xl font-bold text-[#25231F]">{activeItem.name}</h3>
+              <p className="font-manrope text-xs text-[#777064] mt-1">{activeItem.description}</p>
             </div>
 
-            {/* Variants / Portion Size */}
-            {activeItem.variants?.length > 1 && (
-              <div className="space-y-3">
-                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                  Choose Portion / Size
+            {/* Variants */}
+            {activeItem.variants && activeItem.variants.length > 0 && (
+              <div className="space-y-2">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064]">
+                  Select Portion
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   {activeItem.variants.map((v: any) => (
                     <button
-                      key={v.id}
+                      key={v.name}
                       onClick={() => setSelectedVariant(v)}
-                      className={`p-3.5 rounded-2xl border text-left text-xs transition-all ${
-                        selectedVariant?.id === v.id
-                          ? 'border-brand-gold bg-brand-gold/15 text-brand-gold font-bold shadow-gold-glow'
-                          : 'border-brand-cardBorder bg-[#10131A] text-gray-300 hover:border-brand-gold/30'
+                      className={`p-3 rounded-xl border text-left text-xs font-semibold transition-all ${
+                        selectedVariant?.name === v.name
+                          ? 'border-[#B58A45] bg-white ring-2 ring-[#B58A45]/20 text-[#25231F]'
+                          : 'border-[#E9E1D2] bg-white/60 text-[#777064]'
                       }`}
                     >
-                      <div className="font-serif text-sm">{v.name}</div>
-                      <div className="font-bold mt-1 text-brand-gold">₹{v.price}</div>
+                      <div className="text-[#25231F]">{v.name}</div>
+                      <div className="text-[#B58A45] font-bold mt-1">₹{v.price}</div>
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Add-ons */}
-            {activeItem.addons?.length > 0 && (
-              <div className="space-y-3">
-                <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                  Chef's Accompaniments (Optional)
-                </label>
-                <div className="space-y-2">
-                  {activeItem.addons.map((a: any) => {
-                    const isChecked = selectedAddons.includes(a.id);
-                    return (
-                      <div
-                        key={a.id}
-                        onClick={() => {
-                          setSelectedAddons((prev) =>
-                            isChecked ? prev.filter((id) => id !== a.id) : [...prev, a.id]
-                          );
-                        }}
-                        className={`flex items-center justify-between p-3.5 rounded-2xl border cursor-pointer text-xs transition-all ${
-                          isChecked
-                            ? 'border-brand-gold bg-brand-gold/15 text-brand-gold'
-                            : 'border-brand-cardBorder bg-[#10131A] text-gray-300 hover:border-brand-gold/30'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <div
-                            className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] ${
-                              isChecked ? 'bg-brand-gold text-brand-dark border-brand-gold font-bold' : 'border-gray-500'
-                            }`}
-                          >
-                            {isChecked && '✓'}
-                          </div>
-                          <span>{a.name}</span>
-                        </div>
-                        <span className="font-bold text-brand-gold">+₹{a.price}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             {/* Special Instructions */}
             <div className="space-y-2">
-              <label className="text-xs font-cinzel font-bold uppercase tracking-[0.18em] text-brand-gold">
-                Chef's Notes (Optional)
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064]">
+                Chef Instructions / Spice Preference (Optional)
               </label>
-              <input
-                type="text"
-                placeholder="e.g. Mild spice, extra mint chutney, serve hot..."
+              <textarea
+                rows={2}
                 value={specialNotes}
                 onChange={(e) => setSpecialNotes(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl bg-[#10131A] border border-brand-cardBorder text-xs text-brand-ivory focus:outline-none focus:border-brand-gold transition-colors"
+                placeholder="e.g. Medium spice, less oil, extra mint chutney..."
+                className="w-full bg-white border border-[#E9E1D2] rounded-xl px-4 py-2.5 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
               />
             </div>
 
-            {/* Modal Footer */}
-            <div className="pt-4 border-t border-brand-gold/20 flex items-center justify-between">
-              <div>
-                <span className="text-[10px] font-cinzel uppercase tracking-wider text-gray-400">Total Price</span>
-                <div className="font-serif text-2xl font-bold text-brand-gold">
-                  ₹
-                  {(selectedVariant ? selectedVariant.price : activeItem.basePrice) +
-                    (activeItem.addons || [])
-                      .filter((a: any) => selectedAddons.includes(a.id))
-                      .reduce((sum: number, a: any) => sum + a.price, 0)}
-                </div>
-              </div>
-
+            <div className="pt-2">
               <button
                 onClick={handleAddToCart}
-                className="px-7 py-3.5 rounded-xl bg-gradient-to-r from-brand-gold to-amber-600 hover:from-brand-goldLight hover:to-brand-gold text-brand-dark font-bold text-xs uppercase tracking-[0.18em] transition-all shadow-lg shadow-brand-gold/20 flex items-center gap-2"
+                className="w-full bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] py-3.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all shadow-md flex items-center justify-center gap-2"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Add to My Order</span>
+                <span>
+                  Confirm & Add (₹{selectedVariant ? selectedVariant.price : activeItem.basePrice})
+                </span>
               </button>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }

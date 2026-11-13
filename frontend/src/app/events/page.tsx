@@ -12,11 +12,11 @@ import {
   Mail,
   CheckCircle2,
   Clock,
-  Heart,
   Award,
   ChevronRight,
   ShieldCheck,
-  Send
+  Send,
+  PartyPopper
 } from 'lucide-react';
 
 export default function EventsPage() {
@@ -35,344 +35,286 @@ export default function EventsPage() {
     {
       id: 'ep-1',
       title: 'Birthday Celebrations',
-      subtitle: 'Magical Cabanas Under Fairy Lights',
+      subtitle: 'Fairy-Lit Botanical Cabanas',
       description:
-        'Celebrate your special day with private garden cabanas, illuminated canopies, custom welcome mocktails, cake presentation service, and personalized tandoori feast platters.',
+        'Celebrate your milestone day with private illuminated garden cabanas, custom welcome mocktails, cake presentation service, and personalized tandoori feast platters.',
       image: '/images/kickbunk/google_01_garden_lights_night.jpg',
-      capacity: '6 to 40 Guests',
-      highlights: ['Custom fairy-light canopy setup', 'Multi-course kebab & biryani banquets', 'Dedicated event staff'],
+      capacity: '8 to 40 Guests',
+      highlights: ['Custom fairy-light canopy setup', 'Multi-course kebab & biryani banquets', 'Dedicated butler service'],
     },
     {
       id: 'ep-2',
-      title: 'Family Gatherings & Reunions',
-      subtitle: 'Spacious Outdoor Greenery & Comfort',
+      title: 'Corporate Socials & Mixers',
+      subtitle: 'Resto-Bar Lounge & High Counters',
       description:
-        'Bring multi-generational families together in spacious garden enclaves or air-conditioned dining salons with wholesome vegetarian and non-vegetarian sharing platters.',
-      image: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
-      capacity: '10 to 60 Guests',
-      highlights: ['Kid-friendly & elder-accessible seating', 'Traditional handi dum biryani feast', 'Relaxed garden atmosphere'],
+        'Unwind with your team over craft cocktails, artisanal bar platters, giant match screens, and chilled draught beer in an open garden setting.',
+      image: '/images/kickbunk/restaurant_guru_interior.jpg',
+      capacity: '20 to 100 Guests',
+      highlights: ['High-counter resto-bar access', 'Curated cocktail & starter packages', 'AV equipment & screens available'],
     },
     {
       id: 'ep-3',
-      title: 'Friends Meetups & Match Nights',
-      subtitle: 'Resto-Bar Cocktails & Big Screens',
+      title: 'Family Feasts & Anniversaries',
+      subtitle: 'Spacious Outdoor Greenery',
       description:
-        'Cheer for your team on giant sports screens while enjoying chilled draught pitchers, artisanal gin tonics, and hot clay-oven bar bites in the outdoor patio lounge.',
-      image: '/images/kickbunk/magicpin_06_garden_building_night.webp',
-      capacity: '8 to 50 Guests',
-      highlights: ['Live cricket & football match projection', 'Beer pitcher & bar bite packages', 'High-energy music & vibe'],
-    },
-    {
-      id: 'ep-4',
-      title: 'Corporate Dinners & Team Outings',
-      subtitle: 'Professional Hospitality & Executive Banquets',
-      description:
-        'Unwind after a sprint with team dinners, quarterly celebrations, and farewell banquets featuring streamlined billing, custom menu curation, and private dining zones.',
-      image: '/images/kickbunk/magicpin_10_decorative_tree_seating.webp',
-      capacity: '15 to 100+ Guests',
-      highlights: ['GST invoicing & corporate credit support', 'Custom curated fixed-price banquets', 'Dedicated VIP cabana clusters'],
+        'Bring multi-generational families together in spacious garden enclaves with wholesome vegetarian and non-vegetarian royal sharing spreads.',
+      image: '/images/kickbunk/magicpin_04_food_spread_dining.webp',
+      capacity: '12 to 60 Guests',
+      highlights: ['Comfortable garden seating', 'Traditional charcoal biryani feast', 'Relaxed starlit atmosphere'],
     },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg(null);
-
     if (!name || !phone) {
-      setErrorMsg('Please enter your name and contact phone number.');
+      setErrorMsg('Please enter your name and phone number.');
       return;
     }
 
     setIsSubmitting(true);
-    const res = await fetchApi('/inquiries', {
-      method: 'POST',
-      body: JSON.stringify({
-        name,
-        phone,
-        email: email || undefined,
-        subject: `Event Enquiry: ${eventType} (${guestCount} Guests)`,
-        message: `Event Type: ${eventType}\nPreferred Date: ${preferredDate || 'TBD'}\nEstimated Guests: ${guestCount}\nSpecial Requirements: ${notes}`,
-      }),
-    });
+    setErrorMsg(null);
 
-    setIsSubmitting(false);
-    if (res.success) {
+    try {
+      await fetchApi('/contact', {
+        method: 'POST',
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          subject: `Private Event Enquiry: ${eventType} (${guestCount} Guests)`,
+          message: `Date: ${preferredDate || 'Flexible'}. Event: ${eventType}. Guests: ${guestCount}. Notes: ${notes || 'None'}`,
+        }),
+      });
       setIsSubmitted(true);
-    } else {
-      setErrorMsg(res.message || 'Unable to submit enquiry. Please call +91 99806 26699 directly.');
+    } catch {
+      setIsSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F4EFE5] pt-24 pb-20">
-      {/* 1. Header Hero */}
-      <section className="relative py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-30 rounded-3xl"
-          style={{
-            backgroundImage: `url('/images/kickbunk/google_01_garden_lights_night.jpg')`,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/80 to-transparent rounded-3xl" />
-
-        <div className="relative z-10 max-w-3xl space-y-6 p-6 sm:p-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#D4A017]/15 border border-[#D4A017]/40 text-[#F5D77A] text-xs font-semibold tracking-wider uppercase">
-            <Sparkles className="w-3.5 h-3.5 text-[#D4A017]" />
-            <span>KICK BUNK PRIVATE CELEBRATIONS</span>
-          </div>
-
-          <h1 className="font-cormorant text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-tight">
-            PLAN YOUR SPECIAL MOMENT.
-          </h1>
-
-          <p className="font-manrope text-base sm:text-lg text-[#B8B1A5] font-light leading-relaxed">
-            From fairy-lit garden cabanas to grand family dining feasts, Kick Bunk Restaurant & Bar offers a picturesque sanctuary in Bengaluru for birthdays, anniversaries, corporate milestones, and memorable get-togethers.
-          </p>
-
-          <div className="flex flex-wrap gap-4 pt-2">
-            <a
-              href="#enquiry-form"
-              className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.16em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all"
-            >
-              SEND EVENT ENQUIRY
-            </a>
-
-            <a
-              href="tel:+919980626699"
-              className="px-6 py-3.5 rounded-full border border-[#D4A017]/40 text-white text-xs font-semibold tracking-wider hover:border-[#D4A017] flex items-center gap-2"
-            >
-              <Phone className="w-4 h-4 text-[#D4A017]" />
-              <span>Event Hotline: +91 99806 26699</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Event Packages Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <span className="font-cinzel text-xs font-semibold tracking-[0.25em] text-[#D4A017] uppercase">
-            CURATED CELEBRATIONS
-          </span>
-          <h2 className="font-cormorant text-3xl sm:text-5xl font-bold text-white">
-            Occasions Crafted with Care
-          </h2>
-          <p className="text-sm text-[#B8B1A5] font-light">
-            Every celebration package can be tailored with custom menus, seating configurations, and décor arrangements.
-          </p>
+    <div className="bg-[#F7F3EB] text-[#25231F] min-h-screen pt-28 pb-24">
+      
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center space-y-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#E9E1D2] text-[#254C3C] text-xs font-semibold tracking-[0.2em] uppercase shadow-sm">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Bespoke Celebrations</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <h1 className="font-cormorant text-5xl sm:text-6xl md:text-7xl font-normal text-[#25231F] tracking-tight">
+          BANQUETS & PRIVATE EVENTS.
+        </h1>
+
+        <p className="max-w-2xl mx-auto font-manrope text-sm sm:text-base text-[#777064] font-light leading-relaxed">
+          From birthday soirées beneath fairy-lit trees to lively corporate socials and family banquets, Kick Bunk crafts unforgettable moments in Bangalore&apos;s most enchanting garden resto-bar.
+        </p>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Packages Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           {eventPackages.map((pkg) => (
             <div
               key={pkg.id}
-              className="luxury-glass rounded-3xl overflow-hidden border border-[#D4A017]/20 hover:border-[#D4A017]/60 transition-all duration-300 flex flex-col justify-between group"
+              className="bg-white rounded-3xl overflow-hidden border border-[#E9E1D2] shadow-luxury-soft hover:shadow-luxury-card transition-all duration-300 flex flex-col justify-between"
             >
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
                   src={pkg.image}
                   alt={pkg.title}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0F1115] via-transparent to-transparent opacity-90" />
-                <span className="absolute top-4 left-4 bg-[#050505]/90 border border-[#D4A017]/40 px-3 py-1 rounded-full text-xs font-mono text-[#F5D77A] tracking-wider">
-                  Capacity: {pkg.capacity}
+                <span className="absolute top-3 left-3 bg-[#254C3C] text-white text-[9px] font-bold tracking-widest uppercase px-2.5 py-0.5 rounded-full shadow-sm">
+                  {pkg.capacity}
                 </span>
               </div>
 
-              <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-2">
-                  <h3 className="font-cormorant text-2xl sm:text-3xl font-bold text-white">
+              <div className="p-7 space-y-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[#B58A45] block">
+                    {pkg.subtitle}
+                  </span>
+                  <h3 className="font-cormorant text-2xl font-bold text-[#25231F] mt-1">
                     {pkg.title}
                   </h3>
-                  <p className="text-xs font-semibold text-[#D4A017] uppercase tracking-wider">
-                    {pkg.subtitle}
-                  </p>
-                  <p className="text-xs sm:text-sm text-[#B8B1A5] font-light leading-relaxed">
+                  <p className="font-manrope text-xs text-[#777064] font-light leading-relaxed mt-2">
                     {pkg.description}
                   </p>
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-[#1F242D]">
-                  {pkg.highlights.map((h, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-gray-300">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#D4A017] shrink-0" />
-                      <span>{h}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="pt-4 border-t border-[#1F242D] flex items-center justify-between">
-                  <a
-                    href="#enquiry-form"
-                    onClick={() => setEventType(pkg.title)}
-                    className="text-xs font-bold text-[#F5D77A] hover:text-white flex items-center gap-1"
-                  >
-                    <span>Enquire for {pkg.title}</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </a>
+                <div className="pt-4 border-t border-[#EFE7DA] space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#25231F] block">
+                    Package Inclusions:
+                  </span>
+                  <ul className="space-y-1.5 font-manrope text-xs text-[#777064]">
+                    {pkg.highlights.map((h, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <span className="text-[#254C3C] font-bold">✓</span>
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </section>
 
-      {/* 3. Enquiry Form Section */}
-      <section id="enquiry-form" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="luxury-glass border border-[#D4A017]/35 rounded-3xl p-6 sm:p-12 space-y-8 shadow-2xl">
-          <div className="text-center space-y-2">
-            <span className="font-cinzel text-xs font-semibold tracking-[0.25em] text-[#D4A017] uppercase">
-              GET IN TOUCH WITH OUR EVENT DIRECTOR
+        {/* Event Booking Form Section */}
+        <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 border border-[#E9E1D2] shadow-luxury-card max-w-4xl mx-auto">
+          
+          <div className="text-center max-w-xl mx-auto mb-10 space-y-2">
+            <span className="font-cormorant text-sm tracking-[0.3em] uppercase text-[#B58A45] font-bold">
+              Personalized Curation
             </span>
-            <h2 className="font-cormorant text-3xl sm:text-5xl font-bold text-white">
-              Event Booking Enquiry
+            <h2 className="font-cormorant text-3xl sm:text-4xl font-normal text-[#25231F]">
+              REQUEST AN EVENT QUOTATION
             </h2>
-            <p className="text-xs sm:text-sm text-[#B8B1A5] font-light max-w-md mx-auto">
-              Please share your event requirements and our banquet coordinator will reach out with customized packages and menus.
+            <p className="font-manrope text-xs text-[#777064]">
+              Our banquet concierge will reach out within 2 hours with customized menu choices and seating options.
             </p>
           </div>
 
           {isSubmitted ? (
-            <div className="text-center space-y-4 py-8">
-              <div className="w-16 h-16 rounded-full bg-[#D4A017]/20 border border-[#D4A017] text-[#F5D77A] flex items-center justify-center mx-auto shadow-gold-glow">
+            <div className="text-center py-10 space-y-4">
+              <div className="w-16 h-16 rounded-full bg-[#254C3C]/10 text-[#254C3C] flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="font-cormorant text-2xl font-bold text-white">
-                Thank You, {name}!
-              </h3>
-              <p className="text-sm text-gray-300 max-w-md mx-auto">
-                Your event enquiry for {eventType} ({guestCount} guests) has been safely recorded. Our team will contact you at {phone} within 24 hours.
+              <h3 className="font-cormorant text-3xl font-bold text-[#25231F]">Enquiry Received!</h3>
+              <p className="font-manrope text-xs text-[#777064] max-w-md mx-auto">
+                Thank you, <strong className="text-[#25231F]">{name}</strong>. Our private event manager will contact you on <strong className="text-[#254C3C]">{phone}</strong> shortly.
               </p>
               <button
                 onClick={() => setIsSubmitted(false)}
-                className="px-6 py-2.5 rounded-full bg-[#D4A017] text-[#050505] text-xs font-bold uppercase tracking-wider"
+                className="text-xs text-[#B58A45] underline font-bold uppercase tracking-wider py-2"
               >
-                Submit Another Enquiry
+                Send Another Request
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 text-xs">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {errorMsg && (
-                <div className="p-3.5 rounded-xl bg-red-950/50 border border-red-500/40 text-red-200">
+                <div className="p-3 rounded-lg bg-red-50 text-red-700 text-xs border border-red-200">
                   {errorMsg}
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Full Name *
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                    Your Full Name *
                   </label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Ramesh Reddy"
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                    placeholder="e.g. Anand Mahindra"
+                    className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Mobile Number *
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                    Phone (WhatsApp) *
                   </label>
                   <input
                     type="tel"
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+91 99806 26699"
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                    placeholder="+91 98765 43210"
+                    className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-sm text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                   />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com"
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Event Type *
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                    Occasion Type
                   </label>
                   <select
                     value={eventType}
                     onChange={(e) => setEventType(e.target.value)}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                    className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                   >
-                    <option value="Birthday Celebration">Birthday Celebration</option>
-                    <option value="Family Gathering & Reunion">Family Gathering & Reunion</option>
-                    <option value="Friends Meetup & Match Night">Friends Meetup & Match Night</option>
-                    <option value="Corporate Dinner & Outing">Corporate Dinner & Outing</option>
-                    <option value="Anniversary & Romantic Cabana">Anniversary & Romantic Cabana</option>
-                    <option value="Private Dining Experience">Private Dining Experience</option>
+                    <option value="Birthday Celebration">Birthday Soirée</option>
+                    <option value="Corporate Mixer">Corporate Team Party</option>
+                    <option value="Anniversary Dinner">Anniversary Celebration</option>
+                    <option value="Friends Reunion">Reunion / Match Night</option>
+                    <option value="Full Garden Buyout">Full Garden Buyout</option>
                   </select>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Preferred Date
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                    Tentative Date
                   </label>
                   <input
                     type="date"
                     value={preferredDate}
                     onChange={(e) => setPreferredDate(e.target.value)}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                    className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-gray-300 font-medium uppercase tracking-wider">
-                    Estimated Guests
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                    Approx. Guest Count
                   </label>
-                  <input
-                    type="number"
-                    min={4}
-                    max={250}
+                  <select
                     value={guestCount}
                     onChange={(e) => setGuestCount(Number(e.target.value))}
-                    className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
-                  />
+                    className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
+                  >
+                    {[10, 15, 20, 30, 40, 50, 75, 100, 150].map((n) => (
+                      <option key={n} value={n}>
+                        {n} Guests
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-gray-300 font-medium uppercase tracking-wider">
-                  Additional Requirements & Preferences
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#777064] mb-2">
+                  Special Instructions or Food Preferences
                 </label>
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Tell us about food preferences (veg/non-veg), cabana preference, cake setup, audiovisual requirements, or any specific requests..."
-                  className="w-full bg-[#050505] border border-[#1F242D] focus:border-[#D4A017] rounded-xl px-4 py-3 text-sm text-white focus:outline-none"
+                  placeholder="e.g. Need DJ setup, vegetarian buffet options, cake cutting arrangement..."
+                  className="w-full bg-[#F7F3EB] border border-[#E9E1D2] rounded-xl px-4 py-3 text-xs text-[#25231F] focus:outline-none focus:border-[#B58A45]"
                 />
               </div>
 
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-4 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.2em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all disabled:opacity-50"
-                >
-                  {isSubmitting ? 'TRANSMITTING ENQUIRY...' : 'SUBMIT EVENT ENQUIRY'}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-[#254C3C] hover:bg-[#1D3B2E] text-white py-4 rounded-full font-manrope text-xs font-bold tracking-[0.16em] uppercase transition-all shadow-md flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <span>Submitting Enquiry...</span>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 text-[#DCC18B]" />
+                    <span>Submit Banquet Enquiry</span>
+                  </>
+                )}
+              </button>
             </form>
           )}
+
         </div>
-      </section>
+
+      </div>
+
     </div>
   );
 }

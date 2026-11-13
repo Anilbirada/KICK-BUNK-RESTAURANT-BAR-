@@ -27,7 +27,7 @@ export const Navbar: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 25);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -60,32 +60,33 @@ export const Navbar: React.FC = () => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out ${
           scrolled
-            ? 'bg-[#050505]/95 backdrop-blur-xl border-b border-[#D4A017]/25 shadow-2xl shadow-black/90 py-2.5'
-            : 'bg-gradient-to-b from-[#050505]/90 via-[#050505]/50 to-transparent backdrop-blur-[2px] py-4'
+            ? 'bg-[#F7F3EB]/95 backdrop-blur-md border-b border-[#E9E1D2] shadow-[0_4px_24px_rgba(37,35,31,0.08)] py-3'
+            : 'bg-[#F7F3EB]/90 backdrop-blur-sm border-b border-[#EFE7DA] py-4'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* 1. Customer Logo on the Left */}
+          
+          {/* 1. Customer Logo inside a refined charcoal/black plaque */}
           <Link
             href="/"
-            className="flex items-center gap-3 group focus:outline-none"
+            className="flex items-center gap-3.5 group focus:outline-none"
             aria-label="KICK BUNK - Home"
           >
-            <div className="relative w-11 h-11 sm:w-13 sm:h-13 rounded-full overflow-hidden border border-[#D4A017]/40 p-0.5 bg-[#08090C] group-hover:border-[#F5D77A] group-hover:shadow-gold-glow transition-all duration-300">
+            <div className="logo-plaque w-11 h-11 sm:w-12 sm:h-12 transition-transform duration-300 group-hover:scale-105">
               <Image
                 src="/images/logo.png"
                 alt="KICK BUNK Restaurant & Bar Logo"
-                width={52}
-                height={52}
-                className="object-contain w-full h-full transform group-hover:scale-105 transition-transform duration-300"
+                width={48}
+                height={48}
+                className="object-contain w-full h-full rounded-full"
                 priority
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-cinzel text-lg sm:text-xl font-bold tracking-[0.2em] text-[#FAF8F5] group-hover:text-[#F5D77A] transition-colors leading-none">
+              <span className="font-cinzel text-lg sm:text-xl font-bold tracking-[0.2em] text-[#25231F] group-hover:text-[#B58A45] transition-colors leading-none">
                 KICK BUNK
               </span>
-              <span className="font-cormorant text-[11px] sm:text-xs text-[#D4A017] tracking-[0.25em] uppercase font-medium">
+              <span className="font-cormorant text-[11px] sm:text-xs text-[#B58A45] tracking-[0.28em] uppercase font-semibold mt-0.5">
                 Restaurant & Bar
               </span>
             </div>
@@ -98,126 +99,16 @@ export const Navbar: React.FC = () => {
                 link.href === '/'
                   ? pathname === '/'
                   : pathname.startsWith(link.href);
+
               return (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative py-1 text-xs xl:text-[13px] font-medium tracking-[0.16em] transition-colors duration-300 ${
+                  className={`nav-link-gold font-manrope text-xs tracking-[0.16em] uppercase font-medium transition-colors ${
                     isActive
-                      ? 'text-[#F5D77A]'
-                      : 'text-[#B8B1A5] hover:text-[#FAF8F5]'
+                      ? 'text-[#B58A45] font-semibold active'
+                      : 'text-[#25231F] hover:text-[#B58A45]'
                   }`}
-                >
-                  <span>{link.name}</span>
-                  {/* Subtle Gold Underline Animation */}
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#D4A017] to-transparent transition-transform duration-300 origin-center ${
-                      isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0 group-hover:scale-x-100'
-                    }`}
-                  />
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* 3. Actions on the Right */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            {/* Direct Concierge Call */}
-            <a
-              href="tel:+919980626699"
-              className="hidden sm:flex items-center gap-1.5 text-xs text-[#B8B1A5] hover:text-[#F5D77A] transition-colors py-1.5 px-2.5 rounded-full border border-transparent hover:border-[#D4A017]/25"
-              title="Call Kick Bunk Flagship"
-            >
-              <Phone className="w-3.5 h-3.5 text-[#D4A017]" />
-              <span className="hidden xl:inline font-mono text-[11px]">+91 99806 26699</span>
-            </a>
-
-            {/* Cart Button (if items present) */}
-            {totalCartCount > 0 && (
-              <Link
-                href="/cart"
-                className="relative p-2 rounded-full bg-[#0F1115] border border-[#D4A017]/40 text-[#F5D77A] hover:bg-[#151922] transition-colors"
-                title="View Dining Order"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                <span className="absolute -top-1 -right-1 bg-[#D4A017] text-[#050505] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {totalCartCount}
-                </span>
-              </Link>
-            )}
-
-            {/* Gold Reservation Button CTA */}
-            <Link
-              href="/booking"
-              className="relative group overflow-hidden px-4 sm:px-6 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.15em] uppercase shadow-gold-glow hover:shadow-gold-glow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
-            >
-              <Calendar className="w-3.5 h-3.5 text-[#050505]" />
-              <span className="relative z-10 whitespace-nowrap">RESERVE YOUR TABLE</span>
-              <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out" />
-            </Link>
-
-            {/* Mobile Hamburger Toggle */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-[#F5D77A] hover:bg-white/5 focus:outline-none transition-colors"
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-6 h-6 text-[#F5D77A]" />
-              ) : (
-                <MenuIcon className="w-6 h-6 text-[#F5D77A]" />
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* 4. Full-Screen Mobile Navigation Overlay */}
-      <div
-        className={`fixed inset-0 z-40 bg-[#050505]/98 backdrop-blur-2xl transition-all duration-500 lg:hidden flex flex-col justify-between p-6 pt-24 ${
-          mobileMenuOpen
-            ? 'opacity-100 pointer-events-auto translate-y-0'
-            : 'opacity-0 pointer-events-none -translate-y-4'
-        }`}
-      >
-        <div className="flex flex-col space-y-6 max-w-sm mx-auto w-full">
-          <div className="flex items-center justify-center gap-3 pb-4 border-b border-[#D4A017]/15">
-            <div className="w-12 h-12 rounded-full overflow-hidden border border-[#D4A017]/40 p-0.5">
-              <Image
-                src="/images/logo.png"
-                alt="KICK BUNK"
-                width={48}
-                height={48}
-                className="object-contain"
-              />
-            </div>
-            <div>
-              <div className="font-cinzel text-lg font-bold tracking-[0.2em] text-[#FAF8F5]">
-                KICK BUNK
-              </div>
-              <div className="font-cormorant text-xs text-[#D4A017] tracking-[0.2em] uppercase">
-                Restaurant & Bar • Bengaluru
-              </div>
-            </div>
-          </div>
-
-          <nav className="flex flex-col space-y-3 text-center">
-            {navLinks.map((link, idx) => {
-              const isActive =
-                link.href === '/'
-                  ? pathname === '/'
-                  : pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2 font-cormorant text-2xl tracking-[0.1em] transition-all duration-200 ${
-                    isActive
-                      ? 'text-[#F5D77A] font-semibold'
-                      : 'text-[#B8B1A5] hover:text-[#FAF8F5]'
-                  }`}
-                  style={{ transitionDelay: `${idx * 40}ms` }}
                 >
                   {link.name}
                 </Link>
@@ -225,46 +116,163 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          <div className="pt-4 border-t border-[#D4A017]/15 flex flex-col gap-3">
-            <Link
-              href="/booking"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3.5 rounded-full bg-gradient-to-r from-[#D4A017] via-[#F5D77A] to-[#D4A017] text-[#050505] text-xs font-bold tracking-[0.2em] uppercase text-center shadow-gold-glow flex items-center justify-center gap-2"
-            >
-              <Calendar className="w-4 h-4 text-[#050505]" />
-              <span>RESERVE YOUR TABLE</span>
-            </Link>
-
+          {/* 3. Action Buttons (Right) */}
+          <div className="hidden lg:flex items-center gap-4">
+            {/* Direct Call Quick Link */}
             <a
               href="tel:+919980626699"
-              className="w-full py-3 rounded-full border border-[#D4A017]/30 text-[#FAF8F5] text-xs font-medium tracking-wider text-center flex items-center justify-center gap-2 hover:border-[#D4A017]"
+              className="flex items-center gap-2 text-xs font-semibold tracking-wider text-[#777064] hover:text-[#B58A45] transition-colors px-2 py-1"
+              title="Call Kick Bunk Concierge"
             >
-              <Phone className="w-4 h-4 text-[#D4A017]" />
-              <span>Concierge: +91 99806 26699</span>
+              <Phone className="w-3.5 h-3.5 text-[#B58A45]" />
+              <span className="hidden xl:inline">+91 99806 26699</span>
             </a>
-          </div>
-        </div>
 
-        {/* Mobile Footer Info */}
-        <div className="text-center text-xs text-[#B8B1A5] pb-4 space-y-1">
-          <p>Hulimangala Main Road, Bengaluru</p>
-          <div className="flex items-center justify-center gap-4 pt-1 text-[#D4A017]">
-            <a
-              href="https://www.instagram.com/kick_bunk_gardenrestobar/"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:underline flex items-center gap-1"
+            {/* Shopping Bag / Cart */}
+            <Link
+              href="/cart"
+              className="relative p-2.5 text-[#25231F] hover:text-[#B58A45] transition-colors rounded-full hover:bg-[#EFE7DA]"
+              aria-label="View Order Bag"
             >
-              <Instagram className="w-3.5 h-3.5" />
-              <span>@kick_bunk_gardenrestobar</span>
-            </a>
-            <span>•</span>
-            <Link href="/admin" className="text-gray-400 hover:text-[#D4A017]">
-              Admin
+              <ShoppingBag className="w-5 h-5" />
+              {totalCartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#254C3C] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+                  {totalCartCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Antique Gold Reservation Button with Elegant Dark Text */}
+            <Link
+              href="/booking"
+              className="inline-flex items-center gap-2 bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] px-5 py-2.5 rounded-full font-manrope text-xs font-bold tracking-[0.12em] uppercase transition-all duration-300 shadow-[0_4px_16px_rgba(181,138,69,0.3)] hover:shadow-[0_6px_22px_rgba(181,138,69,0.45)] hover:-translate-y-0.5"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Reserve Table</span>
             </Link>
           </div>
+
+          {/* 4. Mobile Hamburger Trigger */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <Link
+              href="/cart"
+              className="relative p-2 text-[#25231F] hover:text-[#B58A45] transition-colors"
+              aria-label="View Order Bag"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {totalCartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[#254C3C] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalCartCount}
+                </span>
+              )}
+            </Link>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-[#25231F] hover:text-[#B58A45] focus:outline-none transition-colors"
+              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-[#25231F]" />
+              ) : (
+                <MenuIcon className="w-6 h-6 text-[#25231F]" />
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer (Luxury Light Warm Ivory) */}
+      <div
+        className={`fixed inset-0 z-40 bg-[#25231F]/40 backdrop-blur-sm lg:hidden transition-opacity duration-300 ${
+          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
+      <div
+        className={`fixed top-0 right-0 bottom-0 w-[84%] max-w-sm bg-[#F7F3EB] border-l border-[#E9E1D2] z-50 lg:hidden shadow-2xl flex flex-col justify-between p-6 transform transition-transform duration-500 ease-out ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div>
+          {/* Header in Drawer */}
+          <div className="flex items-center justify-between pb-6 border-b border-[#E9E1D2]">
+            <div className="flex items-center gap-3">
+              <div className="logo-plaque w-10 h-10">
+                <Image
+                  src="/images/logo.png"
+                  alt="KICK BUNK"
+                  width={40}
+                  height={40}
+                  className="object-contain rounded-full"
+                />
+              </div>
+              <div>
+                <span className="font-cinzel text-base font-bold text-[#25231F] tracking-widest block leading-tight">
+                  KICK BUNK
+                </span>
+                <span className="font-cormorant text-[10px] text-[#B58A45] tracking-[0.25em] uppercase font-semibold">
+                  Restaurant & Bar
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-1.5 text-[#777064] hover:text-[#25231F]"
+              aria-label="Close Navigation Menu"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Links */}
+          <nav className="mt-8 flex flex-col space-y-4">
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === '/'
+                  ? pathname === '/'
+                  : pathname.startsWith(link.href);
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`flex items-center justify-between py-2 text-sm tracking-[0.14em] uppercase font-medium transition-colors ${
+                    isActive
+                      ? 'text-[#B58A45] font-bold border-l-2 border-[#B58A45] pl-3'
+                      : 'text-[#25231F] hover:text-[#B58A45]'
+                  }`}
+                >
+                  <span>{link.name}</span>
+                  <ChevronRight className="w-4 h-4 text-[#B58A45]/50" />
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Footer in Drawer */}
+        <div className="pt-6 border-t border-[#E9E1D2] flex flex-col gap-3">
+          <Link
+            href="/booking"
+            className="w-full flex items-center justify-center gap-2 bg-[#B58A45] hover:bg-[#A37937] text-[#25231F] py-3 rounded-full font-manrope text-xs font-bold tracking-widest uppercase transition-all shadow-[0_4px_16px_rgba(181,138,69,0.3)]"
+          >
+            <Calendar className="w-4 h-4" />
+            <span>Reserve Table</span>
+          </Link>
+
+          <a
+            href="tel:+919980626699"
+            className="flex items-center justify-center gap-2 text-xs text-[#777064] hover:text-[#25231F] py-2"
+          >
+            <Phone className="w-3.5 h-3.5 text-[#B58A45]" />
+            <span>+91 99806 26699</span>
+          </a>
         </div>
       </div>
     </>
   );
 };
+
+export default Navbar;
