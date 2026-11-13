@@ -1,15 +1,29 @@
-# KICK BUNK 360
+# KICK BUNK – European Luxury Restaurant & Bar
 ## Enterprise Restaurant Management & Digital Transformation Platform
-### Complete Multi-Branch Restaurant Ecosystem • Toast POS Benchmark • Production Architecture
+### European Luxury × Modern Garden Restaurant × Premium Hospitality Ecosystem
 
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.x-black?style=flat&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React Native](https://img.shields.io/badge/React_Native-Expo_SDK_51-61DAFB?style=flat&logo=react&logoColor=black)](https://reactnative.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Prisma ORM](https://img.shields.io/badge/Prisma-50_Entities-2D3748?style=flat&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![Socket.IO](https://img.shields.io/badge/Socket.IO-Real--Time_KDS-010101?style=flat&logo=socket.io&logoColor=white)](https://socket.io/)
-[![License](https://img.shields.io/badge/License-Proprietary-red)](#)
+[![Design System](https://img.shields.io/badge/Theme-European_Luxury_Light-C5A46D)](#)
+
+---
+
+## 🏛️ European Luxury Visual Redesign
+
+The platform features a **European Luxury Light Theme**:
+
+- **Warm Luxury Ivory (`#F7F3EB`)**: Primary canvas background providing a spacious, sunlit, and inviting ambiance.
+- **Champagne Cream (`#EFE7DA`)**: Secondary surfaces for garden showcases and the photo editorial gallery.
+- **Pure White (`#FFFFFF`)**: Crisp card surfaces for food items, private banquets, and checkout.
+- **Antique Gold (`#B58A45`)**: Refined metallic accents, animated navigation underlines, and primary reservation buttons.
+- **Rich Charcoal (`#25231F`)**: High-contrast, editorial serif and sans-serif typography.
+- **Deep Emerald Green (`#254C3C`)**: Botanical garden anchor used across the reservation canvas, highlights, and brand footer.
+- **Deep Burgundy (`#482A32`)**: The designated dark luxury contrast section exclusively for the **Resto-Bar Nightlife** experience.
+- **Official Brand Logo Plaque**: Customer's original gold logo displayed inside a circular charcoal plaque with gold rim, preserving original proportions against the ivory header.
 
 ---
 
